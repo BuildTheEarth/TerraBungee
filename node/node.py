@@ -122,13 +122,8 @@ redis_pubsub.unsubscribe(chan_prefix + "tb-controller-ping")
 redis_pubsub.subscribe(chan_prefix + "tb-instance-status")
 redis_pubsub.subscribe(chan_prefix + "tb-service-ask")
 
-def handle_message_tb_controller(message):
-    if message.type == "controller-ping":
-        logger.info("Received ping from service " + message.sender)
-        redis_client.publish("tb-controller-ping",create_message(service_id,message.sender,"controller-pong",None))
-
-def handle_message_tb_controller_calls(message):
-    pass
+def handle_message_tb_service_calls(message):
+    print(message)
 
 def message_handler_target():
     while True:
@@ -143,28 +138,24 @@ def message_handler_target():
             continue # ignore messages from self
         if not (message_parsed.recipient == service_id) or (message_parsed.recipient == "*"):
             continue # ignore messages not directed to us
-        if message["channel"] == (chan_prefix + "tb-controller-ping").encode("utf-8"):
-            handle_message_tb_controller(message_parsed)
+        if message["channel"] == (chan_prefix + "tb-service-calls").encode("utf-8"):
+            handle_message_tb_service_calls(message_parsed)
 
 logger.info("Starting message handler thread")
 
 message_handler_thread = threading.Thread(target=message_handler_target,name="Redis mesage handler",daemon=True)
 message_handler_thread.start()
 
-# broadcast controller status to network
+# broadcast status to network
 redis_client.publish("tb-service-status",create_message(service_id,"*","service-status",{"online":True}))
 logger.info("Pushed status to network")
 
-logger.info("Done! TerraBungee controller now online.")
+logger.info("Done! TerraBungee service " + service_id + " now online.")
 
 try:
     while True:
         time.sleep(0.1)
 except KeyboardInterrupt:
     tb_exit(0)
-
-# broadcast status to network
-redis_client.publish("tb-service-status",create_message(service_id,"*","service-status",{"online":True}))
-logger.info("Pushed status to network")
 
 tb_exit(0)
