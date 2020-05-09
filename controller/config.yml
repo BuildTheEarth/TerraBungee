@@ -1,0 +1,27 @@
+# TerraBungee
+# (C) 2020 Saghetti
+
+# Controller Config
+
+# Redis connection information.
+redis:
+  # The host and port of the Redis server.
+  host: localhost
+  port: 6379
+  # Password for redis. Leave blank for none.
+  # NOTE: not implemented yet
+  password: ""
+
+# How TerraBungee should communicate over the network.
+communication:
+  # The prefix that TerraBungee should use for channels.
+  # Allows running multiple networks using a single Redis server.
+  # It is reccomended to leave this value blank.
+  channel-prefix: ""
+
+# Where resources should be found
+resources:
+  # HTTP URL where templates can be found.
+  # It is reccomended to make this localhost or an IP on the internal network
+  # NOTE: Must end with a trailing forward slash
+  template-url: "https://localhost:8080/terrabungee/templates/"

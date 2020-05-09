@@ -1,0 +1,37 @@
+# TerraBungee
+# (C) 2020 Saghetti
+
+# Node Config
+
+# The name of this node, used to identify it on the network. Must be unique.
+node-name: example-node
+
+# Redis connection information.
+redis:
+  # The host and port of the Redis server.
+  host: localhost
+  port: 6379
+  # Password for redis. Leave blank for none.
+  # NOTE: not implemented yet
+  password: ""
+
+# Limits on how much system resources this node is allowed to use.
+resource-limits:
+  # Maximum amount of server instances that can be hosted on this node.
+  # Make sure that you set this value appropriately, your machine may run out of memory if you create too many instances.
+  max-instances: 15
+  # Maximum amount of memory that is allowed to be allocated to instances, in megabytes
+  # This node will not allow any more instances to be created if it exceeds this memory limit.
+  # Set to -1 for no limit
+  max-memory: -1
+
+# How TerraBungee should communicate over the network.
+communication:
+  # The prefix that TerraBungee should use for channels.
+  # Allows running multiple networks using a single Redis server.
+  # It is reccomended to leave this value blank.
+  channel-prefix: ""
+
+# Hostname for this machine (ex: the internal IP).
+# Use localhost if you're running all your services on the same machine (Controller, Nodes, and Proxies)
+hostname: "localhost"
