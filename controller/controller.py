@@ -57,6 +57,7 @@ redis_pubsub = redis_client.pubsub()
 redis_pubsub.subscribe(chan_prefix + "tb-controller-ping")
 redis_pubsub.subscribe(chan_prefix + "tb-instance-status")
 redis_pubsub.subscribe(chan_prefix + "tb-controller-calls")
+redis_pubsub.subscribe(chan_prefix + "tb-service-status")
 
 def handle_message_tb_controller_ping(message):
     if message.type == "controller-ping":
@@ -67,7 +68,7 @@ def handle_message_tb_controller_calls(message):
     pass
 
 def handle_message_tb_service_status(message):
-    print(message)
+    print(message.data)
 
 def message_handler_target():
     while True:
@@ -80,13 +81,14 @@ def message_handler_target():
         message_parsed = parse_message(message["data"])
         if message_parsed.sender == service_id:
             continue # ignore messages from self
-        if not (message_parsed.recipient == service_id) or (message_parsed.recipient == "*"):
+        if not ((message_parsed.recipient == service_id) or (message_parsed.recipient == "*")):
             continue # ignore messages not directed to us
         if message["channel"] == (chan_prefix + "tb-controller-ping").encode("utf-8"):
             handle_message_tb_controller_ping(message_parsed)
         if message["channel"] == (chan_prefix + "tb-controller-calls").encode("utf-8"):
             handle_message_tb_controller_calls(message_parsed)
         if message["channel"] == (chan_prefix + "tb-service-status").encode("utf-8"):
+            print("got here")
             handle_message_tb_service_status(message_parsed)
 
 logger.info("Starting message handler thread")

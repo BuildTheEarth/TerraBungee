@@ -136,7 +136,7 @@ def message_handler_target():
         message_parsed = parse_message(message["data"])
         if message_parsed.sender == service_id:
             continue # ignore messages from self
-        if not (message_parsed.recipient == service_id) or (message_parsed.recipient == "*"):
+        if not ((message_parsed.recipient == service_id) or (message_parsed.recipient == "*")):
             continue # ignore messages not directed to us
         if message["channel"] == (chan_prefix + "tb-service-calls").encode("utf-8"):
             handle_message_tb_service_calls(message_parsed)
