@@ -66,6 +66,9 @@ def handle_message_tb_controller_ping(message):
 def handle_message_tb_controller_calls(message):
     pass
 
+def handle_message_tb_service_status(message):
+    pass
+
 def message_handler_target():
     while True:
         message = redis_pubsub.get_message()
@@ -83,6 +86,8 @@ def message_handler_target():
             handle_message_tb_controller_ping(message_parsed)
         if message["channel"] == (chan_prefix + "tb-controller-calls").encode("utf-8"):
             handle_message_tb_controller_calls(message_parsed)
+        if message["channel"] == (chan_prefix + "tb-service-status").encode("utf-8"):
+            handle_message_tb_service_status(message_parsed)
 
 logger.info("Starting message handler thread")
 

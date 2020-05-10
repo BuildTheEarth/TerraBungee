@@ -120,7 +120,7 @@ while ping_trying:
 
 redis_pubsub.unsubscribe(chan_prefix + "tb-controller-ping")
 redis_pubsub.subscribe(chan_prefix + "tb-instance-status")
-redis_pubsub.subscribe(chan_prefix + "tb-service-ask")
+redis_pubsub.subscribe(chan_prefix + "tb-service-calls")
 
 def handle_message_tb_service_calls(message):
     print(message)
