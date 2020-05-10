@@ -157,5 +157,3 @@ try:
         time.sleep(0.1)
 except KeyboardInterrupt:
     tb_exit(0)
-
-tb_exit(0)
