@@ -16,7 +16,7 @@ from tbmsg import *
 def tb_exit(exit_code):
     logger.info("Exiting TerraBungee")
     logger.info("Pushing status")
-    redis_client.publish("tb-service-status",create_message(service_id,"*","service-status",{"online":False}))
+    redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":False}))
     logger.info("Closing Redis connection")
     redis_client.close()
     if exit_code == 0:
@@ -67,7 +67,7 @@ def handle_message_tb_controller_calls(message):
     pass
 
 def handle_message_tb_service_status(message):
-    pass
+    print(message)
 
 def message_handler_target():
     while True:
@@ -95,7 +95,7 @@ message_handler_thread = threading.Thread(target=message_handler_target,name="Re
 message_handler_thread.start()
 
 # broadcast controller status to network
-redis_client.publish("tb-service-status",create_message(service_id,"*","service-status",{"online":True}))
+redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":True}))
 logger.info("Pushed status to network")
 
 logger.info("Done! TerraBungee controller now online.")

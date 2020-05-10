@@ -31,7 +31,7 @@ def get_free_port():
 def tb_exit(exit_code):
     logger.info("Exiting TerraBungee")
     logger.info("Pushing status")
-    redis_client.publish("tb-service-status",create_message(service_id,"*","service-status",{"online":False}))
+    redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":False}))
     logger.info("Closing Redis connection")
     redis_client.close()
     if exit_code == 0:
@@ -147,7 +147,7 @@ message_handler_thread = threading.Thread(target=message_handler_target,name="Re
 message_handler_thread.start()
 
 # broadcast status to network
-redis_client.publish("tb-service-status",create_message(service_id,"*","service-status",{"online":True}))
+redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":True}))
 logger.info("Pushed status to network")
 
 logger.info("Done! TerraBungee service " + service_id + " now online.")
