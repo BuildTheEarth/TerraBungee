@@ -6,7 +6,7 @@ print("Starting node...")
 
 import time
 import yaml
-import requests
+import urllib.request
 import redis
 import threading
 import logging
@@ -15,8 +15,19 @@ import socket
 from tbmsg import *
 import socket
 import subprocess
+import zipfile
+import shutil
+import os
+
+# var definitions
+file_server_url = "http://127.0.0.1:8081/files/"
 
 # utility functions
+
+def download_file(url,dest):
+    response = urllib.request.urlopen(url)
+    with open(dest,"wb") as fh:
+        fh.write(response.read())
 
 def get_free_port():
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -40,6 +51,46 @@ def tb_exit(exit_code):
         logger.error("Exiting with code " + str(exit_code) + " (error)")
     exit(exit_code)
 
+class InstancePrepareError(Exception):
+    pass
+
+class Instance:
+    def __init__(self,instance_id):
+        self.instance_id = instance_id
+        self.instance_folder = "instances/" + self.instance_id
+        self.prepared = False
+
+    def prepare(self,template_path):
+        if self.prepared:
+            return
+        # prepare an instance for launching
+        os.makedirs("temp/" + self.instance_id)
+        # extract json from zip
+        template_zip = zipfile.ZipFile(template_path,"r")
+        template_zip.extract("template.json","temp/" + self.instance_id)
+        # parse json
+        with open("temp/" + self.instance_id + "/template.json","r") as fh:
+            template_json = json.loads(fh.read())
+        # make instance folder
+        os.makedirs(self.instance_folder)
+        # do actions specified in template json
+        for action in template_json["actions"]:
+            if action["action"] == "download":
+                download_file(file_server_url + action["source"],self.instance_folder + "/" + action["dest"])
+            elif action["action"] == "create-folder":
+                os.makedirs(self.instance_folder + "/" + action["dest"])
+            elif action["action"] == "unpack":
+                download_file(file_server_url + action["source"],"temp/" + self.instance_id + "/" + action["source"])
+                with zipfile.ZipFile("temp/" + self.instance_id + "/" + action["source"]) as sub_zip:
+                    # unpack files
+                    sub_zip.extractall(path=self.instance_folder + "/" + action["dest"])
+            else:
+                raise InstancePrepareError("Unknown action type " + action["action"] + " while preparing " + instance_id)
+        # clean up
+        shutil.rmtree("temp/" + self.instance_id)
+        template_zip.close()
+        self.prepared = True
+
 log_console_handler = logging.StreamHandler()
 log_console_handler.setFormatter(logging.Formatter("[%(asctime)s %(levelname)s] %(name)s: %(message)s",datefmt="%Y-%m-%d %H:%M:%S"))
 
@@ -54,6 +105,7 @@ with open("config.yml","r") as fh:
 
 chan_prefix = config["communication"]["channel-prefix"]
 node_name = config["node-name"]
+
 # the identifier that is used to differentiate this node on the network
 # see docs section: Service Identifier
 service_id = "node:" + node_name
@@ -149,6 +201,12 @@ message_handler_thread.start()
 # broadcast status to network
 redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":True}))
 logger.info("Pushed status to network")
+
+# grab information from controller
+
+# do tests
+inst = Instance("foo")
+inst.prepare("temp/lobby.zip")
 
 logger.info("Done! TerraBungee service " + service_id + " now online.")
 
