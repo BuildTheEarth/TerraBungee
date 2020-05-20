@@ -67,12 +67,12 @@ class Instance:
         os.makedirs("temp/" + self.instance_id)
         # extract json from zip
         template_zip = zipfile.ZipFile(template_path,"r")
-        template_zip.extract("template.json","temp/" + self.instance_id)
+        template_zip.extractall(path="temp/" + self.instance_id)
         # parse json
         with open("temp/" + self.instance_id + "/template.json","r") as fh:
             template_json = json.loads(fh.read())
-        # make instance folder
-        os.makedirs(self.instance_folder)
+        # apply overrides and create instance folder
+        shutil.move("temp/" + self.instance_id + "/overrides", self.instance_folder)
         # do actions specified in template json
         for action in template_json["actions"]:
             if action["action"] == "download":
