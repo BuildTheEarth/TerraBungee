@@ -18,6 +18,10 @@ def tb_exit(exit_code):
     logger.info("Exiting TerraBungee")
     logger.info("Pushing status")
     redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":False}))
+    logger.info("Stopping threads")
+    if "message_handler_thread" in globals():
+        message_handler_thread.do_run = False
+        message_handler_thread.join()
     logger.info("Closing Redis connection")
     redis_client.close()
     if exit_code == 0:
@@ -75,13 +79,11 @@ def handle_message_tb_controller_ping(message):
 def handle_message_tb_controller_calls(message):
     if message.type == "get-var":
         if controller_network_vars.get(message.data["var"]) == None:
-            print("Var not found!")
             redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,message.sender,"var-value",{
                 "found": False,
                 "var": message.data["var"]
             }))
         else:
-            print("Var found!")
             redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,message.sender,"var-value",{
                 "found": True,
                 "var": message.data["var"],
@@ -97,7 +99,8 @@ def handle_message_tb_service_status(message):
     logger.info("Service " + message.sender + " is now " + ("online" if message.data["online"] else "offline"))
 
 def message_handler_target():
-    while True:
+    current_thread = threading.currentThread()
+    while getattr(current_thread,"do_run",True):
         message = redis_pubsub.get_message()
         if not message:
             time.sleep(0.01)
@@ -119,6 +122,7 @@ def message_handler_target():
 logger.info("Starting message handler thread")
 
 message_handler_thread = threading.Thread(target=message_handler_target,name="Redis mesage handler",daemon=True)
+message_handler_thread.do_run = True
 message_handler_thread.start()
 
 # broadcast controller status to network

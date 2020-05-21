@@ -18,9 +18,12 @@ import subprocess
 import zipfile
 import shutil
 import os
+import queue
 
 # var definitions
 file_server_url = "http://127.0.0.1/"
+
+instance_queue = queue.Queue()
 
 # utility functions
 
@@ -43,6 +46,13 @@ def tb_exit(exit_code):
     logger.info("Exiting TerraBungee")
     logger.info("Pushing status")
     redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":False}))
+    logger.info("Stopping threads")
+    if "message_handler_thread" in globals():
+        message_handler_thread.do_run = False
+        message_handler_thread.join()
+    if "instance_creation_thread" in globals():
+        instance_creation_thread.do_run = False
+        instance_creation_thread.join()
     logger.info("Closing Redis connection")
     redis_client.close()
     if exit_code == 0:
@@ -93,6 +103,11 @@ class Instance:
         shutil.rmtree("temp/" + self.instance_id)
         template_zip.close()
         self.prepared = True
+
+class InstanceCreateTask:
+    def __init__(self,instance_id,template):
+        self.instance_id = instance_id
+        self.template = template
 
 log_console_handler = logging.StreamHandler()
 log_console_handler.setFormatter(logging.Formatter("[%(asctime)s %(levelname)s] %(name)s: %(message)s",datefmt="%Y-%m-%d %H:%M:%S"))
@@ -178,18 +193,25 @@ redis_pubsub.subscribe(chan_prefix + "tb-instance-status")
 redis_pubsub.subscribe(chan_prefix + "tb-service-calls")
 redis_pubsub.subscribe(chan_prefix + "tb-controller-calls")
 
+def create_new_instance(inst_id,template):
+    # add a new task to the instance creation queue
+    instance_queue.put(InstanceCreateTask(inst_id,template))
+
 def handle_message_tb_service_calls(message):
-    print(message)
+    if message.type == "create-instance":
+        # create a new instance
+        create_new_instance(message.data["instance-id"],message.data["template"])
 
 def handle_message_tb_controller_calls(message):
     if message.type == "var-value":
         if message.data["found"]:
             if message.data["var"] == "template-url":
-                print(message.data["value"])
                 file_server_url = message.data["value"]
 
+# target for message handling thread
 def message_handler_target():
-    while True:
+    current_thread = threading.currentThread()
+    while getattr(current_thread,"do_run",True):
         message = redis_pubsub.get_message()
         if not message:
             time.sleep(0.01)
@@ -206,10 +228,27 @@ def message_handler_target():
         if message["channel"] == (chan_prefix + "tb-controller-calls").encode("utf-8"):
             handle_message_tb_controller_calls(message_parsed)
 
+# target for instance creation thread
+def instance_creation_target():
+    current_thread = threading.currentThread()
+    while getattr(current_thread,"do_run",True):
+        try:
+            task = instance_queue.get(timeout=0.05)
+            print(task)
+        except queue.Empty:
+            continue
+
 logger.info("Starting message handler thread")
 
 message_handler_thread = threading.Thread(target=message_handler_target,name="Redis mesage handler",daemon=True)
+message_handler_thread.do_run = True
 message_handler_thread.start()
+
+logger.info("Starting instance creation thread")
+
+instance_creation_thread = threading.Thread(target=instance_creation_target,name="Instance creation thread",daemon=True)
+instance_creation_thread.do_run = True
+instance_creation_thread.start()
 
 # broadcast status to network
 redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":True}))
@@ -220,6 +259,9 @@ logger.info("Requesting vars from controller")
 redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,"controller","get-var",{"var":"template-url"}))
 
 logger.info("Done! TerraBungee service " + service_id + " now online.")
+
+# do tests
+create_new_instance("lobby-1","lobby")
 
 try:
     while True:
