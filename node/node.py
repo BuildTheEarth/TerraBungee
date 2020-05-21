@@ -86,6 +86,9 @@ class Instance:
                     sub_zip.extractall(path=self.instance_folder + "/" + action["dest"])
             else:
                 raise InstancePrepareError("Unknown action type " + action["action"] + " while preparing " + instance_id)
+        # create id.txt
+        with open(self.instance_folder + "/id.txt","w") as fh:
+            fh.write(self.instance_id)
         # clean up
         shutil.rmtree("temp/" + self.instance_id)
         template_zip.close()
