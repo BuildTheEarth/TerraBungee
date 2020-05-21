@@ -26,6 +26,9 @@ def tb_exit(exit_code):
         logger.error("Exiting with code " + str(exit_code) + " (error)")
     exit(exit_code)
 
+# controller variables
+controller_network_vars = {}
+
 log_console_handler = logging.StreamHandler()
 log_console_handler.setFormatter(logging.Formatter("[%(asctime)s %(levelname)s] %(name)s: %(message)s",datefmt="%Y-%m-%d %H:%M:%S"))
 
@@ -39,6 +42,7 @@ with open("config.yml","r") as fh:
     config = yaml.safe_load(fh)
 
 chan_prefix = config["communication"]["channel-prefix"]
+controller_network_vars["template-url"] = config["resources"]["template-url"]
 
 # the identifier that is used to differentiate this node on the network
 # see docs section: Service Identifier
@@ -69,7 +73,21 @@ def handle_message_tb_controller_ping(message):
         redis_client.publish("tb-controller-ping",create_message(service_id,message.sender,"controller-pong",None))
 
 def handle_message_tb_controller_calls(message):
-    pass
+    if message.type == "get-var":
+        if controller_network_vars.get(message.data["var"]) == None:
+            print("Var not found!")
+            redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,message.sender,"var-value",{
+                "found": False,
+                "var": message.data["var"]
+            }))
+        else:
+            print("Var found!")
+            redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,message.sender,"var-value",{
+                "found": True,
+                "var": message.data["var"],
+                "value": controller_network_vars[message.data["var"]]
+            }))
+        return
 
 def handle_message_tb_service_status(message):
     if message.sender in services.keys():

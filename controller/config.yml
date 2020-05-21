@@ -21,7 +21,7 @@ communication:
 
 # Where resources should be found
 resources:
-  # HTTP URL where templates can be found.
+  # URL where templates can be found.
   # It is reccomended to make this localhost or an IP on the internal network
   # NOTE: Must end with a trailing forward slash
-  template-url: "https://localhost:8080/terrabungee/templates/"
+  template-url: "https://localhost:8081/files/"

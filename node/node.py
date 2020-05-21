@@ -20,7 +20,7 @@ import shutil
 import os
 
 # var definitions
-file_server_url = "http://127.0.0.1:8081/files/"
+file_server_url = "http://127.0.0.1/"
 
 # utility functions
 
@@ -173,9 +173,17 @@ while ping_trying:
 redis_pubsub.unsubscribe(chan_prefix + "tb-controller-ping")
 redis_pubsub.subscribe(chan_prefix + "tb-instance-status")
 redis_pubsub.subscribe(chan_prefix + "tb-service-calls")
+redis_pubsub.subscribe(chan_prefix + "tb-controller-calls")
 
 def handle_message_tb_service_calls(message):
     print(message)
+
+def handle_message_tb_controller_calls(message):
+    if message.type == "var-value":
+        if message.data["found"]:
+            if message.data["var"] == "template-url":
+                print(message.data["value"])
+                file_server_url = message.data["value"]
 
 def message_handler_target():
     while True:
@@ -192,6 +200,8 @@ def message_handler_target():
             continue # ignore messages not directed to us
         if message["channel"] == (chan_prefix + "tb-service-calls").encode("utf-8"):
             handle_message_tb_service_calls(message_parsed)
+        if message["channel"] == (chan_prefix + "tb-controller-calls").encode("utf-8"):
+            handle_message_tb_controller_calls(message_parsed)
 
 logger.info("Starting message handler thread")
 
@@ -203,10 +213,8 @@ redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id
 logger.info("Pushed status to network")
 
 # grab information from controller
-
-# do tests
-inst = Instance("foo")
-inst.prepare("temp/lobby.zip")
+logger.info("Requesting vars from controller")
+redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,"controller","get-var",{"var":"template-url"}))
 
 logger.info("Done! TerraBungee service " + service_id + " now online.")
 
