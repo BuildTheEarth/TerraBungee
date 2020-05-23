@@ -21,8 +21,8 @@ import os
 import queue
 
 # var definitions
-file_server_url = "http://127.0.0.1/"
-
+file_server_url = "http://127.0.0.1/" # default URL, make sure new one is set
+instances = {}
 instance_queue = queue.Queue()
 
 # utility functions
@@ -53,6 +53,11 @@ def tb_exit(exit_code):
     if "instance_creation_thread" in globals():
         instance_creation_thread.do_run = False
         instance_creation_thread.join()
+    logger.info("Shutting down instances")
+    for instance_id, instance in instances.items():
+        logger.info("Stopping " + instance_id)
+        instance.stop()
+        instance.delete()
     logger.info("Closing Redis connection")
     redis_client.close()
     if exit_code == 0:
@@ -69,6 +74,7 @@ class Instance:
         self.instance_id = instance_id
         self.instance_folder = "instances/" + self.instance_id
         self.prepared = False
+        self.running = False
 
     def prepare(self,template_path):
         if self.prepared:
@@ -103,6 +109,28 @@ class Instance:
         shutil.rmtree("temp/" + self.instance_id)
         template_zip.close()
         self.prepared = True
+
+    def start(self):
+        # start the instance
+        # TODO: implement
+        if self.running:
+            return
+        self.running = True
+
+    def stop(self):
+        # shut down the instance process
+        # TODO: implement
+        if not self.running:
+            return
+        self.running = False
+
+    def delete(self):
+        # delete the instance
+        if self.running:
+            # stop if it's running, just in case
+            self.stop()
+        # delete instance dir
+        shutil.rmtree("instances/" + self.instance_id)
 
 class InstanceCreateTask:
     def __init__(self,instance_id,template):
@@ -206,6 +234,7 @@ def handle_message_tb_controller_calls(message):
     if message.type == "var-value":
         if message.data["found"]:
             if message.data["var"] == "template-url":
+                global file_server_url
                 file_server_url = message.data["value"]
 
 # target for message handling thread
@@ -234,7 +263,22 @@ def instance_creation_target():
     while getattr(current_thread,"do_run",True):
         try:
             task = instance_queue.get(timeout=0.05)
-            print(task)
+            logger.info("Creating instance " + task.instance_id + " with template " + task.template)
+            if instances.get(task.instance_id):
+                logger.error("Instance ID already exists?! Ignoring request to create instance")
+                continue
+            # download template
+            download_file(file_server_url + "templates/" + task.template + ".zip","temp/" + task.template + ".zip")
+            # create instance
+            inst = Instance(task.instance_id)
+            instances[task.instance_id] = inst
+            # prepare instance
+            inst.prepare("temp/" + task.template + ".zip")
+            # start instance
+            inst.start()
+            # delete template
+            os.remove("temp/" + task.template + ".zip")
+            logger.info("Instance " + task.instance_id + " has been created")
         except queue.Empty:
             continue
 
@@ -261,6 +305,7 @@ redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_
 logger.info("Done! TerraBungee service " + service_id + " now online.")
 
 # do tests
+time.sleep(0.5)
 create_new_instance("lobby-1","lobby")
 
 try:
