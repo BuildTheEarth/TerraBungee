@@ -24,6 +24,9 @@ import queue
 file_server_url = "http://127.0.0.1/" # default URL, make sure new one is set
 instances = {}
 instance_queue = queue.Queue()
+used_ports = [] # keep track of used ports
+config = {}
+hostname = "localhost"
 
 # utility functions
 
@@ -43,6 +46,7 @@ def get_free_port():
     return port
 
 def tb_exit(exit_code):
+    # stop terrabungee gracefully
     logger.info("Exiting TerraBungee")
     logger.info("Pushing status")
     redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":False}))
@@ -58,6 +62,8 @@ def tb_exit(exit_code):
         logger.info("Stopping " + instance_id)
         instance.stop()
         instance.delete()
+    logger.info("Cleaning up files")
+    clean_folders()
     logger.info("Closing Redis connection")
     redis_client.close()
     if exit_code == 0:
@@ -65,6 +71,19 @@ def tb_exit(exit_code):
     else:
         logger.error("Exiting with code " + str(exit_code) + " (error)")
     exit(exit_code)
+
+def clean_folders():
+    # clean instance folder
+    # CAUTION: DO NOT DO THIS WHILE INSTANCES ARE RUNNING
+    if os.path.exists("instances/"):
+        shutil.rmtree("instances/")
+    os.makedirs("instances/")
+    open("instances/DUMMY","w").close()
+    # clean temp using same method
+    if os.path.exists("temp/"):
+        shutil.rmtree("temp/")
+    os.makedirs("temp/")
+    open("temp/DUMMY","w").close()
 
 class InstancePrepareError(Exception):
     pass
@@ -75,6 +94,10 @@ class Instance:
         self.instance_folder = "instances/" + self.instance_id
         self.prepared = False
         self.running = False
+        self.process = None
+        self.server_settings = None
+        self.port = 0
+        self.address = "localhost:25565"
 
     def prepare(self,template_path):
         if self.prepared:
@@ -87,6 +110,7 @@ class Instance:
         # parse json
         with open("temp/" + self.instance_id + "/template.json","r") as fh:
             template_json = json.loads(fh.read())
+        self.server_settings = template_json["server-settings"]
         # apply overrides and create instance folder
         shutil.move("temp/" + self.instance_id + "/overrides", self.instance_folder)
         # do actions specified in template json
@@ -115,6 +139,39 @@ class Instance:
         # TODO: implement
         if self.running:
             return
+        if not self.prepared:
+            return
+        # find a free port
+        # CAUTION: can cause a race condition if another program uses the port!
+        found_port = False
+        while not found_port:
+            port = get_free_port()
+            if port in used_ports:
+                continue
+            used_ports.append(port)
+            found_port = True
+            self.port = port
+        # write port to server.properties
+        file_data = ""
+        with open(self.instance_folder + "/server.properties","r") as fh:
+            file_data = fh.read()
+            file_data = file_data.replace("{port}",str(self.port))
+        with open(self.instance_folder + "/server.properties","w") as fh:
+            fh.write(file_data)
+        self.address = hostname + ":" + str(self.port)
+        # start the server
+        self.process = subprocess.Popen(
+            "java -Xmx" + self.server_settings["ram"] + " " +
+            self.server_settings["jvm-args"] +
+            " -jar " + self.server_settings["server-jar"],
+            cwd=self.instance_folder,
+            stdin=subprocess.DEVNULL, # not sure what difference this makes, might leave it unommented if it doesn't cause any issues
+            # seems like it makes process.communicate() actually work
+            # redirect input to /dev/null (or os equivelent)
+            stdout=subprocess.DEVNULL, # note: may add better logging support later
+            stderr=subprocess.DEVNULL, # TODO: make better
+        )
+        print("Server running on " + self.address)
         self.running = True
 
     def stop(self):
@@ -122,6 +179,12 @@ class Instance:
         # TODO: implement
         if not self.running:
             return
+        if not self.prepared:
+            return
+        #self.process.communicate(b"stop\n")
+        self.process.kill()
+        # remove port from list of used ports
+        used_ports.remove(self.port)
         self.running = False
 
     def delete(self):
@@ -130,7 +193,8 @@ class Instance:
             # stop if it's running, just in case
             self.stop()
         # delete instance dir
-        shutil.rmtree("instances/" + self.instance_id)
+        #shutil.rmtree("instances/" + self.instance_id)
+        self.prepared = False # note: allows for instance reuse, not sure if this is a good idea
 
 class InstanceCreateTask:
     def __init__(self,instance_id,template):
@@ -151,6 +215,7 @@ with open("config.yml","r") as fh:
 
 chan_prefix = config["communication"]["channel-prefix"]
 node_name = config["node-name"]
+hostname = config["hostname"]
 
 # the identifier that is used to differentiate this node on the network
 # see docs section: Service Identifier
@@ -302,11 +367,14 @@ logger.info("Pushed status to network")
 logger.info("Requesting vars from controller")
 redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,"controller","get-var",{"var":"template-url"}))
 
+logger.info("Cleaning up files")
+clean_folders()
+
 logger.info("Done! TerraBungee service " + service_id + " now online.")
 
 # do tests
 time.sleep(0.5)
-create_new_instance("lobby-1","lobby")
+create_new_instance("test-lobby","lobby")
 
 try:
     while True:
