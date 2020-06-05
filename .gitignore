@@ -140,3 +140,9 @@ cython_debug/
 # TerraBungee files
 file_server/
 test_data/
+
+# Eclipse stuff
+.metadata/
+.project
+.settings/
+.classpath

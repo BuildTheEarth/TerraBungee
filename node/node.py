@@ -126,9 +126,12 @@ class Instance:
                     sub_zip.extractall(path=self.instance_folder + "/" + action["dest"])
             else:
                 raise InstancePrepareError("Unknown action type " + action["action"] + " while preparing " + instance_id)
-        # create id.txt
-        with open(self.instance_folder + "/id.txt","w") as fh:
+        # create instance info files
+        os.makedirs(self.instance_folder + "/tb_info")
+        with open(self.instance_folder + "/tb_info/id.txt","w") as fh:
             fh.write(self.instance_id)
+        with open(self.instance_folder + "/tb_info/chprefix.txt","w") as fh:
+            fh.write(chan_prefix)
         # clean up
         shutil.rmtree("temp/" + self.instance_id)
         template_zip.close()
@@ -159,6 +162,9 @@ class Instance:
         with open(self.instance_folder + "/server.properties","w") as fh:
             fh.write(file_data)
         self.address = hostname + ":" + str(self.port)
+        # write address
+        with open(self.instance_folder + "/tb_info/address.txt","w") as fh:
+            fh.write(self.address)
         # start the server
         self.process = subprocess.Popen(
             "java -Xmx" + self.server_settings["ram"] + " " +
@@ -171,7 +177,7 @@ class Instance:
             stdout=subprocess.DEVNULL, # note: may add better logging support later
             stderr=subprocess.DEVNULL, # TODO: make better
         )
-        print("Server running on " + self.address)
+        #print("Server running on " + self.address)
         self.running = True
 
     def stop(self):
@@ -372,9 +378,9 @@ clean_folders()
 
 logger.info("Done! TerraBungee service " + service_id + " now online.")
 
-# do tests
-time.sleep(0.5)
-create_new_instance("test-lobby","lobby")
+# create a test instance
+#time.sleep(0.5)
+#create_new_instance("test-lobby","lobby")
 
 try:
     while True:

@@ -32,6 +32,36 @@ def tb_exit(exit_code):
 
 # controller variables
 controller_network_vars = {}
+instances = {}
+
+class RemoteInstance:
+    def __init__(self,instance_id):
+        self.instance_id = instance_id
+        self.address = "0.0.0.0:0"
+        self.parent_node = ""
+        self.port = 0
+        self.host = "0.0.0.0"
+        self.online = True
+        self.template = ""
+
+    def get_id(self):
+        return self.instance_id
+
+    def get_address(self):
+        return self.address
+
+    def is_online(self):
+        return self.online
+
+    def set_online(self,online):
+        self.online = online
+
+class Node:
+    def __init__(self,service_id):
+        self.service_id = ""
+
+    def create_instance(self,instance_id,template):
+        redis_client.publish("tb-controller-ping",create_message(service_id,message.sender,"controller-pong",None))
 
 log_console_handler = logging.StreamHandler()
 log_console_handler.setFormatter(logging.Formatter("[%(asctime)s %(levelname)s] %(name)s: %(message)s",datefmt="%Y-%m-%d %H:%M:%S"))
@@ -57,6 +87,10 @@ logger.info("Loaded configuration")
 # service status tracking
 services = {}
 
+# nodes
+# TODO: make nodes a subclass of Service, do nice OOP stuff
+nodes = {}
+
 logger.info("Attempting to connect to Redis...")
 redis_client = redis.StrictRedis(host=config["redis"]["host"], port=config["redis"]["port"], db=0)
 # ensure that redis actually connects
@@ -74,7 +108,7 @@ redis_pubsub.subscribe(chan_prefix + "tb-service-status")
 def handle_message_tb_controller_ping(message):
     if message.type == "controller-ping":
         logger.debug("Received ping from service " + message.sender)
-        redis_client.publish("tb-controller-ping",create_message(service_id,message.sender,"controller-pong",None))
+        redis_client.publish(chan_prefix + "tb-controller-ping",create_message(service_id,message.sender,"controller-pong",None))
 
 def handle_message_tb_controller_calls(message):
     if message.type == "get-var":
@@ -96,7 +130,26 @@ def handle_message_tb_service_status(message):
         services[message.sender].set_status(message.data["online"])
     else:
         services[message.sender] = Service(message.sender,message.data["online"])
+    if message.sender.startswith("node:"):
+        if message.data["online"]:
+            # node going online
+            #print(message.sender,"node on")
+            if message.sender in nodes.keys():
+                logger.info("Node sent online status twice! This should not happen, ignore if debugging. Replacing node object")
+                nodes[message.sender] = None
+                nodes[message.sender] = Node(message.sender)
+            else:
+                #logger.info("Node now online!")
+                nodes[message.sender] = Node(message.sender)
+        else:
+            #print(message.sender,"node off")
+            # node going offline
+            if message.sender in nodes.keys():
+                nodes[message.sender] = None
+                #logger.info("Node now offline!")
     logger.info("Service " + message.sender + " is now " + ("online" if message.data["online"] else "offline"))
+    # :)
+    # - sern
 
 def message_handler_target():
     current_thread = threading.currentThread()
@@ -118,6 +171,12 @@ def message_handler_target():
             handle_message_tb_controller_calls(message_parsed)
         if message["channel"] == (chan_prefix + "tb-service-status").encode("utf-8"):
             handle_message_tb_service_status(message_parsed)
+        if message["channel"] == (chan_prefix + "tb-instance-status").encode("utf-8"):
+            print(message_parsed.sender,message_parsed.recipient,message_parsed.type,message_parsed.data)
+
+def create_instance(node,instance_id,template):
+    # create instance on the least strained node
+    pass
 
 logger.info("Starting message handler thread")
 
