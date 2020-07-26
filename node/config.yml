@@ -20,10 +20,6 @@ resource-limits:
   # Maximum amount of server instances that can be hosted on this node.
   # Make sure that you set this value appropriately, your machine may run out of memory if you create too many instances.
   max-instances: 15
-  # Maximum amount of memory that is allowed to be allocated to instances, in megabytes
-  # This node will not allow any more instances to be created if it exceeds this memory limit.
-  # Set to -1 for no limit
-  max-memory: -1
 
 # How TerraBungee should communicate over the network.
 communication:

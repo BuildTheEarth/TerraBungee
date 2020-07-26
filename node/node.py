@@ -19,6 +19,7 @@ import zipfile
 import shutil
 import os
 import queue
+import traceback
 
 # var definitions
 file_server_url = "http://127.0.0.1/" # default URL, make sure new one is set
@@ -72,6 +73,14 @@ def tb_exit(exit_code):
         logger.error("Exiting with code " + str(exit_code) + " (error)")
     exit(exit_code)
 
+def print_message_details(message):
+    logger.info("== Message detail dump ==")
+    logger.info("Sender: " + message.sender)
+    logger.info("Recipient: " + message.recipient)
+    logger.info("Type: " + message.type)
+    logger.info("Data: " + str(message.data))
+    logger.info("== End message dump ==")
+
 def clean_folders():
     # clean instance folder
     # CAUTION: DO NOT DO THIS WHILE INSTANCES ARE RUNNING
@@ -98,6 +107,8 @@ class Instance:
         self.server_settings = None
         self.port = 0
         self.address = "localhost:25565"
+        self.template = None
+        self.service_id = "instance:" + instance_id
 
     def prepare(self,template_path):
         if self.prepared:
@@ -139,7 +150,6 @@ class Instance:
 
     def start(self):
         # start the instance
-        # TODO: implement
         if self.running:
             return
         if not self.prepared:
@@ -165,6 +175,7 @@ class Instance:
         # write address
         with open(self.instance_folder + "/tb_info/address.txt","w") as fh:
             fh.write(self.address)
+        # send message to controller
         # start the server
         self.process = subprocess.Popen(
             "java -Xmx" + self.server_settings["ram"] + " " +
@@ -199,8 +210,10 @@ class Instance:
             # stop if it's running, just in case
             self.stop()
         # delete instance dir
-        #shutil.rmtree("instances/" + self.instance_id)
+        shutil.rmtree("instances/" + self.instance_id)
         self.prepared = False # note: allows for instance reuse, not sure if this is a good idea
+        # publish instance status
+        redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,"*","instance-deleted",{"instance-id":self.instance_id}))
 
 class InstanceCreateTask:
     def __init__(self,instance_id,template):
@@ -233,7 +246,7 @@ logger.info("Attempting to connect to Redis...")
 redis_client = redis.StrictRedis(host=config["redis"]["host"], port=config["redis"]["port"], db=0)
 # ensure that redis actually connects
 if not redis_client.ping():
-    logger.error("Unable to ping Reids!")
+    logger.error("Unable to ping Redis!")
     tb_exit(1)
 logger.info("Established Redis connection to " + config["redis"]["host"] + ":" + str(config["redis"]["port"]))
 
@@ -297,9 +310,40 @@ def create_new_instance(inst_id,template):
     instance_queue.put(InstanceCreateTask(inst_id,template))
 
 def handle_message_tb_service_calls(message):
+    #print(message.data)
     if message.type == "create-instance":
         # create a new instance
-        create_new_instance(message.data["instance-id"],message.data["template"])
+        if not message.data["instance-id"] in instances.keys():
+            create_new_instance(message.data["instance-id"],message.data["template"])
+        else:
+            logger.warning("Instance " + message.data["instance-id"] + " was requested to be created, but already exists?!")
+            print_message_details(message)
+    elif message.type == "delete-instance":
+        # delete instance specified
+        logger.info("Deleting instance " + message.data["instance-id"])
+        if message.data["instance-id"] in instances.keys():
+            instances.pop(message.data["instance-id"]).delete()
+        else:
+            logger.warning("Instance " + message.data["instance-id"] + " was requested to be deleted, but doesn't exist?!")
+            print_message_details(message)
+    elif message.type == "get-instances":
+        print("Sending instance list")
+        instance_list_data = {}
+        for k,v in instances.items():
+            instance_list_data[k] = {
+                "instance-id": v.service_id,
+                "running": v.prepared and v.running, # and both together to act as a failsafe
+                "template": v.template, # NOTE: might be None in rare cases, see Instance.__init__()
+                "parent-node": service_id
+            }
+            if v.prepared and v.running:
+                instance_list_data[k]["address"] = v.address
+        redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,"*","instance-list",instance_list_data))
+    else:
+        logger.error("Unknown message type!")
+        print_message_details(message)
+        for line in traceback.format_exc().split("\n"):
+            logger.error(line)
 
 def handle_message_tb_controller_calls(message):
     if message.type == "var-value":
@@ -323,10 +367,16 @@ def message_handler_target():
             continue # ignore messages from self
         if not ((message_parsed.recipient == service_id) or (message_parsed.recipient == "*")):
             continue # ignore messages not directed to us
-        if message["channel"] == (chan_prefix + "tb-service-calls").encode("utf-8"):
-            handle_message_tb_service_calls(message_parsed)
-        if message["channel"] == (chan_prefix + "tb-controller-calls").encode("utf-8"):
-            handle_message_tb_controller_calls(message_parsed)
+        try:
+            if message["channel"] == (chan_prefix + "tb-service-calls").encode("utf-8"):
+                handle_message_tb_service_calls(message_parsed)
+            if message["channel"] == (chan_prefix + "tb-controller-calls").encode("utf-8"):
+                handle_message_tb_controller_calls(message_parsed)
+        except Exception as e:
+            logger.error("An error occurred inside the message handler!")
+            print_message_details(message_parsed)
+            for line in traceback.format_exc().split("\n"):
+                logger.error(line)
 
 # target for instance creation thread
 def instance_creation_target():
@@ -339,6 +389,7 @@ def instance_creation_target():
                 logger.error("Instance ID already exists?! Ignoring request to create instance")
                 continue
             # download template
+            #print(file_server_url)
             download_file(file_server_url + "templates/" + task.template + ".zip","temp/" + task.template + ".zip")
             # create instance
             inst = Instance(task.instance_id)
@@ -350,6 +401,9 @@ def instance_creation_target():
             # delete template
             os.remove("temp/" + task.template + ".zip")
             logger.info("Instance " + task.instance_id + " has been created")
+            redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,"*","instance-created",{
+                "instance-id": task.instance_id
+            }))
         except queue.Empty:
             continue
 
@@ -368,6 +422,9 @@ instance_creation_thread.start()
 # broadcast status to network
 redis_client.publish(chan_prefix + "tb-service-status",create_message(service_id,"*","service-status",{"online":True}))
 logger.info("Pushed status to network")
+
+redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,"*","node-limits",{"max-instances":config["resource-limits"]["max-instances"]}))
+logger.info("Sent node limits")
 
 # grab information from controller
 logger.info("Requesting vars from controller")

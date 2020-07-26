@@ -13,6 +13,7 @@ import logging
 import json
 from tbmsg import *
 from tblib import *
+import traceback
 
 def tb_exit(exit_code):
     logger.info("Exiting TerraBungee")
@@ -30,19 +31,28 @@ def tb_exit(exit_code):
         logger.error("Exiting with code " + str(exit_code) + " (error)")
     exit(exit_code)
 
+def print_message_details(message):
+    logger.info("== Message detail dump ==")
+    logger.info("Sender: " + message.sender)
+    logger.info("Recipient: " + message.recipient)
+    logger.info("Type: " + message.type)
+    logger.info("Data: " + str(message.data))
+    logger.info("== End message dump ==")
+
 # controller variables
 controller_network_vars = {}
 instances = {}
 
 class RemoteInstance:
-    def __init__(self,instance_id):
+    def __init__(self,parent_node,instance_id,template):
         self.instance_id = instance_id
+        self.parent_node = parent_node
         self.address = "0.0.0.0:0"
-        self.parent_node = ""
         self.port = 0
         self.host = "0.0.0.0"
         self.online = True
-        self.template = ""
+        self.template = template
+        self.exists = True
 
     def get_id(self):
         return self.instance_id
@@ -53,15 +63,39 @@ class RemoteInstance:
     def is_online(self):
         return self.online
 
-    def set_online(self,online):
-        self.online = online
+    def exists(self):
+        return self.exists
+
+    def stop(self):
+        if not self.exists: return
+        if self.online:
+            redis_client.publish(chan_prefix + "tb-service-calls",create_message(service_id,self.parent_node.service_id,"stop-instance",{"instance-id":self.instance_id}))
+            self.online = False
+
+    def start(self):
+        if not self.exists: return
+        if not self.online:
+            redis_client.publish(chan_prefix + "tb-service-calls",create_message(service_id,self.parent_node.service_id,"start-instance",{"instance-id":self.instance_id}))
+            self.online = True
+
+    def delete(self):
+        self.exists = False
+        redis_client.publish(chan_prefix + "tb-service-calls",create_message(service_id,self.parent_node.service_id,"delete-instance",{
+            "instance-id": self.instance_id
+        }))
 
 class Node:
     def __init__(self,service_id):
-        self.service_id = ""
+        self.service_id = service_id
+        self.instances = {}
 
     def create_instance(self,instance_id,template):
-        redis_client.publish("tb-controller-ping",create_message(service_id,message.sender,"controller-pong",None))
+        redis_client.publish(chan_prefix + "tb-service-calls",create_message(service_id,self.service_id,"create-instance",{
+            "template": template,
+            "instance-id": instance_id
+        }))
+        self.instances[instance_id] = RemoteInstance(self,instance_id,template)
+        return self.instances[instance_id]
 
 log_console_handler = logging.StreamHandler()
 log_console_handler.setFormatter(logging.Formatter("[%(asctime)s %(levelname)s] %(name)s: %(message)s",datefmt="%Y-%m-%d %H:%M:%S"))
@@ -95,7 +129,7 @@ logger.info("Attempting to connect to Redis...")
 redis_client = redis.StrictRedis(host=config["redis"]["host"], port=config["redis"]["port"], db=0)
 # ensure that redis actually connects
 if not redis_client.ping():
-    logger.error("Unable to ping Reids!")
+    logger.error("Unable to ping Redis!")
     tb_exit(1)
 logger.info("Established Redis connection to " + config["redis"]["host"] + ":" + str(config["redis"]["port"]))
 
@@ -145,7 +179,7 @@ def handle_message_tb_service_status(message):
             #print(message.sender,"node off")
             # node going offline
             if message.sender in nodes.keys():
-                nodes[message.sender] = None
+                nodes.pop(message.sender)
                 #logger.info("Node now offline!")
     logger.info("Service " + message.sender + " is now " + ("online" if message.data["online"] else "offline"))
     # :)
@@ -165,14 +199,18 @@ def message_handler_target():
             continue # ignore messages from self
         if not ((message_parsed.recipient == service_id) or (message_parsed.recipient == "*")):
             continue # ignore messages not directed to us
-        if message["channel"] == (chan_prefix + "tb-controller-ping").encode("utf-8"):
-            handle_message_tb_controller_ping(message_parsed)
-        if message["channel"] == (chan_prefix + "tb-controller-calls").encode("utf-8"):
-            handle_message_tb_controller_calls(message_parsed)
-        if message["channel"] == (chan_prefix + "tb-service-status").encode("utf-8"):
-            handle_message_tb_service_status(message_parsed)
-        if message["channel"] == (chan_prefix + "tb-instance-status").encode("utf-8"):
-            print(message_parsed.sender,message_parsed.recipient,message_parsed.type,message_parsed.data)
+        try:
+            if message["channel"] == (chan_prefix + "tb-controller-ping").encode("utf-8"):
+                handle_message_tb_controller_ping(message_parsed)
+            if message["channel"] == (chan_prefix + "tb-controller-calls").encode("utf-8"):
+                handle_message_tb_controller_calls(message_parsed)
+            if message["channel"] == (chan_prefix + "tb-service-status").encode("utf-8"):
+                handle_message_tb_service_status(message_parsed)
+        except Exception as e:
+            logger.error("An error occurred inside the message handler!")
+            print_message_details(message_parsed)
+            for line in traceback.format_exc().split("\n"):
+                logger.error(line)
 
 def create_instance(node,instance_id,template):
     # create instance on the least strained node
