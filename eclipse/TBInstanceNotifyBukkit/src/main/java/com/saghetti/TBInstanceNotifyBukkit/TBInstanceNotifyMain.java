@@ -1,6 +1,5 @@
 package com.saghetti.TBInstanceNotifyBukkit;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +22,7 @@ public class TBInstanceNotifyMain extends JavaPlugin  {
 	String instanceId = "";
 	String channelPrefix = "";
 	String address = "";
+	String redisAddress = "";
 	Thread subThread;
 	
     @SuppressWarnings("unchecked")
@@ -31,13 +31,14 @@ public class TBInstanceNotifyMain extends JavaPlugin  {
     	Path rootServerFolder = this.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().toPath();
     	try {
 			instanceId = new String(Files.readAllBytes(rootServerFolder.resolve("tb_info/id.txt")));
+			redisAddress = new String(Files.readAllBytes(rootServerFolder.resolve("tb_info/redisaddr.txt")));
 			channelPrefix = new String(Files.readAllBytes(rootServerFolder.resolve("tb_info/chprefix.txt")));
 			address = new String(Files.readAllBytes(rootServerFolder.resolve("tb_info/address.txt")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     	logger.info("Connecting to Redis...");
-    	jedisPool = new JedisPool(new JedisPoolConfig(),"localhost");
+    	jedisPool = new JedisPool(new JedisPoolConfig(),redisAddress);
     	pubJedis = jedisPool.getResource();
     	JSONObject obj = new JSONObject();
     	obj.put("sender",instanceId);
@@ -46,7 +47,7 @@ public class TBInstanceNotifyMain extends JavaPlugin  {
     	JSONObject contentsObj = new JSONObject();
     	contentsObj.put("address", address);
     	obj.put("data",contentsObj);
-    	pubJedis.publish(channelPrefix + "tb-instance-status",obj.toString());
+    	pubJedis.publish(channelPrefix + "tb-controller-calls",obj.toString());
     	logger.info("Now online!");
     }
     
@@ -58,8 +59,7 @@ public class TBInstanceNotifyMain extends JavaPlugin  {
     	obj.put("recipient","*");
     	obj.put("type","instance-offline");
     	obj.put("data",null);
-    	pubJedis.publish(channelPrefix + "tb-instance-status",obj.toString());
-    	pubJedis.publish("dynamicbungee", "srv:" + instanceId + " offline");
+    	pubJedis.publish(channelPrefix + "tb-controller-calls",obj.toString());
     	logger.info("Now offline!");
     }
 }

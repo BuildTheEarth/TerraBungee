@@ -143,6 +143,8 @@ class Instance:
             fh.write(self.instance_id)
         with open(self.instance_folder + "/tb_info/chprefix.txt","w") as fh:
             fh.write(chan_prefix)
+        with open(self.instance_folder + "/tb_info/redisaddr.txt","w") as fh:
+            fh.write(config["redis"]["host"])
         # clean up
         shutil.rmtree("temp/" + self.instance_id)
         template_zip.close()
