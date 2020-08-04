@@ -25,3 +25,29 @@ resources:
   # It is reccomended to make this localhost or an IP on the internal network
   # NOTE: Must end with a trailing forward slash
   template-url: "http://127.0.0.1:8081/terrabungee/"
+
+# The list of nodes that should be waited on before starting the network.
+nodes-list:
+  - "node:example-node"
+
+# The list of fleets for the network. Fleets are groups of instances that share the same template and can scale dynamically.
+fleets:
+  lobby:
+    # The template that servers in the fleet should use
+    template: "lobby"
+    # The load balancer that this fleet should use.
+    # none: do not use a load balancer. Attempting to send a player to a fleet with no load balancer will result in an error.
+    # fill: fill instances with players one after the other.
+    # distribute: put players on the least populated instances.
+    # random: randomly distribute players amoung instances.
+    load-balancer: fill
+    # The amount of instances that the fleet should start with.
+    min-instances: 3
+    # The maximum amount of instances that should be created. Set to -1 for no limit.
+    max-instances: -1
+    # What nodes should instances be started on? Leave blank to run on any node.
+    # If no nodes from this list are available, instances will be started on any node available.
+    target-nodes:
+      - "node:example-node"
+    # The naming convention for instances. The placeholder {NUM} is a number that will be unique across all instances.
+    instance-naming-convention: "lobby{NUM}"

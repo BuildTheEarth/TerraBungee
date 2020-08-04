@@ -19,7 +19,7 @@ redis:
 resource-limits:
   # Maximum amount of server instances that can be hosted on this node.
   # Make sure that you set this value appropriately, your machine may run out of memory if you create too many instances.
-  max-instances: 15
+  max-instances: 10
 
 # How TerraBungee should communicate over the network.
 communication:

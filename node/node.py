@@ -184,7 +184,7 @@ class Instance:
             self.server_settings["jvm-args"] +
             " -jar " + self.server_settings["server-jar"],
             cwd=self.instance_folder,
-            stdin=subprocess.DEVNULL, # not sure what difference this makes, might leave it unommented if it doesn't cause any issues
+            stdin=subprocess.DEVNULL, # not sure what difference this makes, might leave it uncommented if it doesn't cause any issues
             # seems like it makes process.communicate() actually work
             # redirect input to /dev/null (or os equivelent)
             stdout=subprocess.DEVNULL, # note: may add better logging support later
