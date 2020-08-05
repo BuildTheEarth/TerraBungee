@@ -1,0 +1,13 @@
+# TerraBungee
+# (C) 2020 Saghetti
+
+# BungeeCord Config
+
+# Redis connection information.
+redis:
+  # The host and port of the Redis server.
+  host: localhost
+  port: 6379
+  # Password for redis. Leave blank for none.
+  # NOTE: not implemented yet
+  password: ""

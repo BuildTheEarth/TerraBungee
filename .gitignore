@@ -140,6 +140,7 @@ cython_debug/
 # TerraBungee files
 file_server/
 test_data/
+proxy/
 
 # Eclipse stuff
 .metadata/
