@@ -240,7 +240,7 @@ def handle_message_tb_service_status(message):
             # node going online
             #print(message.sender,"node on")
             if message.sender in nodes.keys():
-                logger.info("Node sent online status twice! This should not happen, ignore if debugging. Replacing node object")
+                logger.warning("Node sent online status twice! This should not happen, ignore if debugging. Replacing node object")
                 nodes[message.sender] = None
                 nodes[message.sender] = Node(message.sender)
             else:
