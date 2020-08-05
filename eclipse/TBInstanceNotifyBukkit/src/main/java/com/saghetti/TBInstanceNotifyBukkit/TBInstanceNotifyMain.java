@@ -41,7 +41,7 @@ public class TBInstanceNotifyMain extends JavaPlugin  {
     	jedisPool = new JedisPool(new JedisPoolConfig(),redisAddress);
     	pubJedis = jedisPool.getResource();
     	JSONObject obj = new JSONObject();
-    	obj.put("sender",instanceId);
+    	obj.put("sender","instance:" + instanceId);
     	obj.put("recipient","*");
     	obj.put("type","instance-online");
     	JSONObject contentsObj = new JSONObject();
