@@ -184,10 +184,10 @@ class Instance:
             self.server_settings["jvm-args"] +
             " -jar " + self.server_settings["server-jar"],
             cwd=self.instance_folder,
-            stdin=subprocess.DEVNULL, # not sure what difference this makes, might leave it uncommented if it doesn't cause any issues
+            #stdin=subprocess.DEVNULL, # not sure what difference this makes, might leave it uncommented if it doesn't cause any issues
             # seems like it makes process.communicate() actually work
             # redirect input to /dev/null (or os equivelent)
-            stdout=subprocess.DEVNULL, # note: may add better logging support later
+            stdout=subprocess.PIPE, # note: may add better logging support later
             stderr=subprocess.DEVNULL, # TODO: make better
         )
         #print("Server running on " + self.address)
@@ -195,12 +195,11 @@ class Instance:
 
     def stop(self):
         # shut down the instance process
-        # TODO: implement
         if not self.running:
             return
         if not self.prepared:
             return
-        #self.process.communicate(b"stop\n")
+        self.process.communicate(b"stop\n")
         self.process.kill()
         # remove port from list of used ports
         used_ports.remove(self.port)
@@ -386,29 +385,35 @@ def instance_creation_target():
     while getattr(current_thread,"do_run",True):
         try:
             task = instance_queue.get(timeout=0.05)
-            logger.info("Creating instance " + task.instance_id + " with template " + task.template)
-            if instances.get(task.instance_id):
-                logger.error("Instance ID already exists?! Ignoring request to create instance")
-                continue
-            # download template
-            #print(file_server_url)
-            download_file(file_server_url + "templates/" + task.template + ".zip","temp/" + task.template + ".zip")
-            # create instance
-            inst = Instance(task.instance_id)
-            instances[task.instance_id] = inst
-            # prepare instance
-            inst.prepare("temp/" + task.template + ".zip")
-            # start instance
-            inst.start()
-            # delete template
-            os.remove("temp/" + task.template + ".zip")
-            logger.info("Instance " + task.instance_id + " has been created")
-            redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,"*","instance-created",{
-                "instance-id": task.instance_id
-            }))
+            try:
+                logger.info("Creating instance " + task.instance_id + " with template " + task.template)
+                if instances.get(task.instance_id):
+                    logger.error("Instance ID already exists?! Ignoring request to create instance")
+                    continue
+                # download template
+                #print(file_server_url)
+                download_file(file_server_url + "templates/" + task.template + ".zip","temp/" + task.template + ".zip")
+                # create instance
+                inst = Instance(task.instance_id)
+                instances[task.instance_id] = inst
+                # prepare instance
+                inst.prepare("temp/" + task.template + ".zip")
+                # start instance
+                inst.start()
+                # delete template
+                os.remove("temp/" + task.template + ".zip")
+                logger.info("Instance " + task.instance_id + " has been created")
+                redis_client.publish(chan_prefix + "tb-controller-calls",create_message(service_id,"*","instance-created",{
+                    "instance-id": task.instance_id
+                }))
+            except Exception as e:
+                logger.error("An error occurred while trying to create an instance!")
+                logger.error("Instance ID: " + task.instance_id)
+                logger.error("Instance template: " + task.template)
+                for line in traceback.format_exc().split("\n"):
+                    logger.error(line)
         except queue.Empty:
             continue
-
 logger.info("Starting message handler thread")
 
 message_handler_thread = threading.Thread(target=message_handler_target,name="Redis mesage handler",daemon=True)
