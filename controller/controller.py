@@ -55,7 +55,7 @@ class RemoteInstance:
     def __init__(self,parent_node,instance_id,template):
         self.instance_id = instance_id
         self.parent_node = parent_node
-        self.address = "0.0.0.0:0"
+        self.address = None
         self.port = 0
         self.host = "0.0.0.0"
         self.online = True
@@ -83,6 +83,7 @@ class RemoteInstance:
         if self.online:
             redis_client.publish(chan_prefix + "tb-service-calls",create_message(service_id,self.parent_node.service_id,"stop-instance",{"instance-id":self.instance_id}))
             self.online = False
+        self.address = None
 
     def start(self):
         if not self.exists: return
@@ -136,7 +137,7 @@ class Fleet:
         return "<Fleet " + self.name + " with " + str(len(self.instances)) + " instance(s)>"
 
     def scale(self,amount):
-        # add or remouve instances from the fleet
+        # add or remove instances from the fleet
         # returns the instances created
         if amount == 0:
             return # nothing to do
@@ -150,10 +151,11 @@ class Fleet:
                 try:
                     if len(self.target_nodes) > 0:
                         # code for scaling with target nodes
-                        inst = create_instance(instance_id,self.template,target_nodes=self.target_nodes)
+                        inst = create_instance_load_balancing(instance_id,self.template,target_nodes=self.target_nodes)
                     else:
                         # code for scaling without target nodes
-                        inst = create_instance(instance_id,self.template)
+                        inst = create_instance_load_balancing(instance_id,self.template)
+                    inst.parent_fleet = self
                     instances_added.append(inst)
                 except InstanceCreationError:
                     pass
@@ -229,6 +231,22 @@ def handle_message_tb_controller_calls(message):
         else:
             logger.info("Maximum instances for node " + message.sender + " is " + str(message.data["max-instances"]))
             nodes[message.sender].max_instances = message.data["max-instances"]
+    if message.type == "get-instances":
+        instances_serialized = []
+        for instance_id, instance in instances.keys():
+            instance_data = {}
+            instance_data["id"] = instance_id
+            instances_serialized.append(instance_data)
+    if message.type == "instance-online":
+        instance_id = message.from[9:]
+        if not instances.get(instance_id):
+            logger.warning("Instance with ID " + instance_id + " went online but isn't part of the instances list?! Ignoring.")
+            return
+    if message.type == "instance-offline":
+        instance_id = message.from[9:]
+        if not instances.get(instance_id):
+            logger.warning("Instance with ID " + instance_id + " went online but isn't part of the instances list?! Ignoring.")
+            return
 
 def handle_message_tb_service_status(message):
     if message.sender in services.keys():
@@ -292,14 +310,16 @@ def message_handler_target():
             for line in traceback.format_exc().split("\n"):
                 logger.error(line)
 
-def create_instance(instance_id,template,target_nodes=nodes.values()):
+def create_instance_load_balancing(instance_id,template,target_nodes=nodes.values()):
     # create instance on the least strained node
     # get nodes sorted by amount of free instance "slots"
     possible_nodes = sorted(target_nodes, key=lambda node: node.max_instances - len(node.instances),reverse=True)
     # try creating instances
     for node in possible_nodes:
         try:
-            return node.create_instance(instance_id,template)
+            instance = node.create_instance(instance_id,template)
+            instances[instance_id] = instance
+            return instance
         except InstanceCreationError:
             continue # no slots available
     # couldn't create the instance!
