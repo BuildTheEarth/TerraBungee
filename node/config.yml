@@ -6,14 +6,16 @@
 # The name of this node, used to identify it on the network. Must be unique.
 node-name: example-node
 
-# Redis connection information.
-redis:
-  # The host and port of the Redis server.
-  host: localhost
-  port: 6379
-  # Password for redis. Leave blank for none.
-  # NOTE: not implemented yet
-  password: ""
+# HTTP server information.
+http:
+  # The host and port that the HTTP server should run on
+  host: 0.0.0.0
+  port: 8081
+
+# The URL that the controller can be accessed from
+# NOTE: must end with a slash
+# It is reccomended to use 127.0.0.1 instead of localhost due to reduced latency
+controller-url: http://127.0.0.1:8080/
 
 # Limits on how much system resources this node is allowed to use.
 resource-limits:
@@ -30,4 +32,4 @@ communication:
 
 # Hostname for this machine (ex: the internal IP).
 # Use localhost if you're running all your services on the same machine (Controller, Nodes, and Proxies)
-hostname: "localhost"
+hostname: "127.0.0.1"

@@ -3,11 +3,10 @@
 
 # BungeeCord Config
 
-# Redis connection information.
-redis:
-  # The host and port of the Redis server.
-  host: localhost
-  port: 6379
-  # Password for redis. Leave blank for none.
-  # NOTE: not implemented yet
-  password: ""
+# The URL that the controller can be accessed from
+# NOTE: must end with a slash
+# It is reccomended to use 127.0.0.1 instead of localhost due to reduced latency
+controller-url: http://127.0.0.1:8080/
+
+# The name of the queue server that players should be sent to when first joining or being queued.
+queue-server: lobby1

@@ -1,6 +1,11 @@
 package com.saghetti.TBInstanceNotifyBukkit;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
@@ -9,57 +14,81 @@ import org.json.simple.JSONObject;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig; 
-
 public class TBInstanceNotifyMain extends JavaPlugin  {
 	final Logger logger = getLogger();
-	JedisPool jedisPool = null;
-	Jedis subJedis = null;
-	Jedis pubJedis = null;
 	FileConfiguration config = null;
 	String instanceId = "";
-	String channelPrefix = "";
+	String controllerURL = "";
 	String address = "";
-	String redisAddress = "";
-	Thread subThread;
 	
-    @SuppressWarnings("unchecked")
 	@Override
     public void onEnable() {
     	Path rootServerFolder = this.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().toPath();
     	try {
 			instanceId = new String(Files.readAllBytes(rootServerFolder.resolve("tb_info/id.txt")));
-			redisAddress = new String(Files.readAllBytes(rootServerFolder.resolve("tb_info/redisaddr.txt")));
-			channelPrefix = new String(Files.readAllBytes(rootServerFolder.resolve("tb_info/chprefix.txt")));
+			controllerURL = new String(Files.readAllBytes(rootServerFolder.resolve("tb_info/controllerurl.txt")));
 			address = new String(Files.readAllBytes(rootServerFolder.resolve("tb_info/address.txt")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-    	logger.info("Connecting to Redis...");
-    	jedisPool = new JedisPool(new JedisPoolConfig(),redisAddress);
-    	pubJedis = jedisPool.getResource();
-    	JSONObject obj = new JSONObject();
-    	obj.put("sender","instance:" + instanceId);
-    	obj.put("recipient","*");
-    	obj.put("type","instance-online");
-    	JSONObject contentsObj = new JSONObject();
-    	contentsObj.put("address", address);
-    	obj.put("data",contentsObj);
-    	pubJedis.publish(channelPrefix + "tb-controller-calls",obj.toString());
+    	logger.info("Pushing status to " + controllerURL + "push/instance/online");
+    	try {
+			HttpURLConnection con = (HttpURLConnection) new URL(controllerURL + "push/instance/online").openConnection();
+			con.setRequestMethod("POST");
+			con.setRequestProperty("Content-Type", "application/json; utf-8");
+			con.setRequestProperty("Accept", "application/json");
+			String jsonInputString = "{\"instance_id\": \"" + instanceId + "\", \"address\": \"" + address + "\"}";
+			con.setDoOutput(true);
+			try(OutputStream os = con.getOutputStream()) {
+			    byte[] input = jsonInputString.getBytes("utf-8");
+			    os.write(input, 0, input.length);
+			}
+			try(BufferedReader br = new BufferedReader(
+				new InputStreamReader(con.getInputStream(), "utf-8"))) {
+				StringBuilder response = new StringBuilder();
+				String responseLine = null;
+				while ((responseLine = br.readLine()) != null) {
+					response.append(responseLine.trim());
+				}
+				//System.out.println(response.toString());
+			}
+			con.disconnect();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	logger.info("Now online!");
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void onDisable() {
-    	JSONObject obj = new JSONObject();
-    	obj.put("sender",instanceId);
-    	obj.put("recipient","*");
-    	obj.put("type","instance-offline");
-    	obj.put("data",null);
-    	pubJedis.publish(channelPrefix + "tb-controller-calls",obj.toString());
+    	logger.info("Pushing status to " + controllerURL + "push/instance/offline");
+    	try {
+			HttpURLConnection con = (HttpURLConnection) new URL(controllerURL + "push/instance/offline").openConnection();
+			con.setRequestMethod("POST");
+			con.setRequestProperty("Content-Type", "application/json; utf-8");
+			con.setRequestProperty("Accept", "application/json");
+			String jsonInputString = "{\"instance_id\": \"" + instanceId + "\"}";
+			con.setDoOutput(true);
+			try(OutputStream os = con.getOutputStream()) {
+			    byte[] input = jsonInputString.getBytes("utf-8");
+			    os.write(input, 0, input.length);
+			}
+			try(BufferedReader br = new BufferedReader(
+				new InputStreamReader(con.getInputStream(), "utf-8"))) {
+				StringBuilder response = new StringBuilder();
+				String responseLine = null;
+				while ((responseLine = br.readLine()) != null) {
+					response.append(responseLine.trim());
+				}
+				//System.out.println(response.toString());
+			}
+			con.disconnect();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     	logger.info("Now offline!");
     }
 }

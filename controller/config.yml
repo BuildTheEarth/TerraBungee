@@ -3,14 +3,11 @@
 
 # Controller Config
 
-# Redis connection information.
-redis:
-  # The host and port of the Redis server.
-  host: localhost
-  port: 6379
-  # Password for redis. Leave blank for none.
-  # NOTE: not implemented yet
-  password: ""
+# HTTP server information.
+http:
+  # The host and port that the HTTP server should run on
+  host: 0.0.0.0
+  port: 8080
 
 # How TerraBungee should communicate over the network.
 communication:
@@ -24,7 +21,7 @@ resources:
   # URL where templates can be found.
   # It is reccomended to make this localhost or an IP on the internal network
   # NOTE: Must end with a trailing forward slash
-  template-url: "http://127.0.0.1:8081/terrabungee/"
+  template-url: "http://127.0.0.1:5000/terrabungee/"
 
 # The list of nodes that should be waited on before starting the network.
 nodes-list:
