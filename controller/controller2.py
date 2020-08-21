@@ -69,23 +69,19 @@ class RemoteInstance:
     def exists(self):
         return self.exists
 
-    def stop(self):
-        if not self.exists: return
-        if self.running:
-            resp = requests.patch(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id,json={
-                "running": False
-            })
-            resp.raise_for_status()
-            self.running = False
-        self.address = None
-
     def start(self):
         if not self.exists: return
         if not self.running:
-            resp = requests.patch(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id,json={
-                "running": True
-            })
+            resp = requests.posts(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id + "/start")
             self.running = True
+
+    def stop(self):
+        if not self.exists: return
+        if self.running:
+            resp = requests.posts(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id + "/stop")
+            resp.raise_for_status()
+            self.running = False
+        self.address = None
 
     def delete(self):
         self.exists = False
@@ -288,10 +284,14 @@ def route_api_instances_specific(instance_id):
             instance_serialized_data["fleet"] = instance_object.parent_fleet.name
         return jsonify(instance_serialized_data)
     if request.method == "POST":
+        if not request.json:
+            abort(400)
         if instance_id in instances.keys():
             abort(409)
-        abort(501)
-
+        if not request.json.get("template"):
+            abort(400)
+        if request.json.get("nodes"):
+            pass
 
 # push endpoints
 
@@ -308,7 +308,7 @@ def route_push_instance_online():
     if not instances[request.json["instance_id"]].online:
         instances[request.json["instance_id"]].online = True
         instances[request.json["instance_id"]].address = request.json["address"]
-        logger.info("Instance " + request.json["instance_id"] + " now online")
+        logger.info("Instance " + request.json["instance_id"] + " now online on address " + request.json["address"])
     else:
         logger.warning("Instance " + request.json["instance_id"] + " came online but was already online?!")
     return "", 204

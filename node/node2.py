@@ -12,7 +12,6 @@ import threading
 import logging
 import json
 import socket
-import socket
 import subprocess
 import zipfile
 import shutil
@@ -97,6 +96,7 @@ class Instance:
         self.address = None
         self.template = template
         self.service_id = "instance:" + instance_id
+        self.socket_thread = None
 
     def __repr__(self):
         if self.running:
@@ -104,9 +104,13 @@ class Instance:
         else:
             return "<Instance " + self.instance_id + ">"
 
-    def prepare(self,template_path):
+    def prepare(self):
         if self.prepared:
             return
+        # download template
+        #print(file_server_url)
+        download_file(file_server_url + "templates/" + self.template + ".zip","temp/" + self.template + ".zip")
+        template_path = "temp/" + self.template + ".zip"
         # prepare an instance for launching
         os.makedirs("temp/" + self.instance_id)
         # extract json from zip
@@ -137,9 +141,13 @@ class Instance:
             fh.write(self.instance_id)
         with open(self.instance_folder + "/tb_info/controllerurl.txt","w") as fh:
             fh.write(config["controller-url"])
+        # make copy of server properties
+        shutil.copy(self.instance_folder + "/server.properties",self.instance_folder + "/server.properties.old")
         # clean up
         shutil.rmtree("temp/" + self.instance_id)
         template_zip.close()
+        # delete template
+        os.remove(template_path)
         self.prepared = True
 
     def start(self):
@@ -160,7 +168,7 @@ class Instance:
             self.port = port
         # write port to server.properties
         file_data = ""
-        with open(self.instance_folder + "/server.properties","r") as fh:
+        with open(self.instance_folder + "/server.properties.old","r") as fh:
             file_data = fh.read()
             file_data = file_data.replace("{port}",str(self.port))
         with open(self.instance_folder + "/server.properties","w") as fh:
@@ -176,11 +184,9 @@ class Instance:
             self.server_settings["jvm-args"] +
             " -jar " + self.server_settings["server-jar"],
             cwd=self.instance_folder,
-            stdin=subprocess.PIPE, # not sure what difference this makes, might leave it uncommented if it doesn't cause any issues
-            # seems like it makes process.communicate() actually work
-            # redirect input to /dev/null (or os equivelent)
-            stdout=subprocess.PIPE, # note: may add better logging support later
-            stderr=subprocess.PIPE, # TODO: make better
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE, # TODO: add better logging support later
+            stderr=subprocess.PIPE,
         )
         #print("Server running on " + self.address)
         self.running = True
@@ -202,34 +208,63 @@ class Instance:
         self.running = False
         self.address = None
 
+    def kill(self):
+        # force the instance process to shut down
+        if not self.running:
+            return
+        if not self.prepared:
+            return
+        self.process.kill()
+        used_ports.remove(self.port)
+        self.running = False
+        self.address = None
+
     def delete(self):
         # delete the instance
         if self.running:
             # stop if it's running, just in case
             self.stop()
         # delete instance dir
-        #shutil.rmtree("instances/" + self.instance_id)
+        shutil.rmtree("instances/" + self.instance_id)
         self.prepared = False # note: allows for instance reuse, not sure if this is a good idea
+
+    def reprepare(self):
+        # delete everything and re-prepare files from template
+        start_again = self.running
+        if self.running:
+            self.stop()
+        if self.prepared:
+            shutil.rmtree("instances/" + self.instance_id)
+            self.prepared = False
+        self.prepare()
+        if start_again:
+            self.start()
+
+    #def open_socket(self):
+    #    found_port = False
+    #    port = 0
+    #    while not found_port:
+    #        port = get_free_port()
+    #        if port in used_ports:
+    #            continue
+    #        used_ports.append(port)
+    #        found_port = True
+    #    def socket_thread_target():
+    #        pass
+    #    self.socket_thread = threading.Thread(name="Socket thread for " + self.instance_id,daemon=True,target=socket_thread_target)
 
 def create_new_instance(instance_id,template):
     logger.info("Creating instance " + instance_id + " with template " + template)
     if instances.get(instance_id):
         logger.error("Instance ID already exists?! Ignoring request to create instance")
-        return instances.get(instance_id)
-    # download template
-    #print(file_server_url)
-    download_file(file_server_url + "templates/" + template + ".zip","temp/" + template + ".zip")
-    # create instance
+        return instances.get(instance_id)    # create instance
     inst = Instance(instance_id,template)
     instances[instance_id] = inst
     # prepare instance
-    inst.prepare("temp/" + template + ".zip")
+    inst.prepare()
     # start instance
     inst.start()
-    # delete template
-    os.remove("temp/" + template + ".zip")
     logger.info("Instance " + instance_id + " has been created")
-    # TODO: push new instance status to controller (possibly)
     return inst
 
 log_console_handler = logging.StreamHandler()
@@ -295,6 +330,8 @@ def route_api_ping():
         "time": time.time()
     })
 
+# Instance API calls
+
 @app.route("/api/instances/")
 def route_api_instances():
     return_data = []
@@ -311,6 +348,7 @@ def route_api_instances():
 
 @app.route("/api/instances/<instance_id>",methods=["GET","POST","PATCH","DELETE"])
 def route_api_instances_specific(instance_id):
+    print(instance_id)
     if request.method == "GET":
         inst = instances.get(instance_id)
         if not inst:
@@ -331,17 +369,15 @@ def route_api_instances_specific(instance_id):
         if instance_id in instances.keys():
             abort(409)
         create_new_instance(instance_id,request.json.get("template"))
-        return ("",201)
+        return "", 201
     if request.method == "PATCH":
         inst = instances.get(instance_id)
         if not inst:
             abort(404)
         if not request.json:
             abort(400)
-        if request.json.get("running") != None:
-            if request.json["running"]:
-                inst.delete()
-                instances[inst].pop(instance_id,None)
+        if request.json.get("template") != None:
+            inst.template = request.json.get("template")
         return "", 204
     if request.method == "DELETE":
         inst = instances.get(instance_id)
@@ -350,6 +386,38 @@ def route_api_instances_specific(instance_id):
         inst.delete()
         instances[instance_id].pop(instance_id,None)
         return "", 204
+
+@app.route("/api/instances/<instance_id>/start",methods=["POST"])
+def route_api_instances_start(instance_id):
+    inst = instances.get(instance_id)
+    if not inst:
+        abort(404)
+    inst.start()
+    return "", 204
+
+@app.route("/api/instances/<instance_id>/stop",methods=["POST"])
+def route_api_instances_stop(instance_id):
+    inst = instances.get(instance_id)
+    if not inst:
+        abort(404)
+    inst.stop()
+    return "", 204
+
+@app.route("/api/instances/<instance_id>/kill",methods=["POST"])
+def route_api_instances_kill(instance_id):
+    inst = instances.get(instance_id)
+    if not inst:
+        abort(404)
+    inst.kill()
+    return "", 204
+
+@app.route("/api/instances/<instance_id>/reprepare",methods=["POST"])
+def route_api_instances_reprepare(instance_id):
+    inst = instances.get(instance_id)
+    if not inst:
+        abort(404)
+    inst.reprepare()
+    return "", 204
 
 @app.route("/api/shutdown",methods=["POST"])
 def route_api_shutdown():
@@ -362,6 +430,7 @@ def route_api_shutdown():
             abort(500)
         logger.info("Starting shutdown due to API call...")
         logger.info("Reason: " + request.json.get("reason"))
+        time.sleep(0.5)
         request.environ.get('werkzeug.server.shutdown')()
         return ("", 204)
 
