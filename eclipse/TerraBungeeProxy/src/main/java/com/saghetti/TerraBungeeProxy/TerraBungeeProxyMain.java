@@ -87,13 +87,18 @@ public class TerraBungeeProxyMain extends Plugin {
 				for (RemoteInstance instance : remoteInstancesCurrent) {
 					currentInstancesAsStrings.add(instance.getId());
 				}
-				// remove instances that are no longer online				
+				
+				// remove instances that are no longer online
 				for (String instanceId : lastInstanceList) {
 					if (!currentInstancesAsStrings.contains(instanceId)) {
 						logger.info("Removing instance " + instanceId);
 						ServerHelper.removeServer(instanceId);
-						pendingInstancesRemove.remove(instanceId);
+						pendingInstancesRemove.add(instanceId);
 					}
+				}
+				
+				for (String instanceId : pendingInstancesRemove) {
+					lastInstanceList.remove(instanceId);
 				}
 			}
 		}, 0, 2000, TimeUnit.MILLISECONDS);
