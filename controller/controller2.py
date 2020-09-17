@@ -53,6 +53,7 @@ class RemoteInstance:
         self.template = template
         self.exists = True
         self.parent_fleet = None
+        self.tags = {}
 
     def __repr__(self):
         return "<Instance " + self.instance_id + " on node " + self.parent_node.service_id + ">"
@@ -72,23 +73,35 @@ class RemoteInstance:
     def start(self):
         if not self.exists: return
         if not self.running:
-            resp = requests.posts(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id + "/start")
+            resp = requests.post(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id + "/start")
             self.running = True
 
     def stop(self):
         if not self.exists: return
         if self.running:
-            resp = requests.posts(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id + "/stop")
+            resp = requests.post(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id + "/stop")
             resp.raise_for_status()
             self.running = False
         self.address = None
 
     def delete(self):
+        if not self.exists: return
         self.exists = False
         resp = requests.delete(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id)
         resp.raise_for_status()
         self.parent_node.instances.pop(self.instance_id,None)
         instances.pop(self.instance_id,None)
+
+    def reprepare(self):
+        if not self.exists: return
+        resp = requests.post(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id + "/reprepare")
+        resp.raise_for_status()
+
+    def kill(self):
+        if not self.exists: return
+        resp = requests.post(service_to_address_map[self.parent_node.service_id] + "api/instances/" + self.instance_id + "/kill")
+        self.running = False
+        resp.raise_for_status()
 
 class Node:
     def __init__(self,service_id):
@@ -292,6 +305,38 @@ def route_api_instances_specific(instance_id):
             abort(400)
         if request.json.get("nodes"):
             pass
+
+@app.route("/api/instances/<instance_id>/start",methods=["POST"])
+def route_api_instances_start(instance_id):
+    inst = instances.get(instance_id)
+    if not inst:
+        abort(404)
+    inst.start()
+    return "", 204
+
+@app.route("/api/instances/<instance_id>/stop",methods=["POST"])
+def route_api_instances_stop(instance_id):
+    inst = instances.get(instance_id)
+    if not inst:
+        abort(404)
+    inst.stop()
+    return "", 204
+
+@app.route("/api/instances/<instance_id>/kill",methods=["POST"])
+def route_api_instances_kill(instance_id):
+    inst = instances.get(instance_id)
+    if not inst:
+        abort(404)
+    inst.kill()
+    return "", 204
+
+@app.route("/api/instances/<instance_id>/reprepare",methods=["POST"])
+def route_api_instances_reprepare(instance_id):
+    inst = instances.get(instance_id)
+    if not inst:
+        abort(404)
+    inst.reprepare()
+    return "", 204
 
 # push endpoints
 

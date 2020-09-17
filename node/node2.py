@@ -240,6 +240,10 @@ class Instance:
         if start_again:
             self.start()
 
+    def suspend(self):
+        # suspend the instance, saving all files in the format of a template that can be used to create this instance again at a later time.
+        pass
+
     #def open_socket(self):
     #    found_port = False
     #    port = 0
@@ -348,7 +352,6 @@ def route_api_instances():
 
 @app.route("/api/instances/<instance_id>",methods=["GET","POST","PATCH","DELETE"])
 def route_api_instances_specific(instance_id):
-    print(instance_id)
     if request.method == "GET":
         inst = instances.get(instance_id)
         if not inst:
@@ -418,6 +421,8 @@ def route_api_instances_reprepare(instance_id):
         abort(404)
     inst.reprepare()
     return "", 204
+
+# misc calls
 
 @app.route("/api/shutdown",methods=["POST"])
 def route_api_shutdown():
