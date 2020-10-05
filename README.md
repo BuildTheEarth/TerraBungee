@@ -3,4 +3,4 @@ TerraBungee is a system that allows for dynamic BungeeCord backend server manage
 
 ## Source Directories
 
-Read the full implementation details here: [TerraBungee Implementation Docs](https://docs.google.com/document/d/1TBERu7Z3uwStIeewy7hEU4VYyrrMHe-riC0Cd41x_rw/edit). Note: Still very much a work-in-progress.
+Read the full implementation details here: [TerraBungee API Docs](https://docs.google.com/document/d/1FTFciviP738NivWvRY6WYqmoGjdUJDMTSOnlIJhvgyg/edit). Note: Still very much a work-in-progress.
