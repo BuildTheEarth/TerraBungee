@@ -1,4 +1,4 @@
 name: TerraBungeeProxy
-main: com.noahhusby.proxy.TerraBungeeProxyMain
+main: com.noahhusby.terrabungee.proxy.TerraBungeeProxyMain
 version: 1.0
 author: noahhusby

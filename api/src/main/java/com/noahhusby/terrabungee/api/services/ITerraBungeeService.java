@@ -30,4 +30,10 @@ public interface ITerraBungeeService {
      * @return The websocket client
      */
     Object getClient();
+
+    /**
+     * Gets the type of service
+     * @return The type of service
+     */
+    ServiceType getType();
 }

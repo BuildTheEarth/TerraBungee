@@ -3,12 +3,15 @@
 package com.noahhusby.terrabungee.api;
 
 import com.google.common.collect.Lists;
+import com.noahhusby.terrabungee.api.network.C2P.C2SInstanceUpdatePacket;
 import com.noahhusby.terrabungee.api.network.IC2PPacket;
 import com.noahhusby.terrabungee.api.network.IP2CPacket;
 import com.noahhusby.terrabungee.api.network.P2C.P2CKeepAlivePacket;
 import com.noahhusby.terrabungee.api.network.P2C.P2CServiceInitPacket;
 import com.noahhusby.terrabungee.api.network.WebsocketEndpoint;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,24 +25,44 @@ public class TerraBungeeNetworkManager {
     private WebsocketEndpoint websocket;
 
     protected TerraBungeeNetworkManager(String controller) {
+        registerControllerPacket(new C2SInstanceUpdatePacket());
+
         try {
             websocket = new WebsocketEndpoint(new URI("ws://"+controller));
+            websocket.addMessageHandler(new WebsocketEndpoint.MessageHandler() {
+                public void handleMessage(String message) {
+                    try {
+                        onIncomingPayload((JSONObject) new JSONParser().parse(message));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                if(websocket.userSession == null) {
-                    try {
-                        websocket = new WebsocketEndpoint(new URI("ws://" + controller));
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    sendPayload(new P2CKeepAlivePacket());
-                    sendPayload(new P2CServiceInitPacket());
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
+            if(websocket.userSession == null) {
+
+                try {
+                    websocket = new WebsocketEndpoint(new URI("ws://" + controller));
+                    websocket.addMessageHandler(new WebsocketEndpoint.MessageHandler() {
+                        public void handleMessage(String message) {
+                            try {
+                                onIncomingPayload((JSONObject) new JSONParser().parse(message));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
                 }
+
+            } else {
+                sendPayload(new P2CKeepAlivePacket());
+                sendPayload(new P2CServiceInitPacket());
             }
         }, 0, 2, TimeUnit.SECONDS);
     }

@@ -1,13 +1,8 @@
-/*
- * TerraBungee - Proxy
- * Copyright (c) 2020 Saghetti & Noah Husby
- *
- * Constants.java
- */
-
-package com.noahhusby.proxy;
+package com.noahhusby.terrabungee.proxy;
 
 public class Constants {
+    public static final String version = "1.0";
+
     public static final String playerMoveID = "move_player";
     public static final String proxyInitID = "proxy_init";
 }

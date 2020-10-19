@@ -1,0 +1,38 @@
+package com.noahhusby.terrabungee.controller.command;
+
+import com.noahhusby.terrabungee.controller.console.ConsoleColor;
+import com.noahhusby.terrabungee.controller.console.TerraBungeeConsole;
+import com.noahhusby.terrabungee.controller.console.TextComponent;
+import com.noahhusby.terrabungee.controller.services.InstanceManager;
+import com.noahhusby.terrabungee.controller.services.StorableStaticInstance;
+
+public class AddStaticCommand implements ICommand {
+    @Override
+    public String getName() {
+        return "addstatic";
+    }
+
+    @Override
+    public void execute(String[] args) {
+        if(args.length < 3) {
+            TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.RED, "Usage: addstatic <id> <address>"));
+            return;
+        }
+
+        String id = args[1];
+        String address = args[2];
+
+        for(StorableStaticInstance s : InstanceManager.getInstance().storableStaticInstances) {
+            if(s.id.equalsIgnoreCase(id)) {
+                TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.RED, "The static instance "),
+                        new TextComponent(ConsoleColor.BLUE, id), new TextComponent(ConsoleColor.RED, " already exists!"));
+                return;
+            }
+        }
+
+        TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.GREEN, "Successfully added static instance "),
+                new TextComponent(ConsoleColor.BLUE, id), new TextComponent(ConsoleColor.GREEN, " with address "),
+                        new TextComponent(ConsoleColor.BLUE, address));
+        InstanceManager.getInstance().addStaticInstance(id, address);
+    }
+}

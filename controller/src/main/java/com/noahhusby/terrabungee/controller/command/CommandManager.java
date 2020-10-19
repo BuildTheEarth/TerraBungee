@@ -13,6 +13,10 @@ public class CommandManager {
 
     private CommandManager() {
         registerCommand(new StopCommand());
+        registerCommand(new AddStaticCommand());
+        registerCommand(new RemoveStaticCommand());
+        registerCommand(new ListStaticCommand());
+        registerCommand(new DefaultServerCommand());
     }
 
     private final List<ICommand> registeredCommands = new ArrayList<>();

@@ -52,4 +52,15 @@ public class TerraBungeeConsole extends Logger {
             e.printStackTrace();
         }
     }
+
+    public static void sendMessage(TextComponent... components) {
+        StringBuilder builder = new StringBuilder();
+        for(TextComponent t : components) {
+            builder.append(t.color.toString());
+            builder.append(t.text);
+            builder.append(ConsoleColor.RESET.toString());
+        }
+
+        System.out.println(builder.toString());
+    }
 }

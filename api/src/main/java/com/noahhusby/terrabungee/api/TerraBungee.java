@@ -1,5 +1,6 @@
 package com.noahhusby.terrabungee.api;
 
+import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.api.services.ServiceType;
 
 import java.util.ArrayList;

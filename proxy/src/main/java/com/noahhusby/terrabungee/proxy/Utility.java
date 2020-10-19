@@ -5,7 +5,7 @@
  * Utility.java
  */
 
-package com.noahhusby.proxy;
+package com.noahhusby.terrabungee.proxy;
 
 import java.net.InetSocketAddress;
 import java.net.URI;

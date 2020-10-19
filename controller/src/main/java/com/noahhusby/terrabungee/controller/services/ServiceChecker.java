@@ -8,6 +8,8 @@ import com.noahhusby.terrabungee.controller.TerraBungeeController;
 import com.noahhusby.terrabungee.controller.discord.DiscordManager;
 import com.noahhusby.terrabungee.controller.discord.embeds.ServiceOfflineEmbed;
 import com.noahhusby.terrabungee.controller.discord.embeds.ServiceReconnectedEmbed;
+import com.noahhusby.terrabungee.controller.network.C2S.C2SInstanceUpdatePacket;
+import com.noahhusby.terrabungee.controller.network.TerraBungeeNetworkManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +36,12 @@ public class ServiceChecker implements Runnable {
         serviceStatus.clear();
         for(TerraBungeeService s : ServiceManager.getInstance().getServices()) {
             serviceStatus.put(s.getId(), s.getStatus());
+        }
+
+        for(TerraBungeeService service : ServiceManager.getInstance().getServices()) {
+            if(service.getIntents().contains(ServiceIntent.INSTANCE_UPDATE)) {
+                TerraBungeeNetworkManager.getInstance().sendPayload(new C2SInstanceUpdatePacket(service));
+            }
         }
     }
 }

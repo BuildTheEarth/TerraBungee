@@ -5,9 +5,9 @@
  * ConfigHandler.java
  */
 
-package com.noahhusby.proxy.config;
+package com.noahhusby.terrabungee.proxy.config;
 
-import com.noahhusby.proxy.TerraBungeeProxyMain;
+import com.noahhusby.terrabungee.proxy.TerraBungeeProxyMain;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;

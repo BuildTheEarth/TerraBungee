@@ -1,8 +1,12 @@
 package com.noahhusby.terrabungee.controller.config;
 
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
+import com.noahhusby.terrabungee.controller.services.InstanceManager;
 import net.minecraftforge.common.config.Configuration;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +25,8 @@ public class ConfigHandler {
         init();
     }
 
+    private File staticInstanceFile;
+
     private Configuration config;
 
     private String category;
@@ -37,6 +43,9 @@ public class ConfigHandler {
         File configFile = new File(System.getProperty("user.dir"), "terrabungee.cfg");
         if(!configFile.exists())
             TerraBungeeController.logger.warning("Generating a new config file! Please fill out terrabungee.cfg before continuing.");
+
+        staticInstanceFile = new File(System.getProperty("user.dir"), "instances.json");
+        loadStaticInstances();
 
         config = new Configuration(configFile);
 
@@ -71,6 +80,44 @@ public class ConfigHandler {
 
     private void order() {
         config.setCategoryPropertyOrder(category, categories.get(category));
+    }
+
+    public void loadStaticInstances() {
+        if (staticInstanceFile.exists())
+        {
+            String json = null;
+            try
+            {
+                Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting()
+                        .create();
+                json = FileUtils.readFileToString(staticInstanceFile, "UTF-8");
+                InstanceManager.setInstance(gson.fromJson(json, InstanceManager.class));
+                InstanceManager.getInstance();
+                saveStaticInstances();
+            }
+            catch (Throwable e)
+            {
+                e.printStackTrace();
+                System.err.println("\n" + json);
+            }
+            return;
+        }
+
+        InstanceManager.setInstance(new InstanceManager());
+        InstanceManager.getInstance();
+        saveStaticInstances();
+    }
+
+    public void saveStaticInstances() {
+        try
+        {
+            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
+            FileUtils.writeStringToFile(staticInstanceFile, gson.toJson(InstanceManager.getInstance()), "UTF-8");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
 }

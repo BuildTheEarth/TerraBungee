@@ -6,4 +6,9 @@ public class Proxy extends TerraBungeeService {
     public Proxy(String Id) {
         super(Id);
     }
+
+    @Override
+    public ServiceType getType() {
+        return type;
+    }
 }

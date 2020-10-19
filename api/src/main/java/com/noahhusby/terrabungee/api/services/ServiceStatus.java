@@ -1,7 +1,7 @@
 package com.noahhusby.terrabungee.api.services;
 
 public enum ServiceStatus {
-    DISCARDED(0), RESTARTING(1), LOST_CONNECTION(2), ONLINE(3);
+    DISCARDED(0), AWAIT_INIT(1), RESTARTING(2), LOST_CONNECTION(3), ONLINE(4), STATIC(5);
 
     private final int value;
 

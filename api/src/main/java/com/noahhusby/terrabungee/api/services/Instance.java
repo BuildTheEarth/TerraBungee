@@ -85,6 +85,11 @@ public class Instance extends TerraBungeeService {
 		return o;
 	}
 
+	@Override
+	public ServiceType getType() {
+		return type;
+	}
+
 	public enum InstanceType {
 		STATIC, DYNAMIC
 	}
