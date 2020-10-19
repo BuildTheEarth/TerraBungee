@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
+}
+
+group 'org.noahhusby'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+    compile group: 'org.glassfish.tyrus.bundles', name: 'tyrus-standalone-client', version: '2.0.0-M3'
+    compile group: 'com.google.guava', name: 'guava', version: '29.0-jre'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
