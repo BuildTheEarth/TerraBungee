@@ -62,7 +62,6 @@ db.sqlite3
 db.sqlite3-journal
 
 # Flask stuff:
-instance/
 .webassets-cache
 
 # Scrapy stuff:
@@ -140,7 +139,6 @@ cython_debug/
 # TerraBungee files
 file_server/
 test_data/
-proxy/
 
 # Eclipse stuff
 .metadata/

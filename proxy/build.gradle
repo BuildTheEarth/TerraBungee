@@ -1,0 +1,33 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
+}
+
+group = 'com.noahhusby'
+version = '1.0'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+}
+
+dependencies {
+    compileOnly 'net.md-5:bungeecord-api:1.12-SNAPSHOT'
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}

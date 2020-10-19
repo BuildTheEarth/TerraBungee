@@ -1,0 +1,5 @@
+name: TBInstanceNotifyBukkit
+main: com.saghetti.TBInstanceNotifyBukkit.TBInstanceNotifyMain
+version: 1.0
+author: Saghetti
+description: Broadcasts the status of this instance over the TerraBungee network
