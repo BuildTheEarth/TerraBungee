@@ -29,26 +29,33 @@ public class InstanceManager {
     @Expose
     public List<StorableStaticInstance> storableStaticInstances = new ArrayList<>();
 
-    public void addStaticInstance(String id, String address) {
+    public boolean addStaticInstance(String id, String address) {
         for(StorableStaticInstance s : storableStaticInstances)
-            if(s.id.equalsIgnoreCase(id)) return;
+            if(s.id.equalsIgnoreCase(id)) return false;
 
         storableStaticInstances.add(new StorableStaticInstance(id, address));
 
         updateInstances();
         ConfigHandler.getInstance().saveStaticInstances();
+        return true;
     }
 
-    public void removeStaticInstance(String id) {
+    public boolean removeStaticInstance(String id) {
+        boolean removed = false;
         List<StorableStaticInstance> temp = new ArrayList<>();
         for(StorableStaticInstance s : storableStaticInstances)
-            if(s.id.equalsIgnoreCase(id)) temp.add(s);
+            if(s.id.equalsIgnoreCase(id)) {
+                removed = true;
+                temp.add(s);
+            }
+
 
         for(StorableStaticInstance s : temp)
             storableStaticInstances.remove(s);
 
         updateInstances();
         ConfigHandler.getInstance().saveStaticInstances();
+        return removed;
     }
 
     /**

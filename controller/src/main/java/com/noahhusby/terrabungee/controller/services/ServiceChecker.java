@@ -27,8 +27,6 @@ public class ServiceChecker implements Runnable {
             }
             if(s.getValue() == ServiceStatus.LOST_CONNECTION && service.getStatus() == ServiceStatus.ONLINE) {
                 TerraBungeeController.logger.warning("Service has reconnected with the controller: " + s.getKey());
-                for(ServiceIntent d : service.getIntents())
-                    System.out.println(d.name());
                 DiscordManager.getInstance().send(new ServiceReconnectedEmbed(service));
             }
         }
@@ -40,7 +38,7 @@ public class ServiceChecker implements Runnable {
 
         for(TerraBungeeService service : ServiceManager.getInstance().getServices()) {
             if(service.getIntents().contains(ServiceIntent.INSTANCE_UPDATE)) {
-                TerraBungeeNetworkManager.getInstance().sendPayload(new C2SInstanceUpdatePacket(service));
+                TerraBungeeNetworkManager.getInstance().send(new C2SInstanceUpdatePacket(service));
             }
         }
     }

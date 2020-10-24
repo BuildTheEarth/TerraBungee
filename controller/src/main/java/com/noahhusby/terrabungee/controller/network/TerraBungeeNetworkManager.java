@@ -14,8 +14,9 @@
 
 package com.noahhusby.terrabungee.controller.network;
 
+import com.noahhusby.terrabungee.controller.network.C2S.C2SResponsePacket;
 import com.noahhusby.terrabungee.controller.network.S2C.S2CKeepAlivePacket;
-import com.noahhusby.terrabungee.controller.network.S2C.S2CServiceInitPacket;
+import com.noahhusby.terrabungee.controller.network.S2C.S2CResponsePacket;
 import io.javalin.websocket.WsContext;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -35,12 +36,16 @@ public class TerraBungeeNetworkManager {
     private final List<IS2CPacket> registeredServicePackets = new ArrayList<>();
 
     private TerraBungeeNetworkManager() {
-        registerServicePacket(new S2CServiceInitPacket());
         registerServicePacket(new S2CKeepAlivePacket());
+        registerServicePacket(new S2CResponsePacket());
     }
 
     private void registerServicePacket(IS2CPacket packet) {
         registeredServicePackets.add(packet);
+    }
+
+    public void onIncomingPayload(WsContext client, String p) {
+        onIncomingPayload(client, p, null);
     }
 
     /**
@@ -48,7 +53,7 @@ public class TerraBungeeNetworkManager {
      * @param client Websocket client
      * @param p Raw string data
      */
-    public void onIncomingPayload(WsContext client, String p) {
+    public void onIncomingPayload(WsContext client, String p, String salt) {
         try {
             JSONObject payload = (JSONObject) new JSONParser().parse(p);
             String id = (String) payload.get("id");
@@ -58,7 +63,7 @@ public class TerraBungeeNetworkManager {
             JSONObject data = (JSONObject) payload.get("data");
 
             for(IS2CPacket s : registeredServicePackets) {
-                if(s.getID().equalsIgnoreCase(type)) s.onMessage(sp, data);
+                if(s.getID().equalsIgnoreCase(type)) s.onMessage(sp, data, new Response(sp, salt));
             }
 
         } catch (ParseException e) {
@@ -66,7 +71,7 @@ public class TerraBungeeNetworkManager {
         }
     }
 
-    public void sendPayload(IC2SPacket packet) {
+    public void send(IC2SPacket packet) {
         ServicePacket servicePacket = packet.getServicePacket();
         JSONObject payload = new JSONObject();
         payload.put("type", packet.getID());
@@ -76,5 +81,9 @@ public class TerraBungeeNetworkManager {
         servicePacket.getClient().send(payload.toJSONString());
     }
 
+    public void respond(Response response) {
+        if(response.salt == null) return;
+        send(new C2SResponsePacket(response));
+    }
 
 }

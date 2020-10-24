@@ -1,31 +1,33 @@
 package com.noahhusby.terrabungee.api;
 
-import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.api.services.ServiceType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class TerraBungee {
 
-    private static TerraBungee instance = null;
-
-    private TerraBungeeNetworkManager networkManager = null;
     private List<ServiceIntent> activeIntents = new ArrayList<>();
-    private ServiceType serviceType = ServiceType.NONE;
-    private String Id;
 
-    public static TerraBungee getInstance() {
-        if(instance == null) instance = new TerraBungee();
-        return instance;
+    private final NetworkManager networkManager;
+    private final InstanceManager instanceManager;
+    private final ScheduledExecutorService executorService;
+    private final ServiceType serviceType;
+    private final String Id;
+
+    public TerraBungee(ServiceType serviceType, String Id, String controller) {
+        this(serviceType, Id, controller, Executors.newScheduledThreadPool(2));
     }
 
-    private TerraBungee() { }
-
-    public void createService(String controller, ServiceType serviceType, String Id) {
-        this.networkManager = new TerraBungeeNetworkManager(controller);
+    public TerraBungee(ServiceType serviceType, String Id, String controller, ScheduledExecutorService executorService) {
+        this.executorService = executorService;
         this.serviceType = serviceType;
         this.Id = Id;
+        this.networkManager = new NetworkManager(controller, this);
+        this.instanceManager = new InstanceManager(this);
     }
 
     public String getId() {
@@ -36,8 +38,12 @@ public class TerraBungee {
         return serviceType;
     }
 
-    public TerraBungeeNetworkManager getNetworkManager() {
+    public NetworkManager getNetworkManager() {
         return networkManager;
+    }
+
+    public InstanceManager getInstanceManager() {
+        return instanceManager;
     }
 
     public List<ServiceIntent> getIntents() {
@@ -45,14 +51,6 @@ public class TerraBungee {
     }
 
     public void enableIntent(ServiceIntent intent) {
-        if(serviceType == ServiceType.NONE) {
-            try {
-                throw new InstanceNotServiceException();
-            } catch (InstanceNotServiceException e) {
-                e.printStackTrace();
-            }
-        }
-
         if(!activeIntents.contains(intent))
             activeIntents.add(intent);
     }
@@ -63,20 +61,16 @@ public class TerraBungee {
     }
 
     public void disableIntent(ServiceIntent intent) {
-        if(serviceType == ServiceType.NONE) {
-            try {
-                throw new InstanceNotServiceException();
-            } catch (InstanceNotServiceException e) {
-                e.printStackTrace();
-            }
-        }
-
         activeIntents.remove(intent);
     }
 
     public void disableIntents(ServiceIntent... intents) {
         for(int x = 0; x < intents.length; x++)
             disableIntent(intents[x]);
+    }
+
+    protected ScheduledExecutorService getExecutorService() {
+        return executorService;
     }
 
 

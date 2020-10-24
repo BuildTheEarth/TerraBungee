@@ -1,5 +1,5 @@
 package com.noahhusby.terrabungee.api.services;
 
 public enum ServiceType {
-    NONE, PROXY, INSTANCE
+    PROXY, INSTANCE, CUSTOM
 }
