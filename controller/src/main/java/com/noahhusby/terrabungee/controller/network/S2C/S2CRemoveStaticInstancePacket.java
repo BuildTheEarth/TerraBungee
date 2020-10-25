@@ -12,27 +12,26 @@ import com.noahhusby.terrabungee.controller.network.NetworkManager;
 import com.noahhusby.terrabungee.controller.services.InstanceManager;
 import org.json.simple.JSONObject;
 
-public class S2CAddStaticInstancePacket implements IS2CPacket {
+public class S2CRemoveStaticInstancePacket implements IS2CPacket {
     @Override
     public String getID() {
-        return Constants.addStaticInstanceID;
+        return Constants.removeStaticInstanceID;
     }
 
     @Override
     public void onMessage(ServicePacket servicePacket, JSONObject data, Response response) {
         for(Instance i : InstanceManager.getInstance().getInstances()) {
             if(i.getId().equalsIgnoreCase((String) data.get("id"))) {
-                response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.ERROR;
+                InstanceManager.getInstance().removeStaticInstance((String) data.get("id"));
+                TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.GREEN, servicePacket.getID() + " removed static instance "),
+                        new TextComponent(ConsoleColor.BLUE, (String) data.get("id")));
+                response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.SUCCESS;
                 NetworkManager.getInstance().respond(response);
                 return;
             }
         }
 
-        response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.SUCCESS;
-        TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.GREEN, servicePacket.getID() + " created new static instance "),
-                new TextComponent(ConsoleColor.BLUE, (String) data.get("id")), new TextComponent(ConsoleColor.GREEN, " with address "),
-                new TextComponent(ConsoleColor.BLUE, (String) data.get("address")));
-        InstanceManager.getInstance().addStaticInstance((String) data.get("id"), (String) data.get("address"));
+        response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.ERROR;
         NetworkManager.getInstance().respond(response);
     }
 }

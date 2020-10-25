@@ -15,7 +15,9 @@
 package com.noahhusby.terrabungee.controller.network;
 
 import com.noahhusby.terrabungee.controller.network.C2S.C2SResponsePacket;
+import com.noahhusby.terrabungee.controller.network.S2C.S2CAddStaticInstancePacket;
 import com.noahhusby.terrabungee.controller.network.S2C.S2CKeepAlivePacket;
+import com.noahhusby.terrabungee.controller.network.S2C.S2CRemoveStaticInstancePacket;
 import com.noahhusby.terrabungee.controller.network.S2C.S2CResponsePacket;
 import io.javalin.websocket.WsContext;
 import org.json.simple.JSONObject;
@@ -25,19 +27,21 @@ import org.json.simple.parser.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TerraBungeeNetworkManager {
-    private static TerraBungeeNetworkManager instance;
+public class NetworkManager {
+    private static NetworkManager instance;
 
-    public static TerraBungeeNetworkManager getInstance() {
-        if(instance == null) instance = new TerraBungeeNetworkManager();
+    public static NetworkManager getInstance() {
+        if(instance == null) instance = new NetworkManager();
         return instance;
     }
 
     private final List<IS2CPacket> registeredServicePackets = new ArrayList<>();
 
-    private TerraBungeeNetworkManager() {
+    private NetworkManager() {
         registerServicePacket(new S2CKeepAlivePacket());
         registerServicePacket(new S2CResponsePacket());
+        registerServicePacket(new S2CAddStaticInstancePacket());
+        registerServicePacket(new S2CRemoveStaticInstancePacket());
     }
 
     private void registerServicePacket(IS2CPacket packet) {

@@ -1,7 +1,6 @@
 package com.noahhusby.terrabungee.controller.network.S2C;
 
 import com.noahhusby.terrabungee.api.Constants;
-import com.noahhusby.terrabungee.api.NetworkManager;
 import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.api.services.ServiceType;
 import com.noahhusby.terrabungee.controller.network.C2S.C2SResponsePacket;
@@ -9,7 +8,7 @@ import com.noahhusby.terrabungee.controller.network.Response;
 import com.noahhusby.terrabungee.controller.services.ServiceManager;
 import com.noahhusby.terrabungee.controller.network.IS2CPacket;
 import com.noahhusby.terrabungee.controller.network.ServicePacket;
-import com.noahhusby.terrabungee.controller.network.TerraBungeeNetworkManager;
+import com.noahhusby.terrabungee.controller.network.NetworkManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -26,6 +25,6 @@ public class S2CKeepAlivePacket implements IS2CPacket {
         ServiceManager.getInstance().getService(servicePacket.getID()).keepAlive();
 
         response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.SUCCESS;
-        if(response.salt != null) TerraBungeeNetworkManager.getInstance().send(new C2SResponsePacket(response));
+        if(response.salt != null) NetworkManager.getInstance().send(new C2SResponsePacket(response));
     }
 }

@@ -1,15 +1,12 @@
 package com.noahhusby.terrabungee.controller;
 
 import ch.qos.logback.classic.Level;
-import com.noahhusby.terrabungee.api.ServiceIntent;
-import com.noahhusby.terrabungee.api.TerraBungee;
-import com.noahhusby.terrabungee.api.services.ServiceType;
 import com.noahhusby.terrabungee.controller.config.ConfigHandler;
 import com.noahhusby.terrabungee.controller.console.TerraBungeeConsole;
 import com.noahhusby.terrabungee.controller.discord.DiscordManager;
 import com.noahhusby.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
 import com.noahhusby.terrabungee.controller.discord.embeds.ControllerStoppedEmbed;
-import com.noahhusby.terrabungee.controller.network.TerraBungeeNetworkManager;
+import com.noahhusby.terrabungee.controller.network.NetworkManager;
 import com.noahhusby.terrabungee.controller.services.ServiceChecker;
 import io.javalin.Javalin;
 import org.slf4j.LoggerFactory;
@@ -55,7 +52,7 @@ public class TerraBungeeController {
         alternateThread.schedule(() -> {
             webServer.ws("/", wsHandler -> {
                 wsHandler.onMessage(ctx -> {
-                    TerraBungeeNetworkManager.getInstance().onIncomingPayload(ctx, ctx.message());
+                    NetworkManager.getInstance().onIncomingPayload(ctx, ctx.message());
                 });
             });
             logger.info("Starting WebSocket Server!");

@@ -1,7 +1,6 @@
 package com.noahhusby.terrabungee.controller.services;
 
 import com.noahhusby.terrabungee.api.ServiceIntent;
-import com.noahhusby.terrabungee.api.services.ITerraBungeeService;
 import com.noahhusby.terrabungee.api.services.ServiceStatus;
 import com.noahhusby.terrabungee.api.services.TerraBungeeService;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
@@ -9,7 +8,7 @@ import com.noahhusby.terrabungee.controller.discord.DiscordManager;
 import com.noahhusby.terrabungee.controller.discord.embeds.ServiceOfflineEmbed;
 import com.noahhusby.terrabungee.controller.discord.embeds.ServiceReconnectedEmbed;
 import com.noahhusby.terrabungee.controller.network.C2S.C2SInstanceUpdatePacket;
-import com.noahhusby.terrabungee.controller.network.TerraBungeeNetworkManager;
+import com.noahhusby.terrabungee.controller.network.NetworkManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class ServiceChecker implements Runnable {
 
         for(TerraBungeeService service : ServiceManager.getInstance().getServices()) {
             if(service.getIntents().contains(ServiceIntent.INSTANCE_UPDATE)) {
-                TerraBungeeNetworkManager.getInstance().send(new C2SInstanceUpdatePacket(service));
+                NetworkManager.getInstance().send(new C2SInstanceUpdatePacket(service));
             }
         }
     }
