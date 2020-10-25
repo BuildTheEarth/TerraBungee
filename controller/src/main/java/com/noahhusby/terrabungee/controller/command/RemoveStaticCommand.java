@@ -29,7 +29,7 @@ public class RemoveStaticCommand implements ICommand {
         }
 
         if(remove != null) {
-            InstanceManager.getInstance().removeStaticInstance(id);
+            InstanceManager.getInstance().removeStaticInstance(null, id);
             TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.GREEN, "Successfully removed static instance "),
                     new TextComponent(ConsoleColor.BLUE, id));
             return;

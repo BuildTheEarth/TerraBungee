@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Noah Husby
+ * TerraBungeeProxy - ListInstanceFragment.java
+ */
+
 package com.noahhusby.terrabungee.proxy.commands.fragments.instance;
 
 import com.noahhusby.terrabungee.api.TerraBungee;

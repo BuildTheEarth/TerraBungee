@@ -1,8 +1,6 @@
 /*
- * TerraBungee - Proxy
- * Copyright (c) 2020 Saghetti & Noah Husby
- *
- * ConfigHandler.java
+ * Copyright (c) 2020 Noah Husby
+ * TerraBungeeProxy - ConfigHandler.java
  */
 
 package com.noahhusby.terrabungee.proxy.config;

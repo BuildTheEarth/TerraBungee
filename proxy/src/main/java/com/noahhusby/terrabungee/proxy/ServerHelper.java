@@ -1,8 +1,6 @@
 /*
- * TerraBungee - Proxy
- * Copyright (c) 2020 Saghetti & Noah Husby
- *
- * ServerHelper.java
+ * Copyright (c) 2020 Noah Husby
+ * TerraBungeeProxy - ServerHelper.java
  */
 
 package com.noahhusby.terrabungee.proxy;

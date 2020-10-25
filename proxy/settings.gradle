@@ -1,1 +1,6 @@
-rootProject.name = 'TerraBungee-Proxy'
+/*
+ * Copyright (c) 2020 Noah Husby
+ * TerraBungeeProxy - settings.gradle
+ */
+
+rootProject.name = 'TerraBungeeProxy'

@@ -33,6 +33,6 @@ public class AddStaticCommand implements ICommand {
         TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.GREEN, "Successfully added static instance "),
                 new TextComponent(ConsoleColor.BLUE, id), new TextComponent(ConsoleColor.GREEN, " with address "),
                         new TextComponent(ConsoleColor.BLUE, address));
-        InstanceManager.getInstance().addStaticInstance(id, address);
+        InstanceManager.getInstance().addStaticInstance(null, id, address);
     }
 }

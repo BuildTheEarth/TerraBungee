@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Noah Husby
+ * TerraBungeeProxy - Command.java
+ */
+
 package com.noahhusby.terrabungee.proxy.commands;
 
 import net.md_5.bungee.api.CommandSender;

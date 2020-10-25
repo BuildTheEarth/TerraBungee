@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Noah Husby
+ * TerraBungeeProxy - Constants.java
+ */
+
 package com.noahhusby.terrabungee.proxy;
 
 public class Constants {

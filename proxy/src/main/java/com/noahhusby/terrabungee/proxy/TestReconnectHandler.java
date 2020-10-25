@@ -1,8 +1,6 @@
 /*
- * TerraBungee - Proxy
- * Copyright (c) 2020 Saghetti & Noah Husby
- *
- * TestReconnectHandler.java
+ * Copyright (c) 2020 Noah Husby
+ * TerraBungeeProxy - TestReconnectHandler.java
  */
 
 package com.noahhusby.terrabungee.proxy;

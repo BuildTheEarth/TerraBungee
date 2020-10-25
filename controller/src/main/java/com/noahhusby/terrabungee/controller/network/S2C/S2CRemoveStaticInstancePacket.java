@@ -10,6 +10,7 @@ import com.noahhusby.terrabungee.controller.network.Response;
 import com.noahhusby.terrabungee.controller.network.ServicePacket;
 import com.noahhusby.terrabungee.controller.network.NetworkManager;
 import com.noahhusby.terrabungee.controller.services.InstanceManager;
+import com.noahhusby.terrabungee.controller.services.ServiceManager;
 import org.json.simple.JSONObject;
 
 public class S2CRemoveStaticInstancePacket implements IS2CPacket {
@@ -22,7 +23,7 @@ public class S2CRemoveStaticInstancePacket implements IS2CPacket {
     public void onMessage(ServicePacket servicePacket, JSONObject data, Response response) {
         for(Instance i : InstanceManager.getInstance().getInstances()) {
             if(i.getId().equalsIgnoreCase((String) data.get("id"))) {
-                InstanceManager.getInstance().removeStaticInstance((String) data.get("id"));
+                InstanceManager.getInstance().removeStaticInstance(ServiceManager.getInstance().getService(servicePacket.getID()), (String) data.get("id"));
                 TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.GREEN, servicePacket.getID() + " removed static instance "),
                         new TextComponent(ConsoleColor.BLUE, (String) data.get("id")));
                 response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.SUCCESS;

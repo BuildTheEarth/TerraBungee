@@ -34,6 +34,14 @@ public class ServiceManager {
         return services;
     }
 
+    public int getTotalDisconnectedServices() {
+        int x = 0;
+        for(TerraBungeeService s : services)
+            if(s.getStatus() == ServiceStatus.LOST_CONNECTION) x++;
+
+        return x;
+    }
+
     /**
      * Gets all servers created of a certain type regardless of state (unless discarded)
      * @param type The type of service

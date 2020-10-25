@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Noah Husby
+ * TerraBungeeProxy - TerraBungeeAdminCommand.java
+ */
+
 package com.noahhusby.terrabungee.proxy.commands;
 
 import com.noahhusby.terrabungee.proxy.chat.ChatHelper;

@@ -1,11 +1,11 @@
 package com.noahhusby.terrabungee.controller.services;
 
 import com.google.gson.annotations.Expose;
-import com.noahhusby.terrabungee.api.services.Instance;
-import com.noahhusby.terrabungee.api.services.ServiceStatus;
-import com.noahhusby.terrabungee.api.services.ServiceType;
-import com.noahhusby.terrabungee.api.services.TerraBungeeService;
+import com.noahhusby.terrabungee.api.services.*;
 import com.noahhusby.terrabungee.controller.config.ConfigHandler;
+import com.noahhusby.terrabungee.controller.discord.DiscordManager;
+import com.noahhusby.terrabungee.controller.discord.embeds.StaticInstanceAddedEmbed;
+import com.noahhusby.terrabungee.controller.discord.embeds.StaticInstanceRemovedEmbed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +29,11 @@ public class InstanceManager {
     @Expose
     public List<StorableStaticInstance> storableStaticInstances = new ArrayList<>();
 
-    public boolean addStaticInstance(String id, String address) {
+    public boolean addStaticInstance(ITerraBungeeService service, String id, String address) {
         for(StorableStaticInstance s : storableStaticInstances)
             if(s.id.equalsIgnoreCase(id)) return false;
 
+        DiscordManager.getInstance().send(new StaticInstanceAddedEmbed(service, id));
         storableStaticInstances.add(new StorableStaticInstance(id, address));
 
         updateInstances();
@@ -40,7 +41,7 @@ public class InstanceManager {
         return true;
     }
 
-    public boolean removeStaticInstance(String id) {
+    public boolean removeStaticInstance(ITerraBungeeService service, String id) {
         boolean removed = false;
         List<StorableStaticInstance> temp = new ArrayList<>();
         for(StorableStaticInstance s : storableStaticInstances)
@@ -52,6 +53,9 @@ public class InstanceManager {
 
         for(StorableStaticInstance s : temp)
             storableStaticInstances.remove(s);
+
+        if(removed)
+            DiscordManager.getInstance().send(new StaticInstanceRemovedEmbed(service, id));
 
         updateInstances();
         ConfigHandler.getInstance().saveStaticInstances();

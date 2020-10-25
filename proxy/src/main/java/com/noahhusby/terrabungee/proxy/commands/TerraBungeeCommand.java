@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020 Noah Husby
+ * TerraBungeeProxy - TerraBungeeCommand.java
+ */
+
 package com.noahhusby.terrabungee.proxy.commands;
 
 import com.noahhusby.terrabungee.proxy.Constants;
