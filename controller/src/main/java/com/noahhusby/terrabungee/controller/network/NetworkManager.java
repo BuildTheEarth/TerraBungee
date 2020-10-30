@@ -15,10 +15,7 @@
 package com.noahhusby.terrabungee.controller.network;
 
 import com.noahhusby.terrabungee.controller.network.C2S.C2SResponsePacket;
-import com.noahhusby.terrabungee.controller.network.S2C.S2CAddStaticInstancePacket;
-import com.noahhusby.terrabungee.controller.network.S2C.S2CKeepAlivePacket;
-import com.noahhusby.terrabungee.controller.network.S2C.S2CRemoveStaticInstancePacket;
-import com.noahhusby.terrabungee.controller.network.S2C.S2CResponsePacket;
+import com.noahhusby.terrabungee.controller.network.S2C.*;
 import io.javalin.websocket.WsContext;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -42,6 +39,7 @@ public class NetworkManager {
         registerServicePacket(new S2CResponsePacket());
         registerServicePacket(new S2CAddStaticInstancePacket());
         registerServicePacket(new S2CRemoveStaticInstancePacket());
+        registerServicePacket(new S2CServiceMessagePacket());
     }
 
     private void registerServicePacket(IS2CPacket packet) {
@@ -77,6 +75,7 @@ public class NetworkManager {
 
     public void send(IC2SPacket packet) {
         ServicePacket servicePacket = packet.getServicePacket();
+        if(servicePacket == null) return;
         JSONObject payload = new JSONObject();
         payload.put("type", packet.getID());
         payload.put("id", servicePacket.getID());

@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.Maps;
 
-import com.noahhusby.terrabungee.api.NetworkManager;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
@@ -24,7 +23,6 @@ import com.noahhusby.terrabungee.api.services.ServiceType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
@@ -79,10 +77,7 @@ public class TerraBungeeProxyMain extends Plugin implements Listener {
 
 	@EventHandler
 	public void onProxyJoin(PostLoginEvent e) {
-		for(Map.Entry<String, ServerInfo> s : ProxyServer.getInstance().getServers().entrySet()) {
-			e.getPlayer().connect(s.getValue(), ServerConnectEvent.Reason.JOIN_PROXY);
-			return;
-		}
+		e.getPlayer().setReconnectServer(ProxyServer.getInstance().getServerInfo(ConfigHandler.queueServer));
 	}
 	
 	@Override

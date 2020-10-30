@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.noahhusby'
-version '1.0'
+version '1.0.1'
 mainClassName = 'com.noahhusby.terrabungee.controller.TerraBungeeControllerApplication'
 
 repositories {

@@ -1,0 +1,37 @@
+package com.noahhusby.terrabungee.controller.network.C2S;
+
+import com.noahhusby.terrabungee.api.Constants;
+import com.noahhusby.terrabungee.controller.network.IC2SPacket;
+import com.noahhusby.terrabungee.controller.network.ServicePacket;
+import com.noahhusby.terrabungee.controller.services.ServiceManager;
+import org.json.simple.JSONObject;
+
+public class C2SServiceMessagePacket implements IC2SPacket {
+
+    private final String from;
+    private final String to;
+    private final String message;
+
+    public C2SServiceMessagePacket(String from, String to, String message) {
+        this.from = from;
+        this.to = to;
+        this.message = message;
+    }
+
+    @Override
+    public String getID() {
+        return Constants.serviceMessageID;
+    }
+
+    @Override
+    public JSONObject getMessage(JSONObject data) {
+        data.put("message", message);
+        data.put("from", from);
+        return data;
+    }
+
+    @Override
+    public ServicePacket getServicePacket() {
+        return ServicePacket.fromService(ServiceManager.getInstance().getService(to));
+    }
+}
