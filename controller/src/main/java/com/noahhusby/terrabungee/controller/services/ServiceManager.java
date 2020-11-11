@@ -134,6 +134,8 @@ public class ServiceManager {
     public TerraBungeeService createService(ServiceType type, String ID) {
         if(type == ServiceType.PROXY) {
             return createService(new Proxy(ID));
+        } else if(type == ServiceType.CUSTOM) {
+            return createService(new Custom(ID));
         }
 
         return null;

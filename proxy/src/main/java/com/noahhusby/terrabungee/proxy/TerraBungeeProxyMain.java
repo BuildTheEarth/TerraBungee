@@ -13,6 +13,11 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.Maps;
 
+import com.noahhusby.terrabungee.api.events.EventListener;
+import com.noahhusby.terrabungee.api.events.controller.ControllerConnectedEvent;
+import com.noahhusby.terrabungee.api.events.service.InstanceUpdateEvent;
+import com.noahhusby.terrabungee.api.network.PacketResponse;
+import com.noahhusby.terrabungee.api.network.Response;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
@@ -22,10 +27,13 @@ import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.api.services.ServiceType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
+import org.json.simple.JSONObject;
 
 public class TerraBungeeProxyMain extends Plugin implements Listener {
     private static TerraBungeeProxyMain instance = null;
@@ -41,21 +49,19 @@ public class TerraBungeeProxyMain extends Plugin implements Listener {
 		ConfigHandler.getInstance();
 
 		tb = new TerraBungee(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
+		tb.setAutoReconnect(true);
+		tb.connect();
 		tb.enableIntent(ServiceIntent.INSTANCE_UPDATE);
 
-		getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
-		getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
-
-		getProxy().getScheduler().schedule(this, new Runnable() {
+		tb.addListener(new EventListener() {
 			@Override
-			public void run() {
-				List<Instance> instances = new ArrayList<>();
-				instances.addAll(tb.getInstanceManager().getInstances());
+			public void onInstanceUpdate(InstanceUpdateEvent event) {
+				List<Instance> instances = new ArrayList<>(event.getInstances());
 
 				Map<String, ServerInfo> removeServerInfo = Maps.newHashMap();
 				removeServerInfo.putAll(ProxyServer.getInstance().getServers());
 
-				for(Instance i : tb.getInstanceManager().getInstances()) {
+				for(Instance i : event.getInstances()) {
 					for(Map.Entry<String, ServerInfo> s : ProxyServer.getInstance().getServers().entrySet()) {
 						if(s.getKey().equalsIgnoreCase(i.getId())) {
 							removeServerInfo.remove(s.getKey(), s.getValue());
@@ -72,17 +78,22 @@ public class TerraBungeeProxyMain extends Plugin implements Listener {
 					ServerHelper.removeServer(s.getKey());
 				}
 			}
-		}, 0, 2, TimeUnit.SECONDS);
+		});
+
+		getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
+		getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
 	}
 
 	@EventHandler
-	public void onProxyJoin(PostLoginEvent e) {
-		e.getPlayer().setReconnectServer(ProxyServer.getInstance().getServerInfo(ConfigHandler.queueServer));
+	public void onProxyJoin(ServerConnectEvent e) {
+		if(e.getReason() == ServerConnectEvent.Reason.JOIN_PROXY)
+			e.getPlayer().connect(ProxyServer.getInstance().getServerInfo(ConfigHandler.queueServer));
 	}
 	
 	@Override
 	public void onDisable() {
 		instance = null;
+		tb.discard();
 	}
 	
 	public static TerraBungeeProxyMain getInstance() {

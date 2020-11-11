@@ -40,6 +40,7 @@ public class NetworkManager {
         registerServicePacket(new S2CAddStaticInstancePacket());
         registerServicePacket(new S2CRemoveStaticInstancePacket());
         registerServicePacket(new S2CServiceMessagePacket());
+        registerServicePacket(new S2CSetServiceStatusPacket());
     }
 
     private void registerServicePacket(IS2CPacket packet) {
