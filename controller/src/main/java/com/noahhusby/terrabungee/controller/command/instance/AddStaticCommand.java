@@ -1,5 +1,6 @@
-package com.noahhusby.terrabungee.controller.command;
+package com.noahhusby.terrabungee.controller.command.instance;
 
+import com.noahhusby.terrabungee.controller.command.ICommand;
 import com.noahhusby.terrabungee.controller.console.ConsoleColor;
 import com.noahhusby.terrabungee.controller.console.TerraBungeeConsole;
 import com.noahhusby.terrabungee.controller.console.TextComponent;
@@ -10,6 +11,11 @@ public class AddStaticCommand implements ICommand {
     @Override
     public String getName() {
         return "addstatic";
+    }
+
+    @Override
+    public String getPurpose() {
+        return "Add a static instance";
     }
 
     @Override

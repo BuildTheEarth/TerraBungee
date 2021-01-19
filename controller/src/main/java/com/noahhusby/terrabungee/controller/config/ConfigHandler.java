@@ -35,6 +35,12 @@ public class ConfigHandler {
     public static String host;
     public static int port;
 
+    public static String sqlHost;
+    public static int sqlPort;
+    public static String sqlUser;
+    public static String sqlPassword;
+    public static String sqlDb;
+
     public static String botToken;
     public static String guildID;
     public static String channelID;
@@ -54,6 +60,17 @@ public class ConfigHandler {
         cat("General", "General settings for the TerraBungee Controller");
         host = config.getString(prop("Host"), category, "127.0.0.1", "The IP address that the controller should run on.");
         port = config.getInt(prop("Port"), category, 7000, 0, 65535, "The port that the controller should run on.");
+
+        order();
+
+        cat("MySQL Database", "Settings for the MySQL Database");
+        sqlHost = config.getString(prop("Host"), category, "127.0.0.1", "The host IP for the database.");
+        sqlPort = config.getInt(prop("Port"), category, 3306, 0, 65535,"The port for the database.");
+        sqlUser = config.getString(prop("Username"), category, "", "The username for the database.");
+        sqlPassword = config.getString(prop("Password"), category, "", "The password for the database.");
+        sqlDb = config.getString(prop("Database"), category, "", "The name of the database.");
+
+        order();
 
         cat("Discord", "Settings for the discord bot");
         botToken = config.getString(prop("Bot Token"), category, "", "The token of the discord bot.");

@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.Maps;
 
+import com.google.gson.Gson;
 import com.noahhusby.terrabungee.api.events.EventListener;
 import com.noahhusby.terrabungee.api.events.controller.ControllerConnectedEvent;
 import com.noahhusby.terrabungee.api.events.service.InstanceUpdateEvent;
@@ -37,6 +38,7 @@ import org.json.simple.JSONObject;
 
 public class TerraBungeeProxyMain extends Plugin implements Listener {
     private static TerraBungeeProxyMain instance = null;
+    public static Gson GSON = new Gson();
     public static TerraBungee tb;
     private Logger logger;
 
@@ -71,10 +73,12 @@ public class TerraBungeeProxyMain extends Plugin implements Listener {
 				}
 
 				for(Instance i : instances) {
+					if(i.getId().equals("Hub")) continue;
 					ServerHelper.addServer(i.getId(), i.getAddress());
 				}
 
 				for(Map.Entry<String, ServerInfo> s : removeServerInfo.entrySet()) {
+					if(s.getValue().getName().equals("Hub")) continue;
 					ServerHelper.removeServer(s.getKey());
 				}
 			}
@@ -86,7 +90,7 @@ public class TerraBungeeProxyMain extends Plugin implements Listener {
 
 	@EventHandler
 	public void onProxyJoin(ServerConnectEvent e) {
-		if(e.getReason() == ServerConnectEvent.Reason.JOIN_PROXY)
+		if(e.getReason() == ServerConnectEvent.Reason.JOIN_PROXY && !ConfigHandler.queueServer.equals(""))
 			e.getPlayer().connect(ProxyServer.getInstance().getServerInfo(ConfigHandler.queueServer));
 	}
 	

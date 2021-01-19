@@ -6,10 +6,10 @@
  */
 package com.noahhusby.terrabungee.controller.network;
 
-import org.json.simple.JSONObject;
+import com.google.gson.JsonObject;
 
 public interface IC2SPacket {
     String getID();
-    JSONObject getMessage(JSONObject data);
+    void getMessage(JsonObject data);
     ServicePacket getServicePacket();
 }

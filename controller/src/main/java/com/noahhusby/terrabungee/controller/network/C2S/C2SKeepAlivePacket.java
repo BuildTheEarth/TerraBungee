@@ -1,12 +1,12 @@
 package com.noahhusby.terrabungee.controller.network.C2S;
 
+import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.api.Constants;
 import com.noahhusby.terrabungee.api.services.TerraBungeeService;
 import com.noahhusby.terrabungee.controller.network.IC2SPacket;
 import com.noahhusby.terrabungee.controller.network.ServicePacket;
 import com.noahhusby.terrabungee.controller.services.InstanceManager;
 import com.noahhusby.terrabungee.controller.services.ServiceManager;
-import org.json.simple.JSONObject;
 
 import javax.swing.*;
 
@@ -24,11 +24,10 @@ public class C2SKeepAlivePacket implements IC2SPacket {
     }
 
     @Override
-    public JSONObject getMessage(JSONObject data) {
-        data.put("version", com.noahhusby.terrabungee.controller.Constants.version);
-        data.put("total_services", ServiceManager.getInstance().getServices().size());
-        data.put("total_disconnected_services", ServiceManager.getInstance().getTotalDisconnectedServices());
-        return data;
+    public void getMessage(JsonObject data) {
+        data.addProperty("version", com.noahhusby.terrabungee.controller.Constants.version);
+        data.addProperty("total_services", ServiceManager.getInstance().getServices().size());
+        data.addProperty("total_disconnected_services", ServiceManager.getInstance().getTotalDisconnectedServices());
     }
 
     @Override

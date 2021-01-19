@@ -1,5 +1,12 @@
 package com.noahhusby.terrabungee.controller.command;
 
+import com.noahhusby.terrabungee.controller.command.controller.HelpCommand;
+import com.noahhusby.terrabungee.controller.command.controller.StopCommand;
+import com.noahhusby.terrabungee.controller.command.instance.AddStaticCommand;
+import com.noahhusby.terrabungee.controller.command.instance.DefaultServerCommand;
+import com.noahhusby.terrabungee.controller.command.instance.ListStaticCommand;
+import com.noahhusby.terrabungee.controller.command.instance.RemoveStaticCommand;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,22 +19,27 @@ public class CommandManager {
     }
 
     private CommandManager() {
-        registerCommand(new StopCommand());
-        registerCommand(new AddStaticCommand());
-        registerCommand(new RemoveStaticCommand());
-        registerCommand(new ListStaticCommand());
-        registerCommand(new DefaultServerCommand());
+        register(new HelpCommand());
+        register(new StopCommand());
+        register(new AddStaticCommand());
+        register(new RemoveStaticCommand());
+        register(new ListStaticCommand());
+        register(new DefaultServerCommand());
     }
 
-    private final List<ICommand> registeredCommands = new ArrayList<>();
+    private final List<ICommand> commands = new ArrayList<>();
 
-    private void registerCommand(ICommand command) {
-        registeredCommands.add(command);
+    private void register(ICommand command) {
+        commands.add(command);
+    }
+
+    public List<ICommand> getCommands() {
+        return commands;
     }
 
     public boolean execute(String input) {
         String[] args = input.split(" ");
-        for(ICommand c : registeredCommands) {
+        for(ICommand c : commands) {
             if(c.getName().equalsIgnoreCase(args[0])) {
                 c.execute(args);
                 return true;

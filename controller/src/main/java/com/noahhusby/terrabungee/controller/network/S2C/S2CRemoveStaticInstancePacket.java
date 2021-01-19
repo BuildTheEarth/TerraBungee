@@ -1,5 +1,6 @@
 package com.noahhusby.terrabungee.controller.network.S2C;
 
+import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.api.Constants;
 import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.controller.console.ConsoleColor;
@@ -11,7 +12,6 @@ import com.noahhusby.terrabungee.controller.network.ServicePacket;
 import com.noahhusby.terrabungee.controller.network.NetworkManager;
 import com.noahhusby.terrabungee.controller.services.InstanceManager;
 import com.noahhusby.terrabungee.controller.services.ServiceManager;
-import org.json.simple.JSONObject;
 
 public class S2CRemoveStaticInstancePacket implements IS2CPacket {
     @Override
@@ -20,12 +20,12 @@ public class S2CRemoveStaticInstancePacket implements IS2CPacket {
     }
 
     @Override
-    public void onMessage(ServicePacket servicePacket, JSONObject data, Response response) {
+    public void onMessage(ServicePacket servicePacket, JsonObject data, Response response) {
         for(Instance i : InstanceManager.getInstance().getInstances()) {
-            if(i.getId().equalsIgnoreCase((String) data.get("id"))) {
-                InstanceManager.getInstance().removeStaticInstance(ServiceManager.getInstance().getService(servicePacket.getID()), (String) data.get("id"));
+            if(i.getId().equalsIgnoreCase(data.get("id").getAsString())) {
+                InstanceManager.getInstance().removeStaticInstance(ServiceManager.getInstance().getService(servicePacket.getID()), data.get("id").getAsString());
                 TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.GREEN, servicePacket.getID() + " removed static instance "),
-                        new TextComponent(ConsoleColor.BLUE, (String) data.get("id")));
+                        new TextComponent(ConsoleColor.BLUE, data.get("id").getAsString()));
                 response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.SUCCESS;
                 NetworkManager.getInstance().respond(response);
                 return;

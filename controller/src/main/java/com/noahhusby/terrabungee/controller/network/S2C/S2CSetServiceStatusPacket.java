@@ -1,5 +1,6 @@
 package com.noahhusby.terrabungee.controller.network.S2C;
 
+import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.api.Constants;
 import com.noahhusby.terrabungee.api.services.ServiceStatus;
 import com.noahhusby.terrabungee.controller.discord.DiscordManager;
@@ -10,7 +11,6 @@ import com.noahhusby.terrabungee.controller.network.NetworkManager;
 import com.noahhusby.terrabungee.controller.network.Response;
 import com.noahhusby.terrabungee.controller.network.ServicePacket;
 import com.noahhusby.terrabungee.controller.services.ServiceManager;
-import org.json.simple.JSONObject;
 
 public class S2CSetServiceStatusPacket implements IS2CPacket {
     @Override
@@ -19,15 +19,15 @@ public class S2CSetServiceStatusPacket implements IS2CPacket {
     }
 
     @Override
-    public void onMessage(ServicePacket servicePacket, JSONObject data, Response response) {
-        String serviceID = (String) data.get("id");
+    public void onMessage(ServicePacket servicePacket, JsonObject data, Response response) {
+        String serviceID = data.get("id").getAsString();
         response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.ERROR;
         if(ServiceManager.getInstance().getService(serviceID) == null) {
             NetworkManager.getInstance().send(new C2SResponsePacket(response));
             return;
         }
 
-        int status = Math.round((long) data.get("status"));
+        int status = data.get("status").getAsInt();
         for(ServiceStatus s : ServiceStatus.values()) {
             if(s.getValue() == status) {
                 ServiceManager.getInstance().getService(serviceID).setStatus(s);

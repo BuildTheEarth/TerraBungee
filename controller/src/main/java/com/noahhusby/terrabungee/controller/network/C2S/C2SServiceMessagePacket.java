@@ -1,10 +1,10 @@
 package com.noahhusby.terrabungee.controller.network.C2S;
 
+import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.api.Constants;
 import com.noahhusby.terrabungee.controller.network.IC2SPacket;
 import com.noahhusby.terrabungee.controller.network.ServicePacket;
 import com.noahhusby.terrabungee.controller.services.ServiceManager;
-import org.json.simple.JSONObject;
 
 public class C2SServiceMessagePacket implements IC2SPacket {
 
@@ -24,10 +24,9 @@ public class C2SServiceMessagePacket implements IC2SPacket {
     }
 
     @Override
-    public JSONObject getMessage(JSONObject data) {
-        data.put("message", message);
-        data.put("from", from);
-        return data;
+    public void getMessage(JsonObject data) {
+        data.addProperty("message", message);
+        data.addProperty("from", from);
     }
 
     @Override

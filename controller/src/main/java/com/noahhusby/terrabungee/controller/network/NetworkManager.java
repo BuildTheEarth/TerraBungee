@@ -14,12 +14,11 @@
 
 package com.noahhusby.terrabungee.controller.network;
 
+import com.google.gson.JsonObject;
+import com.noahhusby.lib.data.JsonUtils;
 import com.noahhusby.terrabungee.controller.network.C2S.C2SResponsePacket;
 import com.noahhusby.terrabungee.controller.network.S2C.*;
 import io.javalin.websocket.WsContext;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,37 +56,35 @@ public class NetworkManager {
      * @param p Raw string data
      */
     public void onIncomingPayload(WsContext client, String p, String salt) {
-        try {
-            JSONObject payload = (JSONObject) new JSONParser().parse(p);
-            String id = (String) payload.get("id");
-            String type = (String) payload.get("type");
+        JsonObject payload = JsonUtils.parseString(p).getAsJsonObject();
+        String id = payload.get("id").getAsString();
+        String type = payload.get("type").getAsString();
 
-            ServicePacket sp = new ServicePacket(client, id);
-            JSONObject data = (JSONObject) payload.get("data");
+        ServicePacket sp = new ServicePacket(client, id);
+        JsonObject data = payload.getAsJsonObject("data");
 
-            for(IS2CPacket s : registeredServicePackets) {
-                if(s.getID().equalsIgnoreCase(type)) s.onMessage(sp, data, new Response(sp, salt));
-            }
-
-        } catch (ParseException e) {
-            e.printStackTrace();
+        for(IS2CPacket s : registeredServicePackets) {
+            if(s.getID().equalsIgnoreCase(type)) s.onMessage(sp, data, new Response(sp, salt));
         }
     }
 
     public void send(IC2SPacket packet) {
         ServicePacket servicePacket = packet.getServicePacket();
         if(servicePacket == null) return;
-        JSONObject payload = new JSONObject();
-        payload.put("type", packet.getID());
-        payload.put("id", servicePacket.getID());
-        payload.put("data", packet.getMessage(new JSONObject()));
 
-        servicePacket.getClient().send(payload.toJSONString());
+        JsonObject payload = new JsonObject();
+        payload.addProperty("type", packet.getID());
+        payload.addProperty("id", servicePacket.getID());
+
+        JsonObject packetData = new JsonObject();
+        packet.getMessage(packetData);
+        payload.addProperty("data", packetData.getAsString());
+
+        servicePacket.getClient().send(payload.getAsString());
     }
 
     public void respond(Response response) {
         if(response.salt == null) return;
         send(new C2SResponsePacket(response));
     }
-
 }

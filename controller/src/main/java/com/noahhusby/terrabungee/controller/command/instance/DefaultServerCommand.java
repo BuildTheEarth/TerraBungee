@@ -1,7 +1,8 @@
-package com.noahhusby.terrabungee.controller.command;
+package com.noahhusby.terrabungee.controller.command.instance;
 
 import com.noahhusby.terrabungee.api.services.ITerraBungeeService;
 import com.noahhusby.terrabungee.api.services.Instance;
+import com.noahhusby.terrabungee.controller.command.ICommand;
 import com.noahhusby.terrabungee.controller.console.ConsoleColor;
 import com.noahhusby.terrabungee.controller.console.TerraBungeeConsole;
 import com.noahhusby.terrabungee.controller.console.TextComponent;
@@ -11,6 +12,11 @@ public class DefaultServerCommand implements ICommand {
     @Override
     public String getName() {
         return "setdefault";
+    }
+
+    @Override
+    public String getPurpose() {
+        return "Set the default server/fleet upon joining";
     }
 
     @Override

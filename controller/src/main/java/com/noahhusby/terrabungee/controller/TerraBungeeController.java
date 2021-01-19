@@ -1,6 +1,7 @@
 package com.noahhusby.terrabungee.controller;
 
 import ch.qos.logback.classic.Level;
+import com.google.gson.Gson;
 import com.noahhusby.terrabungee.controller.config.ConfigHandler;
 import com.noahhusby.terrabungee.controller.console.TerraBungeeConsole;
 import com.noahhusby.terrabungee.controller.discord.DiscordManager;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class TerraBungeeController {
     private Javalin webServer;
     public static TerraBungeeConsole logger;
+    public static Gson GSON = new Gson();
 
     public static boolean isTerraBungeeRunning = true;
     public static boolean isTBQueuedForTermination = false;

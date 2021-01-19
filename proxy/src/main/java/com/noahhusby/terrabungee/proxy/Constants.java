@@ -8,6 +8,7 @@ package com.noahhusby.terrabungee.proxy;
 public class Constants {
     public static final String version = "1.0.2";
 
+    public static final String playerUpdatePacket = "player_update";
     public static final String playerMoveID = "move_player";
     public static final String proxyInitID = "proxy_init";
 }

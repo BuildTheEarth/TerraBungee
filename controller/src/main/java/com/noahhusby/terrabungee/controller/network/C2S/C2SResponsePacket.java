@@ -1,11 +1,11 @@
 package com.noahhusby.terrabungee.controller.network.C2S;
 
+import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.api.Constants;
 import com.noahhusby.terrabungee.api.services.ITerraBungeeService;
 import com.noahhusby.terrabungee.controller.network.IC2SPacket;
 import com.noahhusby.terrabungee.controller.network.Response;
 import com.noahhusby.terrabungee.controller.network.ServicePacket;
-import org.json.simple.JSONObject;
 
 public class C2SResponsePacket implements IC2SPacket {
 
@@ -21,11 +21,11 @@ public class C2SResponsePacket implements IC2SPacket {
     }
 
     @Override
-    public JSONObject getMessage(JSONObject data) {
-        data.put("salt", response.salt);
-        data.put("response_code", response.responseCode.name());
-        data.put("response", response.responseData.toJSONString());
-        return data;
+    public void getMessage(JsonObject data) {
+        data.addProperty("salt", response.salt);
+        data.addProperty("response_code", response.responseCode.name());
+        //TODO: Add Json Responses
+        data.addProperty("response", new JsonObject().getAsString());
     }
 
     @Override

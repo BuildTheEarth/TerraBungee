@@ -1,8 +1,8 @@
 package com.noahhusby.terrabungee.controller.network;
 
-import org.json.simple.JSONObject;
+import com.google.gson.JsonObject;
 
 public interface IS2CPacket {
     String getID();
-    void onMessage(ServicePacket servicePacket, JSONObject data, Response response);
+    void onMessage(ServicePacket servicePacket, JsonObject data, Response response);
 }
