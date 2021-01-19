@@ -17,8 +17,6 @@ import com.google.gson.Gson;
 import com.noahhusby.terrabungee.api.events.EventListener;
 import com.noahhusby.terrabungee.api.events.controller.ControllerConnectedEvent;
 import com.noahhusby.terrabungee.api.events.service.InstanceUpdateEvent;
-import com.noahhusby.terrabungee.api.network.PacketResponse;
-import com.noahhusby.terrabungee.api.network.Response;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
