@@ -23,7 +23,7 @@ public class S2CKeepAlivePacket implements IS2CPacket {
     @Override
     public void onMessage(ServicePacket servicePacket, JsonObject data, Response response) {
         ServiceType type = ServiceType.valueOf(data.get("type").getAsString());
-        List<ServiceIntent> intents = TerraBungeeUtil.arrayToIntents(TerraBungeeUtil.parse(data.get("intents").getAsString()).getAsJsonArray());
+        List<ServiceIntent> intents = TerraBungeeUtil.arrayToIntents(data.get("intents").getAsJsonArray());
         ServiceManager.getInstance().initService(type, servicePacket.getID(), servicePacket.getClient(), intents);
         ServiceManager.getInstance().getService(servicePacket.getID()).keepAlive();
 

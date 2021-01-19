@@ -16,6 +16,7 @@ package com.noahhusby.terrabungee.controller.network;
 
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.JsonUtils;
+import com.noahhusby.terrabungee.controller.TerraBungeeController;
 import com.noahhusby.terrabungee.controller.network.C2S.C2SResponsePacket;
 import com.noahhusby.terrabungee.controller.network.S2C.*;
 import io.javalin.websocket.WsContext;
@@ -45,22 +46,19 @@ public class NetworkManager {
         registeredServicePackets.add(packet);
     }
 
-    public void onIncomingPayload(WsContext client, String p) {
-        onIncomingPayload(client, p, null);
-    }
-
     /**
      * Will be executed upon incoming payload for Redis/Websocket
      * @param client Websocket client
      * @param p Raw string data
      */
-    public void onIncomingPayload(WsContext client, String p, String salt) {
+    public void onIncomingPayload(WsContext client, String p) {
         JsonObject payload = JsonUtils.parseString(p).getAsJsonObject();
+        String salt = payload.get("salt").getAsString();
         String id = payload.get("id").getAsString();
         String type = payload.get("type").getAsString();
 
         ServicePacket sp = new ServicePacket(client, id);
-        JsonObject data = payload.getAsJsonObject("data");
+        JsonObject data = payload.get("data").getAsJsonObject();
 
         for(IS2CPacket s : registeredServicePackets) {
             if(s.getID().equalsIgnoreCase(type)) {
@@ -81,8 +79,8 @@ public class NetworkManager {
 
         JsonObject packetData = new JsonObject();
         packet.getMessage(packetData);
-        payload.addProperty("data", packetData.getAsString());
+        payload.add("data", packetData);
 
-        servicePacket.getClient().send(payload.getAsString());
+        servicePacket.getClient().send(TerraBungeeController.GSON.toJson(payload));
     }
 }

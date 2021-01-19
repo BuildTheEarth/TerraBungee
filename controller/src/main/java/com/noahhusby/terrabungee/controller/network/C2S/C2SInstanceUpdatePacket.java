@@ -29,7 +29,7 @@ public class C2SInstanceUpdatePacket implements IC2SPacket {
     public void getMessage(JsonObject data) {
         JsonArray instanceArray = new JsonArray();
         for(Instance i : InstanceManager.getInstance().getInstances())
-            instanceArray.add(TerraBungeeController.GSON.toJson(i));
+            instanceArray.add(TerraBungeeController.GSON.toJsonTree(i));
 
         data.add("instances", instanceArray);
     }

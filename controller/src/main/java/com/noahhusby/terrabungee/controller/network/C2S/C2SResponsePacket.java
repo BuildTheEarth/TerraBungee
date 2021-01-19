@@ -28,6 +28,6 @@ public class C2SResponsePacket implements IC2SPacket {
 
     @Override
     public ServicePacket getServicePacket() {
-        return ServicePacket.fromService(response.getService());
+        return response.getServicePacket();
     }
 }

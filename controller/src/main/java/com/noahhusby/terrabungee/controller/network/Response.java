@@ -6,18 +6,18 @@ import com.noahhusby.terrabungee.controller.services.ServiceManager;
 import com.noahhusby.terrabungee.api.network.Response.ResponseCode;
 
 public class Response {
-    private final ITerraBungeeService service;
+    private final ServicePacket servicePacket;
     private final String salt;
     private ResponseCode responseCode = ResponseCode.SUCCESS;
     private JsonObject responseData = new JsonObject();
 
     public Response(ServicePacket sp, String salt) {
-        this.service = ServiceManager.getInstance().getService(sp.getID());
+        this.servicePacket = sp;
         this.salt = salt;
     }
 
-    public ITerraBungeeService getService() {
-        return service;
+    public ServicePacket getServicePacket() {
+        return servicePacket;
     }
 
     public String getSalt() {
