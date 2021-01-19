@@ -35,7 +35,6 @@ public class NetworkManager {
 
     private NetworkManager() {
         registerServicePacket(new S2CKeepAlivePacket());
-        registerServicePacket(new S2CResponsePacket());
         registerServicePacket(new S2CAddStaticInstancePacket());
         registerServicePacket(new S2CRemoveStaticInstancePacket());
         registerServicePacket(new S2CServiceMessagePacket());
@@ -64,7 +63,11 @@ public class NetworkManager {
         JsonObject data = payload.getAsJsonObject("data");
 
         for(IS2CPacket s : registeredServicePackets) {
-            if(s.getID().equalsIgnoreCase(type)) s.onMessage(sp, data, new Response(sp, salt));
+            if(s.getID().equalsIgnoreCase(type)) {
+                Response response = new Response(sp, salt);
+                s.onMessage(sp, data, response);
+                send(new C2SResponsePacket(response));
+            }
         }
     }
 
@@ -81,10 +84,5 @@ public class NetworkManager {
         payload.addProperty("data", packetData.getAsString());
 
         servicePacket.getClient().send(payload.getAsString());
-    }
-
-    public void respond(Response response) {
-        if(response.salt == null) return;
-        send(new C2SResponsePacket(response));
     }
 }

@@ -1,16 +1,42 @@
 package com.noahhusby.terrabungee.controller.network;
 
+import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.api.services.ITerraBungeeService;
 import com.noahhusby.terrabungee.controller.services.ServiceManager;
+import com.noahhusby.terrabungee.api.network.Response.ResponseCode;
 
 public class Response {
-    public final ITerraBungeeService service;
-    public final String salt;
-
-    public com.noahhusby.terrabungee.api.network.Response.ResponseCode responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.SUCCESS;
+    private final ITerraBungeeService service;
+    private final String salt;
+    private ResponseCode responseCode = ResponseCode.SUCCESS;
+    private JsonObject responseData = new JsonObject();
 
     public Response(ServicePacket sp, String salt) {
         this.service = ServiceManager.getInstance().getService(sp.getID());
         this.salt = salt;
+    }
+
+    public ITerraBungeeService getService() {
+        return service;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public ResponseCode getCode() {
+        return responseCode;
+    }
+
+    public void setCode(ResponseCode responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public JsonObject getData() {
+        return responseData;
+    }
+
+    public void setData(JsonObject responseData) {
+        this.responseData = responseData;
     }
 }

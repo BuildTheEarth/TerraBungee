@@ -26,13 +26,11 @@ public class S2CRemoveStaticInstancePacket implements IS2CPacket {
                 InstanceManager.getInstance().removeStaticInstance(ServiceManager.getInstance().getService(servicePacket.getID()), data.get("id").getAsString());
                 TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.GREEN, servicePacket.getID() + " removed static instance "),
                         new TextComponent(ConsoleColor.BLUE, data.get("id").getAsString()));
-                response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.SUCCESS;
-                NetworkManager.getInstance().respond(response);
+                response.setCode(com.noahhusby.terrabungee.api.network.Response.ResponseCode.SUCCESS);
                 return;
             }
         }
 
-        response.responseCode = com.noahhusby.terrabungee.api.network.Response.ResponseCode.ERROR;
-        NetworkManager.getInstance().respond(response);
+        response.setCode(com.noahhusby.terrabungee.api.network.Response.ResponseCode.ERROR);
     }
 }
