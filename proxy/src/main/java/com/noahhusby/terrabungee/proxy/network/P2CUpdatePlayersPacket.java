@@ -9,17 +9,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.api.TerraBungee;
 import com.noahhusby.terrabungee.api.network.IS2CPacket;
-import com.noahhusby.terrabungee.api.players.TBPlayer;
 import com.noahhusby.terrabungee.proxy.Constants;
-import com.noahhusby.terrabungee.proxy.TerraBungeeProxyMain;
-import org.json.simple.JSONArray;
-
-import java.util.List;
 
 public class P2CUpdatePlayersPacket implements IS2CPacket {
-    private final List<TBPlayer> players;
+    private final JsonArray players;
 
-    public P2CUpdatePlayersPacket(List<TBPlayer> players) {
+    public P2CUpdatePlayersPacket(JsonArray players) {
         this.players = players;
     }
 
@@ -30,10 +25,6 @@ public class P2CUpdatePlayersPacket implements IS2CPacket {
 
     @Override
     public void getMessage(TerraBungee terraBungee, JsonObject data) {
-        JsonArray array = new JsonArray();
-        for(TBPlayer player : players)
-            array.add(TerraBungeeProxyMain.GSON.toJsonTree(player));
-
-        data.add("players", array);
+        data.add("players", players);
     }
 }

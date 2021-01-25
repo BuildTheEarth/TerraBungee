@@ -10,14 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import com.google.common.collect.Maps;
 
 import com.google.gson.Gson;
 import com.noahhusby.terrabungee.api.events.EventListener;
-import com.noahhusby.terrabungee.api.events.controller.ControllerConnectedEvent;
 import com.noahhusby.terrabungee.api.events.service.InstanceUpdateEvent;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
@@ -29,17 +27,14 @@ import com.noahhusby.terrabungee.api.services.ServiceType;
 import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.event.LoginEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
-import org.json.simple.JSONObject;
 
-public class TerraBungeeProxyMain extends Plugin implements Listener {
+public class TerraBungeeProxy extends Plugin implements Listener {
 	public static ScheduledExecutorService threads = Executors.newScheduledThreadPool(4);
-    private static TerraBungeeProxyMain instance = null;
+    private static TerraBungeeProxy instance = null;
     public static Gson GSON = new Gson();
     public static TerraBungee tb;
     private Logger logger;
@@ -103,7 +98,7 @@ public class TerraBungeeProxyMain extends Plugin implements Listener {
 		tb.discard();
 	}
 	
-	public static TerraBungeeProxyMain getInstance() {
+	public static TerraBungeeProxy getInstance() {
 		return instance;
 	}
 }

@@ -6,7 +6,7 @@
 package com.noahhusby.terrabungee.proxy.commands.fragments.instance;
 
 import com.noahhusby.terrabungee.api.services.Instance;
-import com.noahhusby.terrabungee.proxy.TerraBungeeProxyMain;
+import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.chat.ChatHelper;
 import com.noahhusby.terrabungee.proxy.chat.TextElement;
 import com.noahhusby.terrabungee.proxy.commands.ICommandFragment;
@@ -21,7 +21,7 @@ public class InstanceInfoFragment implements ICommandFragment {
             return;
         }
 
-        for(Instance i : TerraBungeeProxyMain.tb.getInstanceManager().getInstances())
+        for(Instance i : TerraBungeeProxy.tb.getInstanceManager().getInstances())
             if(i.getId().equalsIgnoreCase(args[0])) {
                 sender.sendMessage(ChatHelper.makeTitleTextComponent(new TextElement("Instance [", ChatColor.GRAY),
                         new TextElement(i.getId(), ChatColor.BLUE), new TextElement("]:", ChatColor.GRAY)));

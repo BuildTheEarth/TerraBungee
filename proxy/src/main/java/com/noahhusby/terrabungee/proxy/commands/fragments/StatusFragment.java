@@ -7,20 +7,18 @@ package com.noahhusby.terrabungee.proxy.commands.fragments;
 
 import com.noahhusby.terrabungee.api.Controller;
 import com.noahhusby.terrabungee.proxy.Constants;
-import com.noahhusby.terrabungee.proxy.TerraBungeeProxyMain;
+import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.chat.ChatHelper;
 import com.noahhusby.terrabungee.proxy.chat.TextElement;
 import com.noahhusby.terrabungee.proxy.commands.ICommandFragment;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class StatusFragment implements ICommandFragment {
     @Override
     public void execute(CommandSender sender, String[] args) {
         sender.sendMessage(ChatHelper.makeTitleTextComponent(new TextElement("TerraBungee Status:", ChatColor.BLUE)));
-        Controller controller = TerraBungeeProxyMain.tb.getController();
+        Controller controller = TerraBungeeProxy.tb.getController();
         if(controller.isOnline()) {
             sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("Controller: ", ChatColor.GOLD),
                     new TextElement("Online", ChatColor.GREEN)));
@@ -39,7 +37,7 @@ public class StatusFragment implements ICommandFragment {
         sender.sendMessage();
         sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("This Proxy:", ChatColor.BLUE)));
         sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("ID: ", ChatColor.GRAY),
-                new TextElement(TerraBungeeProxyMain.tb.getId(), ChatColor.BLUE)));
+                new TextElement(TerraBungeeProxy.tb.getId(), ChatColor.BLUE)));
         sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("Version: ", ChatColor.GRAY),
                 new TextElement(Constants.version, ChatColor.BLUE)));
     }

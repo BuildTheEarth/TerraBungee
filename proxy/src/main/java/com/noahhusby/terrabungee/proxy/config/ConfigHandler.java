@@ -5,7 +5,7 @@
 
 package com.noahhusby.terrabungee.proxy.config;
 
-import com.noahhusby.terrabungee.proxy.TerraBungeeProxyMain;
+import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -27,7 +27,7 @@ public class ConfigHandler {
     public static String controllerUrl = "";
     public static String serviceID = "";
 
-    private final TerraBungeeProxyMain plugin = TerraBungeeProxyMain.getInstance();
+    private final TerraBungeeProxy plugin = TerraBungeeProxy.getInstance();
     private Configuration config;
 
     private ConfigHandler() {
