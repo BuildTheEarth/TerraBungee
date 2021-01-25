@@ -1,0 +1,49 @@
+/*
+ * Copyright (c) 2021 Noah Husby
+ * TerraBungeeProxy - TerraBungeeListener.java
+ */
+
+package com.noahhusby.terrabungee.proxy;
+
+import com.google.common.collect.Maps;
+import com.noahhusby.terrabungee.api.events.EventListener;
+import com.noahhusby.terrabungee.api.events.service.InstanceUpdateEvent;
+import com.noahhusby.terrabungee.api.services.Instance;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author Noah Husby
+ */
+public class TBListener extends EventListener {
+    @Override
+    public void onInstanceUpdate(InstanceUpdateEvent event) {
+        List<Instance> instances = new ArrayList<>(event.getInstances());
+
+        Map<String, ServerInfo> removeServerInfo = Maps.newHashMap();
+        removeServerInfo.putAll(ProxyServer.getInstance().getServers());
+
+        for(Instance i : event.getInstances()) {
+            for(Map.Entry<String, ServerInfo> s : ProxyServer.getInstance().getServers().entrySet()) {
+                if(s.getKey().equalsIgnoreCase(i.getId())) {
+                    removeServerInfo.remove(s.getKey(), s.getValue());
+                    instances.remove(i);
+                }
+            }
+        }
+
+        for(Instance i : instances) {
+            if(i.getId().equals("Hub")) continue;
+            ServerHelper.addServer(i.getId(), i.getAddress());
+        }
+
+        for(Map.Entry<String, ServerInfo> s : removeServerInfo.entrySet()) {
+            if(s.getValue().getName().equals("Hub")) continue;
+            ServerHelper.removeServer(s.getKey());
+        }
+    }
+}

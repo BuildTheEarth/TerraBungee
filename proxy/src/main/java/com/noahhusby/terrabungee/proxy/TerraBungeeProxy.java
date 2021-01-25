@@ -35,7 +35,6 @@ import net.md_5.bungee.event.EventHandler;
 public class TerraBungeeProxy extends Plugin implements Listener {
 	public static ScheduledExecutorService threads = Executors.newScheduledThreadPool(4);
     private static TerraBungeeProxy instance = null;
-    public static Gson GSON = new Gson();
     public static TerraBungee tb;
     private Logger logger;
 
@@ -53,34 +52,7 @@ public class TerraBungeeProxy extends Plugin implements Listener {
 		tb.connect();
 		tb.enableIntent(ServiceIntent.INSTANCE_UPDATE);
 
-		tb.addListener(new EventListener() {
-			@Override
-			public void onInstanceUpdate(InstanceUpdateEvent event) {
-				List<Instance> instances = new ArrayList<>(event.getInstances());
-
-				Map<String, ServerInfo> removeServerInfo = Maps.newHashMap();
-				removeServerInfo.putAll(ProxyServer.getInstance().getServers());
-
-				for(Instance i : event.getInstances()) {
-					for(Map.Entry<String, ServerInfo> s : ProxyServer.getInstance().getServers().entrySet()) {
-						if(s.getKey().equalsIgnoreCase(i.getId())) {
-							removeServerInfo.remove(s.getKey(), s.getValue());
-							instances.remove(i);
-						}
-					}
-				}
-
-				for(Instance i : instances) {
-					if(i.getId().equals("Hub")) continue;
-					ServerHelper.addServer(i.getId(), i.getAddress());
-				}
-
-				for(Map.Entry<String, ServerInfo> s : removeServerInfo.entrySet()) {
-					if(s.getValue().getName().equals("Hub")) continue;
-					ServerHelper.removeServer(s.getKey());
-				}
-			}
-		});
+		tb.addListener(new TBListener());
 
 		getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
 		getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
@@ -88,8 +60,10 @@ public class TerraBungeeProxy extends Plugin implements Listener {
 
 	@EventHandler
 	public void onProxyJoin(ServerConnectEvent e) {
+		/*
 		if(e.getReason() == ServerConnectEvent.Reason.JOIN_PROXY && !ConfigHandler.queueServer.equals(""))
 			e.getPlayer().connect(ProxyServer.getInstance().getServerInfo(ConfigHandler.queueServer));
+		 */
 	}
 	
 	@Override
