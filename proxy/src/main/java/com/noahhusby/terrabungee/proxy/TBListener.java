@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import com.noahhusby.terrabungee.api.events.EventListener;
 import com.noahhusby.terrabungee.api.events.service.InstanceUpdateEvent;
 import com.noahhusby.terrabungee.api.services.Instance;
+import com.noahhusby.terrabungee.proxy.util.ProxyUtil;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 
@@ -38,12 +39,12 @@ public class TBListener extends EventListener {
 
         for(Instance i : instances) {
             if(i.getId().equals("Hub")) continue;
-            ServerHelper.addServer(i.getId(), i.getAddress());
+            ProxyUtil.addServer(i.getId(), i.getAddress());
         }
 
         for(Map.Entry<String, ServerInfo> s : removeServerInfo.entrySet()) {
             if(s.getValue().getName().equals("Hub")) continue;
-            ServerHelper.removeServer(s.getKey());
+            ProxyUtil.removeServer(s.getKey());
         }
     }
 }

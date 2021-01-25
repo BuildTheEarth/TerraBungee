@@ -33,14 +33,13 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
 public class TerraBungeeProxy extends Plugin implements Listener {
-	public static ScheduledExecutorService threads = Executors.newScheduledThreadPool(4);
     private static TerraBungeeProxy instance = null;
     public static TerraBungee tb;
-    private Logger logger;
+    public static Logger LOGGER;
 
 	@Override
 	public void onEnable() {
-		logger = getLogger();
+		LOGGER = getLogger();
 		instance = this;
 
 		ProxyServer.getInstance().getPluginManager().registerListener(this, this);
