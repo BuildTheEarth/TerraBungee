@@ -29,6 +29,9 @@ dependencies {
     compileOnly 'net.md-5:bungeecord-api:1.12-SNAPSHOT'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     compile group: 'com.noahhusby', name: 'TerraBungeeAPI', version: '1.0.3'
+
+    compileOnly "org.projectlombok:lombok:1.18.16"
+    annotationProcessor "org.projectlombok:lombok:1.18.0"
 }
 
 processResources {
