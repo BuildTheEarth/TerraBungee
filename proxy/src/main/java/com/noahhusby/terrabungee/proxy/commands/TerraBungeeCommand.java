@@ -6,8 +6,7 @@
 package com.noahhusby.terrabungee.proxy.commands;
 
 import com.noahhusby.terrabungee.proxy.Constants;
-import com.noahhusby.terrabungee.proxy.chat.ChatHelper;
-import com.noahhusby.terrabungee.proxy.chat.TextElement;
+import com.noahhusby.terrabungee.proxy.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 
@@ -18,7 +17,7 @@ public class TerraBungeeCommand extends CommandFragmentManager {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        sender.sendMessage(ChatHelper.makeTitleTextComponent(new TextElement("TerraBungee v"+ Constants.version, ChatColor.RED),
-                new TextElement(" by ", ChatColor.GRAY), new TextElement("Noah Husby", ChatColor.BLUE)));
+        sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "TerraBungee v" + Constants.version,
+                ChatColor.GRAY, " by ", ChatColor.BLUE, "Noah Husby"));
     }
 }

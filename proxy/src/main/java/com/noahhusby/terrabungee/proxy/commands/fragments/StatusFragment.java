@@ -8,38 +8,30 @@ package com.noahhusby.terrabungee.proxy.commands.fragments;
 import com.noahhusby.terrabungee.api.Controller;
 import com.noahhusby.terrabungee.proxy.Constants;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
-import com.noahhusby.terrabungee.proxy.chat.ChatHelper;
-import com.noahhusby.terrabungee.proxy.chat.TextElement;
 import com.noahhusby.terrabungee.proxy.commands.ICommandFragment;
+import com.noahhusby.terrabungee.proxy.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 
 public class StatusFragment implements ICommandFragment {
     @Override
     public void execute(CommandSender sender, String[] args) {
-        sender.sendMessage(ChatHelper.makeTitleTextComponent(new TextElement("TerraBungee Status:", ChatColor.BLUE)));
+        sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "TerraBungee Status:"));
         Controller controller = TerraBungeeProxy.tb.getController();
         if(controller.isOnline()) {
-            sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("Controller: ", ChatColor.GOLD),
-                    new TextElement("Online", ChatColor.GREEN)));
-            sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("System Status: ", ChatColor.GOLD),
-                    new TextElement("Great", ChatColor.GREEN)));
-            sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("Total Services: ", ChatColor.GRAY),
-                    new TextElement(String.valueOf(controller.getTotalServices()), ChatColor.BLUE)));
-            sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("Total Disconnected Services: ", ChatColor.GRAY),
-                    new TextElement(String.valueOf(controller.getTotalDisconnectedServices()), ChatColor.BLUE)));
+            sender.sendMessage(ChatUtil.combine(ChatColor.GOLD, "Controller: ", ChatColor.GREEN, "Online"));
+            sender.sendMessage(ChatUtil.combine(ChatColor.GOLD, "System Status: ", ChatColor.GREEN, "Great"));
+            sender.sendMessage(ChatUtil.combine(ChatColor.GOLD, "Version: ", ChatColor.GREEN, controller.getVersion()));
+            sender.sendMessage(ChatUtil.combine(ChatColor.GRAY,  "Total Services: ", ChatColor.BLUE, controller.getTotalServices()));
+            sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "Total Disconnected Services: ", ChatColor.BLUE, controller.getTotalDisconnectedServices()));
         } else {
-            sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("Controller: ", ChatColor.GOLD),
-                    new TextElement("Disconnected", ChatColor.RED)));
-            sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("System Status: ", ChatColor.GOLD),
-                    new TextElement("Fatal", ChatColor.RED)));
+            sender.sendMessage(ChatUtil.combine(ChatColor.GOLD, "Controller: ", ChatColor.RED, "Disconnected"));
         }
+
         sender.sendMessage();
-        sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("This Proxy:", ChatColor.BLUE)));
-        sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("ID: ", ChatColor.GRAY),
-                new TextElement(TerraBungeeProxy.tb.getId(), ChatColor.BLUE)));
-        sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("Version: ", ChatColor.GRAY),
-                new TextElement(Constants.version, ChatColor.BLUE)));
+        sender.sendMessage(ChatUtil.combine(ChatColor.RED, "This Proxy:"));
+        sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "ID: ", ChatColor.BLUE, TerraBungeeProxy.tb.getId()));
+        sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "Version: ", ChatColor.BLUE, Constants.version));
     }
 
     @Override

@@ -5,10 +5,10 @@
 
 package com.noahhusby.terrabungee.proxy.commands;
 
-import com.noahhusby.terrabungee.proxy.chat.ChatHelper;
-import com.noahhusby.terrabungee.proxy.chat.TextElement;
+import com.noahhusby.terrabungee.proxy.util.ChatUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,26 +64,25 @@ public class FragmentManager {
     }
 
     private void displayCommands(CommandSender sender) {
-        sender.sendMessage(ChatHelper.makeTitleTextComponent(new TextElement(title+":", ChatColor.GRAY)));
+        sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, title + ":"));
         for(ICommandFragment f : commandFragments) {
 
-            List<TextElement> message = new ArrayList<>();
-            message.add(new TextElement(commandBase, ChatColor.YELLOW));
-            message.add(new TextElement(f.getName()+" ", ChatColor.GREEN));
+            List<TextComponent> message = new ArrayList<>();
+            message.add(ChatUtil.combine(ChatColor.YELLOW, commandBase));
+            message.add(ChatUtil.combine(ChatColor.GREEN, String.format("%s ", ChatColor.GREEN)));
             if(f.getArguments() != null) {
                 for(int x = 0; x < f.getArguments().length; x++) {
                     String argument = f.getArguments()[x];
                     if(argument.startsWith("<")) {
-                        message.add(new TextElement(argument+" ", ChatColor.RED));
+                        message.add(ChatUtil.combine(ChatColor.RED, String.format("%s ", argument)));
                     } else {
-                        message.add(new TextElement(argument+" ", ChatColor.GRAY));
+                        message.add(ChatUtil.combine(ChatColor.GRAY, String.format("%s ", argument)));
                     }
                 }
             }
-            message.add(new TextElement("- ", ChatColor.GRAY));
-            message.add(new TextElement(f.getPurpose(), ChatColor.BLUE));
 
-            sender.sendMessage(ChatHelper.makeTextComponent(message.toArray(new TextElement[message.size()])));
+            message.add(ChatUtil.combine(ChatColor.GRAY, "- ", ChatColor.BLUE, f.getPurpose()));
+            sender.sendMessage(ChatUtil.combine(message));
         }
     }
 }

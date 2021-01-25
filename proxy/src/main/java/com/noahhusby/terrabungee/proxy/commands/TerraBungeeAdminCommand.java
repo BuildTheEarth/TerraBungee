@@ -5,12 +5,9 @@
 
 package com.noahhusby.terrabungee.proxy.commands;
 
-import com.noahhusby.terrabungee.proxy.chat.ChatHelper;
-import com.noahhusby.terrabungee.proxy.chat.TextElement;
 import com.noahhusby.terrabungee.proxy.commands.fragments.InstanceFragment;
 import com.noahhusby.terrabungee.proxy.commands.fragments.StatusFragment;
-import com.noahhusby.terrabungee.proxy.commands.fragments.instance.ListInstanceFragment;
-import net.md_5.bungee.api.ChatColor;
+import com.noahhusby.terrabungee.proxy.util.ChatUtil;
 import net.md_5.bungee.api.CommandSender;
 
 public class TerraBungeeAdminCommand extends CommandFragmentManager {
@@ -26,7 +23,7 @@ public class TerraBungeeAdminCommand extends CommandFragmentManager {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(!hasAdmin(sender)) {
-            sender.sendMessage(ChatHelper.makeTextComponent(new TextElement("You don't have permission to run this command!", ChatColor.DARK_RED)));
+            sender.sendMessage(ChatUtil.getNoPermission());
             return;
         }
 

@@ -6,12 +6,14 @@
 package com.noahhusby.terrabungee.proxy.util;
 
 import com.noahhusby.terrabungee.proxy.Constants;
+import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * @author Noah Husby
  */
+@UtilityClass
 public class ChatUtil {
     public static TextComponent title() {
         return new TextComponent(Constants.prefix.replace("&","\u00A7"));
