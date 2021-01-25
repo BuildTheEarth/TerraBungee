@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class TerraBungeeController {
     private Javalin webServer;
     public static TerraBungeeConsole logger;
+    public static ScheduledExecutorService threads = Executors.newScheduledThreadPool(16);
     public static Gson GSON = new Gson();
 
     public static boolean isTerraBungeeRunning = true;

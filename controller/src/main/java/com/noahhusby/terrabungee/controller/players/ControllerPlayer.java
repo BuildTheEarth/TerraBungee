@@ -1,0 +1,53 @@
+package com.noahhusby.terrabungee.controller.players;
+
+import com.noahhusby.terrabungee.api.players.TBPlayer;
+import com.noahhusby.terrabungee.api.util.EventHashMap;
+
+import java.util.Map;
+import java.util.UUID;
+
+public class ControllerPlayer extends TBPlayer {
+    public ControllerPlayer(UUID uuid) {
+        super(uuid);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    public void setDiscordId(String id) {
+        this.discordId = id;
+    }
+
+    public void setProxy(String id) {
+        this.proxy = id;
+    }
+
+    public void setAttributes(EventHashMap<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+        if(!online) {
+            setServer(null);
+            setProxy(null);
+        }
+    }
+
+    public ControllerPlayer deepCopy() {
+        ControllerPlayer copy = new ControllerPlayer(getUniqueID());
+        copy.setOnline(online);
+        copy.setDiscordId(discordId);
+        copy.setName(name);
+        copy.setAttributes(attributes);
+        copy.setProxy(proxy);
+        copy.setServer(server);
+
+        return copy;
+    }
+}

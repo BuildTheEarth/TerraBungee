@@ -1,0 +1,93 @@
+package com.noahhusby.terrabungee.controller.players;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.noahhusby.lib.data.storage.StorageList;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+/**
+ * @author Noah Husby
+ */
+public class PlayerManager {
+    private static PlayerManager instance = null;
+    public static PlayerManager getInstance() {
+        return instance == null ? instance = new PlayerManager() : instance;
+    }
+
+    private PlayerManager() {
+    }
+
+    private final ExecutorService manipulationThread = Executors.newSingleThreadExecutor(
+            new ThreadFactoryBuilder().setNameFormat("player-manipulation-%d").build());
+
+    private final StorageList<ControllerPlayer> players = new StorageList<>(ControllerPlayer.class);
+    private Map<UUID, ControllerPlayer> playerRegistry = Maps.newHashMap();
+    private Map<UUID, ControllerPlayer> onlinePlayerRegistry = Maps.newHashMap();
+
+    public StorageList<ControllerPlayer> getPlayers() {
+        return players;
+    }
+
+    public Map<UUID, ControllerPlayer> getPlayersRegistry() {
+        return playerRegistry;
+    }
+
+    public Map<UUID, ControllerPlayer> getOnlinePlayerRegistry() {
+        return onlinePlayerRegistry;
+    }
+
+    public void proxyPlayerDrop(String id, List<ControllerPlayer> players) {
+        manipulate(ps -> {
+            Map<UUID, ControllerPlayer> proxyPlayers = Maps.newHashMap();
+            for(ControllerPlayer p : ps)
+                if(p.getProxy().equals(id))
+                    proxyPlayers.put(p.getUniqueID(), p);
+
+            proxyPlayers.forEach((uuid, controllerPlayer) -> controllerPlayer.setOnline(false));
+
+            for(ControllerPlayer p : players) {
+                ControllerPlayer player = proxyPlayers.get(p.getUniqueID());
+                if(player == null) {
+                    ps.add(p);
+                    continue;
+                }
+
+                player.setName(p.getName());
+                player.setServer(p.getServer());
+                player.setOnline(true);
+                player.setProxy(id);
+            }
+        });
+    }
+
+    private void manipulate(Consumer<StorageList<ControllerPlayer>> p) {
+        manipulationThread.submit(() -> p.accept(players));
+        manipulationThread.submit(() -> {
+            Map<UUID, ControllerPlayer> all = Maps.newHashMap();
+            Map<UUID, ControllerPlayer> online = Maps.newHashMap();
+
+            for(ControllerPlayer e : ImmutableList.copyOf(players)) {
+                if(all.containsKey(e.getUniqueID())) {
+                    players.remove(e);
+                } else {
+                    all.put(e.getUniqueID(), e.deepCopy());
+                    if(e.isOnline()) online.put(e.getUniqueID(), e.deepCopy());
+                }
+            }
+
+            playerRegistry = ImmutableMap.copyOf(all);
+            onlinePlayerRegistry = ImmutableMap.copyOf(online);
+        });
+    }
+}

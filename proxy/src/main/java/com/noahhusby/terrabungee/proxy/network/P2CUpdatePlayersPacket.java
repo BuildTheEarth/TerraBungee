@@ -5,6 +5,7 @@
 
 package com.noahhusby.terrabungee.proxy.network;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.api.TerraBungee;
 import com.noahhusby.terrabungee.api.network.IS2CPacket;
@@ -29,8 +30,10 @@ public class P2CUpdatePlayersPacket implements IS2CPacket {
 
     @Override
     public void getMessage(TerraBungee terraBungee, JsonObject data) {
-        JSONArray array = new JSONArray();
+        JsonArray array = new JsonArray();
         for(TBPlayer player : players)
-            array.add(TerraBungeeProxyMain.GSON.toJson(player));
+            array.add(TerraBungeeProxyMain.GSON.toJsonTree(player));
+
+        data.add("players", array);
     }
 }

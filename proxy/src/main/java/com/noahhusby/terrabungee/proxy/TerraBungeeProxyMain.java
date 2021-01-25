@@ -8,6 +8,8 @@ package com.noahhusby.terrabungee.proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -24,6 +26,7 @@ import com.noahhusby.terrabungee.api.ServiceIntent;
 import com.noahhusby.terrabungee.api.TerraBungee;
 import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.api.services.ServiceType;
+import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.LoginEvent;
@@ -35,6 +38,7 @@ import net.md_5.bungee.event.EventHandler;
 import org.json.simple.JSONObject;
 
 public class TerraBungeeProxyMain extends Plugin implements Listener {
+	public static ScheduledExecutorService threads = Executors.newScheduledThreadPool(4);
     private static TerraBungeeProxyMain instance = null;
     public static Gson GSON = new Gson();
     public static TerraBungee tb;
@@ -47,6 +51,7 @@ public class TerraBungeeProxyMain extends Plugin implements Listener {
 
 		ProxyServer.getInstance().getPluginManager().registerListener(this, this);
 		ConfigHandler.getInstance();
+		PlayerHandler.getInstance();
 
 		tb = new TerraBungee(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
 		tb.setAutoReconnect(true);

@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.JsonUtils;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
 import com.noahhusby.terrabungee.controller.network.C2S.C2SResponsePacket;
+import com.noahhusby.terrabungee.controller.network.P2C.P2CUpdatePlayersPacket;
 import com.noahhusby.terrabungee.controller.network.S2C.*;
 import io.javalin.websocket.WsContext;
 
@@ -40,6 +41,7 @@ public class NetworkManager {
         registerServicePacket(new S2CRemoveStaticInstancePacket());
         registerServicePacket(new S2CServiceMessagePacket());
         registerServicePacket(new S2CSetServiceStatusPacket());
+        registerServicePacket(new P2CUpdatePlayersPacket());
     }
 
     private void registerServicePacket(IS2CPacket packet) {
