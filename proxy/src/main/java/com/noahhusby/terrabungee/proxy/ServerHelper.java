@@ -7,6 +7,7 @@ package com.noahhusby.terrabungee.proxy;
 
 import java.net.InetSocketAddress;
 
+import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 
@@ -16,7 +17,7 @@ public class ServerHelper {
 			TerraBungeeProxy.getInstance().getLogger().info("Instance " + instanceId + " tried to be created but already existed?! Ignoring request.");
 			return;
 		}
-		InetSocketAddress inetSocketAddress = Utility.makeInetSocketAddressFromString(address);
+		InetSocketAddress inetSocketAddress = TerraBungeeUtil.makeInetSocketAddress(address);
 		ServerInfo serverInfo = ProxyServer.getInstance().constructServerInfo(
 			instanceId, inetSocketAddress,
 			"A TerraBungee Instance - " + instanceId, false
