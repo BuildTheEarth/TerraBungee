@@ -19,13 +19,13 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class ListInstanceFragment implements ICommandFragment {
     @Override
     public void execute(CommandSender sender, String[] args) {
-        TextComponent list = ChatUtil.titleAndCombine(ChatColor.RED, "Instances:");
+        TextComponent list = ChatUtil.titleAndCombine(ChatColor.RED, "Instances: ");
         boolean first = true;
         for(Instance i : TerraBungeeProxy.tb.getInstanceManager().getInstances()) {
             if(first) {
                 first = false;
             } else {
-                list.addExtra(ChatUtil.combine(", ", ChatColor.GRAY));
+                list.addExtra(ChatUtil.combine(ChatColor.GRAY, ", "));
             }
 
             TextComponent t = ChatUtil.combine((i.getInstanceType() == Instance.InstanceType.STATIC ?
@@ -34,6 +34,8 @@ public class ListInstanceFragment implements ICommandFragment {
             t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Get info about " + i.getId()).create()));
             list.addExtra(t);
         }
+
+        sender.sendMessage(list);
     }
 
     @Override

@@ -67,22 +67,22 @@ public class FragmentManager {
         sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, title + ":"));
         for(ICommandFragment f : commandFragments) {
 
-            List<TextComponent> message = new ArrayList<>();
-            message.add(ChatUtil.combine(ChatColor.YELLOW, commandBase));
-            message.add(ChatUtil.combine(ChatColor.GREEN, String.format("%s ", ChatColor.GREEN)));
+            TextComponent message = new TextComponent();
+            message.addExtra(ChatUtil.combine(ChatColor.YELLOW, commandBase));
+            message.addExtra(ChatUtil.combine(ChatColor.GREEN, String.format("%s ", f.getName())));
             if(f.getArguments() != null) {
                 for(int x = 0; x < f.getArguments().length; x++) {
                     String argument = f.getArguments()[x];
                     if(argument.startsWith("<")) {
-                        message.add(ChatUtil.combine(ChatColor.RED, String.format("%s ", argument)));
+                        message.addExtra(ChatUtil.combine(ChatColor.RED, String.format("%s ", argument)));
                     } else {
-                        message.add(ChatUtil.combine(ChatColor.GRAY, String.format("%s ", argument)));
+                        message.addExtra(ChatUtil.combine(ChatColor.GRAY, String.format("%s ", argument)));
                     }
                 }
             }
 
-            message.add(ChatUtil.combine(ChatColor.GRAY, "- ", ChatColor.BLUE, f.getPurpose()));
-            sender.sendMessage(ChatUtil.combine(message));
+            message.addExtra(ChatUtil.combine(ChatColor.GRAY, "- ", ChatColor.BLUE, f.getPurpose()));
+            sender.sendMessage(message);
         }
     }
 }
