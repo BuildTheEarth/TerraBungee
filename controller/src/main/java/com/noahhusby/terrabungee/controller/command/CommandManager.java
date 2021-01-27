@@ -25,6 +25,7 @@ public class CommandManager {
         register(new RemoveStaticCommand());
         register(new ListStaticCommand());
         register(new DefaultServerCommand());
+        register(new TestCommand());
     }
 
     private final List<ICommand> commands = new ArrayList<>();

@@ -49,15 +49,17 @@ public class PlayerManager {
 
     public void proxyPlayerDrop(String id, List<ControllerPlayer> players) {
         manipulate(ps -> {
-            Map<UUID, ControllerPlayer> proxyPlayers = Maps.newHashMap();
+            Map<UUID, ControllerPlayer> playerMap = Maps.newHashMap();
             for(ControllerPlayer p : ps)
-                if(p.getProxy().equals(id))
-                    proxyPlayers.put(p.getUniqueID(), p);
+                playerMap.put(p.getUniqueID(), p);
 
-            proxyPlayers.forEach((uuid, controllerPlayer) -> controllerPlayer.setOnline(false));
+            playerMap.forEach((uuid, controllerPlayer) -> {
+                if(controllerPlayer.getProxy() != null && controllerPlayer.getProxy().equals(id))
+                    controllerPlayer.setOnline(false);
+            });
 
             for(ControllerPlayer p : players) {
-                ControllerPlayer player = proxyPlayers.get(p.getUniqueID());
+                ControllerPlayer player = playerMap.get(p.getUniqueID());
                 if(player == null) {
                     ps.add(p);
                     continue;

@@ -39,6 +39,9 @@ public class ServiceChecker implements Runnable {
             if(service.getIntents().contains(ServiceIntent.INSTANCE_UPDATE)) {
                 NetworkManager.getInstance().send(new C2SInstanceUpdatePacket(service));
             }
+            if(service.getIntents().contains(ServiceIntent.ONLINE_PLAYER_UPDATE)) {
+                //TODO: Send player update packet
+            }
         }
     }
 }
