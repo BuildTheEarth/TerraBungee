@@ -42,6 +42,7 @@ public class NetworkManager {
         registerServicePacket(new S2CServiceMessagePacket());
         registerServicePacket(new S2CSetServiceStatusPacket());
         registerServicePacket(new P2CUpdatePlayersPacket());
+        registerServicePacket(new S2CRetrieveUncachedPlayerPacket());
     }
 
     private void registerServicePacket(IS2CPacket packet) {

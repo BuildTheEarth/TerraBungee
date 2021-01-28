@@ -19,6 +19,7 @@ import com.noahhusby.terrabungee.api.events.EventListener;
 import com.noahhusby.terrabungee.api.events.service.InstanceUpdateEvent;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
+import com.noahhusby.terrabungee.proxy.commands.Thing;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
 import com.noahhusby.terrabungee.api.ServiceIntent;
 import com.noahhusby.terrabungee.api.TerraBungee;
@@ -55,6 +56,7 @@ public class TerraBungeeProxy extends Plugin implements Listener {
 
 		getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
 		getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
+		getProxy().getPluginManager().registerCommand(this, new Thing());
 	}
 
 	@EventHandler

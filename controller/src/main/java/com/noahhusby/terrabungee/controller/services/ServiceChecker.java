@@ -1,5 +1,6 @@
 package com.noahhusby.terrabungee.controller.services;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.noahhusby.terrabungee.api.ServiceIntent;
 import com.noahhusby.terrabungee.api.services.ServiceStatus;
 import com.noahhusby.terrabungee.api.services.TerraBungeeService;
@@ -13,9 +14,15 @@ import com.noahhusby.terrabungee.controller.network.NetworkManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ServiceChecker implements Runnable {
+
+    private final ExecutorService serviceCheckerThreads = Executors.newFixedThreadPool(16,
+            new ThreadFactoryBuilder().setNameFormat("service-checker-%d").build());
     Map<String, ServiceStatus> serviceStatus = new HashMap<>();
+
     @Override
     public void run() {
         for(Map.Entry<String, ServiceStatus> s : serviceStatus.entrySet()) {
@@ -37,11 +44,15 @@ public class ServiceChecker implements Runnable {
         }
 
         for(TerraBungeeService service : ServiceManager.getInstance().getServices()) {
-            if(service.getIntents().contains(ServiceIntent.INSTANCE_UPDATE)) {
-                NetworkManager.getInstance().send(new C2SInstanceUpdatePacket(service));
-            }
-            if(service.getIntents().contains(ServiceIntent.ONLINE_PLAYER_UPDATE)) {
-                NetworkManager.getInstance().send(new C2SOnlinePlayerCacheHitPacket(service));
+            if(service.getStatus() == ServiceStatus.ONLINE) {
+                serviceCheckerThreads.execute(() -> {
+                    if(service.getIntents().contains(ServiceIntent.INSTANCE_UPDATE)) {
+                        NetworkManager.getInstance().send(new C2SInstanceUpdatePacket(service));
+                    }
+                    if(service.getIntents().contains(ServiceIntent.ONLINE_PLAYER_UPDATE)) {
+                        NetworkManager.getInstance().send(new C2SOnlinePlayerCacheHitPacket(service));
+                    }
+                });
             }
         }
     }
