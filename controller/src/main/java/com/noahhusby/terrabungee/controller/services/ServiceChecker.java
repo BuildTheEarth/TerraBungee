@@ -8,6 +8,7 @@ import com.noahhusby.terrabungee.controller.discord.DiscordManager;
 import com.noahhusby.terrabungee.controller.discord.embeds.ServiceOfflineEmbed;
 import com.noahhusby.terrabungee.controller.discord.embeds.ServiceReconnectedEmbed;
 import com.noahhusby.terrabungee.controller.network.C2S.C2SInstanceUpdatePacket;
+import com.noahhusby.terrabungee.controller.network.C2S.C2SOnlinePlayerCacheHitPacket;
 import com.noahhusby.terrabungee.controller.network.NetworkManager;
 
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class ServiceChecker implements Runnable {
                 NetworkManager.getInstance().send(new C2SInstanceUpdatePacket(service));
             }
             if(service.getIntents().contains(ServiceIntent.ONLINE_PLAYER_UPDATE)) {
-                //TODO: Send player update packet
+                NetworkManager.getInstance().send(new C2SOnlinePlayerCacheHitPacket(service));
             }
         }
     }

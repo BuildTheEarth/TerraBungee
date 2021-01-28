@@ -49,7 +49,7 @@ public class TerraBungeeProxy extends Plugin implements Listener {
 		tb = new TerraBungee(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
 		tb.setAutoReconnect(true);
 		tb.connect();
-		tb.enableIntent(ServiceIntent.INSTANCE_UPDATE);
+		tb.enableIntents(ServiceIntent.INSTANCE_UPDATE);
 
 		tb.addListener(new TBListener());
 

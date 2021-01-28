@@ -31,7 +31,7 @@ dependencies {
     compile group: 'com.noahhusby', name: 'TerraBungeeAPI', version: '1.0.3'
 
     compileOnly "org.projectlombok:lombok:1.18.16"
-    annotationProcessor "org.projectlombok:lombok:1.18.0"
+    annotationProcessor "org.projectlombok:lombok:1.18.16"
 }
 
 processResources {
