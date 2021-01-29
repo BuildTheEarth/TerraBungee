@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.JsonUtils;
 import com.noahhusby.terrabungee.api.Constants;
+import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.api.services.ITerraBungeeService;
 import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
@@ -29,7 +30,7 @@ public class C2SInstanceUpdatePacket implements IC2SPacket {
     public void getMessage(JsonObject data) {
         JsonArray instanceArray = new JsonArray();
         for(Instance i : InstanceManager.getInstance().getInstances())
-            instanceArray.add(TerraBungeeController.GSON.toJsonTree(i));
+            instanceArray.add(TerraBungeeUtil.GSON.toJsonTree(i));
 
         data.add("instances", instanceArray);
     }

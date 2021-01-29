@@ -1,12 +1,14 @@
 package com.noahhusby.terrabungee.controller.services;
 
 import com.noahhusby.terrabungee.api.ServiceIntent;
+import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.api.services.*;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
 import io.javalin.websocket.WsContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ServiceManager {
     private static ServiceManager instance;
@@ -19,7 +21,10 @@ public class ServiceManager {
     private List<TerraBungeeService> services = new ArrayList<>();
     private String defaultServer = "";
 
-    private ServiceManager() { }
+    private ServiceManager() {
+        TerraBungeeUtil.newSingleThreadScheduledExecutor("terrabungee-service-checker")
+                .scheduleAtFixedRate(new ServiceChecker(), 0, 2, TimeUnit.SECONDS);
+    }
 
     /**
      * Gets all services created regardless of state (unless discarded)

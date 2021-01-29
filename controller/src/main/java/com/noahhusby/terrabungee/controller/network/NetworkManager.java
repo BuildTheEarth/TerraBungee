@@ -16,6 +16,7 @@ package com.noahhusby.terrabungee.controller.network;
 
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.JsonUtils;
+import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
 import com.noahhusby.terrabungee.controller.network.C2S.C2SResponsePacket;
 import com.noahhusby.terrabungee.controller.network.P2C.P2CUpdatePlayersPacket;
@@ -85,6 +86,6 @@ public class NetworkManager {
         packet.getMessage(packetData);
         payload.add("data", packetData);
 
-        servicePacket.getClient().send(TerraBungeeController.GSON.toJson(payload));
+        servicePacket.getClient().send(TerraBungeeUtil.GSON.toJson(payload));
     }
 }
