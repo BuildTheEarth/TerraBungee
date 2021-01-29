@@ -4,7 +4,6 @@ import com.noahhusby.terrabungee.controller.command.CommandManager;
 import com.noahhusby.terrabungee.controller.command.ICommand;
 import com.noahhusby.terrabungee.controller.console.ConsoleColor;
 import com.noahhusby.terrabungee.controller.console.TerraBungeeConsole;
-import com.noahhusby.terrabungee.controller.console.TextComponent;
 
 public class HelpCommand implements ICommand {
     @Override
@@ -19,10 +18,10 @@ public class HelpCommand implements ICommand {
 
     @Override
     public void execute(String[] args) {
-        TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.RED, "Commands:"));
+        TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Commands:");
         for(ICommand command : CommandManager.getInstance().getCommands()) {
-            TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.YELLOW, command.getName()),
-                    new TextComponent(ConsoleColor.WHITE, " - "), new TextComponent(ConsoleColor.GREEN, command.getPurpose()));
+            TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW, command.getName(), ConsoleColor.WHITE, " - ",
+                    ConsoleColor.GREEN, command.getPurpose());
         }
 
     }

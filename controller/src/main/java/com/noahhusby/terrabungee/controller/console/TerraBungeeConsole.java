@@ -53,12 +53,10 @@ public class TerraBungeeConsole extends Logger {
         }
     }
 
-    public static void sendMessage(TextComponent... components) {
+    public static void sendMessage(Object... objects) {
         StringBuilder builder = new StringBuilder();
-        for(TextComponent t : components) {
-            builder.append(t.color.toString());
-            builder.append(t.text);
-            builder.append(ConsoleColor.RESET.toString());
+        for(Object o : objects) {
+            builder.append(o.toString());
         }
 
         System.out.println(builder.toString());

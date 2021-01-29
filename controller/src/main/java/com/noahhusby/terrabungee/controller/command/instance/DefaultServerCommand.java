@@ -5,7 +5,6 @@ import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.controller.command.ICommand;
 import com.noahhusby.terrabungee.controller.console.ConsoleColor;
 import com.noahhusby.terrabungee.controller.console.TerraBungeeConsole;
-import com.noahhusby.terrabungee.controller.console.TextComponent;
 import com.noahhusby.terrabungee.controller.services.ServiceManager;
 
 public class DefaultServerCommand implements ICommand {
@@ -22,7 +21,7 @@ public class DefaultServerCommand implements ICommand {
     @Override
     public void execute(String[] args) {
         if(args.length < 2) {
-            TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.RED, "Usage: setdefault <id>"));
+            TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Usage: setdefault <id>");
             return;
         }
 
@@ -33,8 +32,8 @@ public class DefaultServerCommand implements ICommand {
             if(s.getId().equalsIgnoreCase(id)) {
                 matched = true;
                 if(s instanceof Instance) {
-                    TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.GREEN, "Successfully set default instance/fleet "),
-                            new TextComponent(ConsoleColor.BLUE, id));
+                    TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, "Successfully set default instance/fleet ",
+                            ConsoleColor.BLUE, id);
                     ServiceManager.getInstance().setDefaultServer(id);
                     return;
                 }
@@ -42,12 +41,12 @@ public class DefaultServerCommand implements ICommand {
         }
 
         if(matched) {
-            TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.RED, "Service "),
-                    new TextComponent(ConsoleColor.BLUE, id), new TextComponent(ConsoleColor.RED, " is not an instance/fleet!"));
+            TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Service ", ConsoleColor.BLUE, id, ConsoleColor.RED,
+                    " is not an instance/fleet!");
             return;
         }
 
-        TerraBungeeConsole.sendMessage(new TextComponent(ConsoleColor.RED, "Service "),
-                new TextComponent(ConsoleColor.BLUE, id), new TextComponent(ConsoleColor.RED, " doesn't exist!"));
+        TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Service ", ConsoleColor.BLUE, id,
+                ConsoleColor.RED, " doesn't exist!");
     }
 }

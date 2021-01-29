@@ -1,5 +1,7 @@
 package com.noahhusby.terrabungee.controller.discord;
 
+import com.noahhusby.terrabungee.api.TerraBungeeUtil;
+import com.noahhusby.terrabungee.controller.TerraBungeeController;
 import com.noahhusby.terrabungee.controller.config.ConfigHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -23,25 +25,20 @@ public class DiscordManager {
 
     private JDA bot;
     private TextChannel channel;
-    private static ExecutorService botThreadExecutor;
+    private static final ExecutorService botThread = TerraBungeeUtil.newSingleThreadExecutor("terrabungee-bot");
 
     private DiscordManager() {
-        botThreadExecutor = Executors.newFixedThreadPool(1, r -> new Thread(r, "Bot"));
         if(ConfigHandler.botToken.equalsIgnoreCase("")) return;
-        execute(() -> {
+        botThread.submit(() -> {
             try {
                 bot = JDABuilder.createDefault(ConfigHandler.botToken)
                         .enableIntents(GatewayIntent.DIRECT_MESSAGES)
                         .enableIntents(GatewayIntent.GUILD_MESSAGES)
                         .addEventListeners(new DiscordListener()).build();
             } catch (LoginException e) {
-                e.printStackTrace();
+                TerraBungeeController.logger.warning("Failed to initialize discord bot! Please check the tokena and try again.");
             }
         });
-    }
-
-    public static void execute(Runnable r) {
-        botThreadExecutor.submit(r);
     }
 
     public JDA getBot() {
@@ -50,7 +47,7 @@ public class DiscordManager {
 
     public void send(IMessageEmbed emb) {
         if(ConfigHandler.botToken.equalsIgnoreCase("")) return;
-        execute(() -> {
+        botThread.submit(() -> {
             if(channel == null) {
                 Guild g = bot.getGuildById(ConfigHandler.guildID);
                 channel = g.getTextChannelById(ConfigHandler.channelID);
