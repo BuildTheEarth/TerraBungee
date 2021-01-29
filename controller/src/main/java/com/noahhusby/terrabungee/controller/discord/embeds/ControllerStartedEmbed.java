@@ -8,9 +8,8 @@ import java.awt.*;
 
 public class ControllerStartedEmbed implements IMessageEmbed {
     @Override
-    public EmbedBuilder build(EmbedBuilder e) {
+    public void build(EmbedBuilder e) {
         e.setColor(Color.cyan);
         e.setDescription("**Controller Started!**");
-        return e;
     }
 }

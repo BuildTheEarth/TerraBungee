@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class DiscordManager {
     private static DiscordManager instance = null;
@@ -64,18 +65,25 @@ public class DiscordManager {
         return bot;
     }
 
+    public MessageEmbed buildEmbed(Consumer<EmbedBuilder> builder) {
+        EmbedBuilder e = new EmbedBuilder();
+        e.setTimestamp(new Date().toInstant());
+        e.setFooter("TerraBungee by Noah Husby");
+        builder.accept(e);
+        return e.build();
+    }
+
     public void send(IMessageEmbed emb) {
         if(ConfigHandler.botToken.equalsIgnoreCase("")) return;
         botThread.submit(() -> {
             if(channel == null) {
                 Guild g = bot.getGuildById(ConfigHandler.guildID);
+                if(g == null) return;
                 channel = g.getTextChannelById(ConfigHandler.channelID);
+                if(channel == null) return;
             }
 
-            EmbedBuilder e = new EmbedBuilder();
-            e.setTimestamp(new Date().toInstant());
-            e.setFooter("TerraBungee by Noah Husby");
-            channel.sendMessage(emb.build(e).build()).queue();
+            channel.sendMessage(buildEmbed(emb::build)).submit();
         });
     }
 }

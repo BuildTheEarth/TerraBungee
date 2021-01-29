@@ -15,10 +15,9 @@ public class ProxyAddedEmbed implements IMessageEmbed {
     }
 
     @Override
-    public EmbedBuilder build(EmbedBuilder e) {
+    public void build(EmbedBuilder e) {
         e.setColor(Color.decode("#a7a888"));
         e.setTitle("New Proxy Added");
         e.setDescription("**ID: ** "+service.getId());
-        return e;
     }
 }

@@ -7,9 +7,8 @@ import java.awt.*;
 
 public class ControllerStoppedEmbed implements IMessageEmbed {
     @Override
-    public EmbedBuilder build(EmbedBuilder e) {
+    public void build(EmbedBuilder e) {
         e.setColor(Color.red);
         e.setDescription("**Controller Stopped!**");
-        return e;
     }
 }

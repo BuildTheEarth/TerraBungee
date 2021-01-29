@@ -17,15 +17,14 @@ public class StaticInstanceAddedEmbed implements IMessageEmbed {
     }
 
     @Override
-    public EmbedBuilder build(EmbedBuilder e) {
+    public void build(EmbedBuilder e) {
         e.setTitle("Static Instance Added");
         e.setColor(Color.YELLOW);
         if(service == null) {
             e.setDescription("Static instance __" + instance+ "__ was created by the console");
-            return e;
+            return;
         }
 
         e.setDescription("Static instance __" + instance+ "__ was created by **" + service.getId() + "**");
-        return e;
     }
 }

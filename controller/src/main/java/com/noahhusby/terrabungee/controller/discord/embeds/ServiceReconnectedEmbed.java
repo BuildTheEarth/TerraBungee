@@ -17,7 +17,7 @@ public class ServiceReconnectedEmbed implements IMessageEmbed {
     }
 
     @Override
-    public EmbedBuilder build(EmbedBuilder e) {
+    public void build(EmbedBuilder e) {
         e.setColor(Color.GREEN);
 
         if(service instanceof Proxy) {
@@ -27,6 +27,5 @@ public class ServiceReconnectedEmbed implements IMessageEmbed {
         }
 
         e.setDescription("**ID: ** "+service.getId());
-        return e;
     }
 }

@@ -17,15 +17,14 @@ public class StaticInstanceRemovedEmbed implements IMessageEmbed {
     }
 
     @Override
-    public EmbedBuilder build(EmbedBuilder e) {
+    public void build(EmbedBuilder e) {
         e.setTitle("Static Instance Removed");
         e.setColor(Color.YELLOW);
         if(service == null) {
             e.setDescription("Static instance __" + instance+ "__ was removed by the console");
-            return e;
+            return;
         }
 
         e.setDescription("Static instance __" + instance+ "__ was removed by **" + service.getId() + "**");
-        return e;
     }
 }

@@ -17,7 +17,7 @@ public class ServiceOfflineEmbed implements IMessageEmbed {
     }
 
     @Override
-    public EmbedBuilder build(EmbedBuilder e) {
+    public void build(EmbedBuilder e) {
         e.setColor(Color.RED);
         e.setTitle("Service Lost Connection");
 
@@ -28,6 +28,5 @@ public class ServiceOfflineEmbed implements IMessageEmbed {
         }
 
         e.setDescription("**ID: ** "+service.getId());
-        return e;
     }
 }

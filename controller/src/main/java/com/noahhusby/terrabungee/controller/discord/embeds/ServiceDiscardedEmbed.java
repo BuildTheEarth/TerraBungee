@@ -17,11 +17,10 @@ public class ServiceDiscardedEmbed implements IMessageEmbed {
     }
 
     @Override
-    public EmbedBuilder build(EmbedBuilder e) {
+    public void build(EmbedBuilder e) {
         e.setColor(Color.PINK);
         e.setTitle("Service Discarded");
 
         e.setDescription("**ID: ** "+service.getId());
-        return e;
     }
 }
