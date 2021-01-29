@@ -27,7 +27,7 @@ public class ControllerPlayer extends TBPlayer {
         this.proxy = id;
     }
 
-    public void setAttributes(EventHashMap<String, Object> attributes) {
+    public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
 

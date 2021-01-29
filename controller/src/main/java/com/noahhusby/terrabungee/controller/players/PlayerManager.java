@@ -73,6 +73,17 @@ public class PlayerManager {
         });
     }
 
+    public void updateAttribute(UUID uuid, Map<String, Object> attributes) {
+        manipulate(ps -> {
+            for(ControllerPlayer p : ps) {
+                if(p.getUniqueID().equals(uuid)) {
+                    p.setAttributes(attributes);
+                    return;
+                }
+            }
+        });
+    }
+
     private void manipulate(Consumer<StorageList<ControllerPlayer>> p) {
         manipulationThread.submit(() -> p.accept(players));
         manipulationThread.submit(() -> {

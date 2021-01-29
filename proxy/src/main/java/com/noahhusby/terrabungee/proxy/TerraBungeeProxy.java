@@ -5,29 +5,16 @@
 
 package com.noahhusby.terrabungee.proxy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.logging.Logger;
 
-import com.google.common.collect.Maps;
-
-import com.google.gson.Gson;
-import com.noahhusby.terrabungee.api.events.EventListener;
-import com.noahhusby.terrabungee.api.events.service.InstanceUpdateEvent;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
-import com.noahhusby.terrabungee.proxy.commands.Thing;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
 import com.noahhusby.terrabungee.api.ServiceIntent;
 import com.noahhusby.terrabungee.api.TerraBungee;
-import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.api.services.ServiceType;
 import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -56,7 +43,6 @@ public class TerraBungeeProxy extends Plugin implements Listener {
 
 		getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
 		getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
-		getProxy().getPluginManager().registerCommand(this, new Thing());
 	}
 
 	@EventHandler
