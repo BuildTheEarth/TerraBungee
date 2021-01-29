@@ -1,33 +1,28 @@
 package com.noahhusby.terrabungee.controller.services;
 
 import com.google.gson.annotations.Expose;
+import com.noahhusby.lib.data.storage.StorageList;
 import com.noahhusby.terrabungee.api.services.*;
-import com.noahhusby.terrabungee.controller.config.ConfigHandler;
 import com.noahhusby.terrabungee.controller.discord.DiscordManager;
 import com.noahhusby.terrabungee.controller.discord.embeds.StaticInstanceAddedEmbed;
 import com.noahhusby.terrabungee.controller.discord.embeds.StaticInstanceRemovedEmbed;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InstanceManager {
-    private static InstanceManager instance;
+    private static InstanceManager instance = null;
 
     public static InstanceManager getInstance() {
-        return instance;
-    }
-
-    public static void setInstance(InstanceManager instance) {
-        InstanceManager.instance = instance;
-        instance.updateInstances();
+        return instance == null ? instance = new InstanceManager() : instance;
     }
 
     public InstanceManager() {
         updateInstances();
     }
 
-    @Expose
-    public List<StorableStaticInstance> storableStaticInstances = new ArrayList<>();
+    @Getter public StorageList<StorableStaticInstance> storableStaticInstances = new StorageList<>(StorableStaticInstance.class);
 
     public boolean addStaticInstance(ITerraBungeeService service, String id, String address) {
         for(StorableStaticInstance s : storableStaticInstances)
@@ -37,7 +32,6 @@ public class InstanceManager {
         storableStaticInstances.add(new StorableStaticInstance(id, address));
 
         updateInstances();
-        ConfigHandler.getInstance().saveStaticInstances();
         return true;
     }
 
@@ -58,7 +52,6 @@ public class InstanceManager {
             DiscordManager.getInstance().send(new StaticInstanceRemovedEmbed(service, id));
 
         updateInstances();
-        ConfigHandler.getInstance().saveStaticInstances();
         return removed;
     }
 
@@ -84,7 +77,6 @@ public class InstanceManager {
     }
 
     public void reload() {
-        ConfigHandler.getInstance().loadStaticInstances();
     }
 
     private void updateInstances() {

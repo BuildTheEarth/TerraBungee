@@ -19,6 +19,7 @@ public class ServiceOfflineEmbed implements IMessageEmbed {
     @Override
     public EmbedBuilder build(EmbedBuilder e) {
         e.setColor(Color.RED);
+        e.setTitle("Service Lost Connection");
 
         if(service instanceof Proxy) {
             e.setTitle("Proxy Lost Connection");

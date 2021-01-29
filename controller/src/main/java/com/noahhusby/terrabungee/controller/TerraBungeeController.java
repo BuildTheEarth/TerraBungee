@@ -24,11 +24,13 @@ public class TerraBungeeController {
     public static TerraBungeeConsole logger;
 
     @Getter private ScheduledExecutorService generalThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(8, "terrabungee-general");
+    @Getter private static TerraBungeeController instance;
 
     public static boolean isTerraBungeeRunning = true;
     public static boolean isTBQueuedForTermination = false;
 
     public void enable() {
+        instance = this;
         logger = new TerraBungeeConsole();
 
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("io.javalin.Javalin")).setLevel(Level.WARN);

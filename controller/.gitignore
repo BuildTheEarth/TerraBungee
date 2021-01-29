@@ -69,3 +69,7 @@ gradle-app.setting
 **/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/java,code-java,java-web,gradle,maven
+/players.json
+/instances.json
+/terrabungee.cfg
+

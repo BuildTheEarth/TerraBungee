@@ -11,9 +11,13 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import javax.security.auth.login.LoginException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalField;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class DiscordManager {
     private static DiscordManager instance = null;
@@ -29,6 +33,10 @@ public class DiscordManager {
 
     private DiscordManager() {
         if(ConfigHandler.botToken.equalsIgnoreCase("")) return;
+        loadBot();
+    }
+
+    public void loadBot() {
         botThread.submit(() -> {
             try {
                 bot = JDABuilder.createDefault(ConfigHandler.botToken)
@@ -36,8 +44,19 @@ public class DiscordManager {
                         .enableIntents(GatewayIntent.GUILD_MESSAGES)
                         .addEventListeners(new DiscordListener()).build();
             } catch (LoginException e) {
-                TerraBungeeController.logger.warning("Failed to initialize discord bot! Please check the tokena and try again.");
+                TerraBungeeController.logger.warning("Failed to initialize discord bot! Please check the token and try again.");
             }
+            TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
+                Guild g = bot.getGuildById(ConfigHandler.guildID);
+                if(g == null) return;
+                boolean adminRole = false;
+                for(Role r : g.getRoles()) {
+                    if(r.getName().equalsIgnoreCase("TBAdmin")) adminRole = true;
+                }
+                if(!adminRole) {
+                    g.createRole().setMentionable(true).setName("TBAdmin").submit();
+                }
+            }, 5, TimeUnit.SECONDS);
         });
     }
 
@@ -54,7 +73,8 @@ public class DiscordManager {
             }
 
             EmbedBuilder e = new EmbedBuilder();
-            e.setFooter("TerraBungee by Noah Husby \u2022 Today at " + new SimpleDateFormat("hh:mm a").format(new Date()));
+            e.setTimestamp(new Date().toInstant());
+            e.setFooter("TerraBungee by Noah Husby");
             channel.sendMessage(emb.build(e).build()).queue();
         });
     }

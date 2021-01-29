@@ -3,7 +3,17 @@ package com.noahhusby.terrabungee.controller.config;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.noahhusby.lib.data.sql.Credentials;
+import com.noahhusby.lib.data.sql.MySQL;
+import com.noahhusby.lib.data.sql.structure.Structure;
+import com.noahhusby.lib.data.sql.structure.Type;
+import com.noahhusby.lib.data.storage.Storage;
+import com.noahhusby.lib.data.storage.compare.CutComparator;
+import com.noahhusby.lib.data.storage.compare.ValueComparator;
+import com.noahhusby.lib.data.storage.handlers.LocalStorageHandler;
+import com.noahhusby.lib.data.storage.handlers.SQLStorageHandler;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
+import com.noahhusby.terrabungee.controller.players.PlayerManager;
 import com.noahhusby.terrabungee.controller.services.InstanceManager;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.io.FileUtils;
@@ -12,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class ConfigHandler {
     private static ConfigHandler instance = null;
@@ -26,6 +37,7 @@ public class ConfigHandler {
     }
 
     private File staticInstanceFile;
+    private File playerDataFile;
 
     private Configuration config;
 
@@ -51,9 +63,25 @@ public class ConfigHandler {
             TerraBungeeController.logger.warning("Generating a new config file! Please fill out terrabungee.cfg before continuing.");
 
         staticInstanceFile = new File(System.getProperty("user.dir"), "instances.json");
-        loadStaticInstances();
+        playerDataFile = new File(System.getProperty("user.dir"), "players.json");
 
         config = new Configuration(configFile);
+        loadData();
+    }
+
+    /**
+     * Reloads all data/data fields. Called upon startup or reload
+     */
+    public void loadData() {
+        Storage playerData = PlayerManager.getInstance().getPlayers();
+        playerData.clearHandlers();
+        if(playerData.getComparator() instanceof CutComparator)
+            playerData.setComparator(new ValueComparator("UUID"));
+
+        Storage staticInstanceData = InstanceManager.getInstance().getStorableStaticInstances();
+        staticInstanceData.clearHandlers();
+        if(staticInstanceData.getComparator() instanceof CutComparator)
+            staticInstanceData.setComparator(new ValueComparator("Id"));
 
         config.load();
 
@@ -78,8 +106,65 @@ public class ConfigHandler {
         channelID = config.getString(prop("Updates Channel ID"), category, "", "The ID of the Discord channel where TerraBungee updates should be sent.");
 
         order();
+        if(config.hasChanged()) config.save();
 
-        config.save();
+        playerData.registerHandler(new LocalStorageHandler(playerDataFile));
+        staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
+
+        {
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
+                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "Players",
+                        Structure.builder()
+                                .add("UUID", Type.TEXT)
+                                .add("Name", Type.TEXT)
+                                .add("Attributes", Type.TEXT)
+                                .add("DiscordID", Type.TEXT)
+                                .add("LastSeen", Type.BIGINT)
+                                .repair(true)
+                        .build()
+                    );
+            sqlStorageHandler.setPriority(100);
+            playerData.registerHandler(sqlStorageHandler);
+        }
+
+        {
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
+                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "StaticInstances",
+                    Structure.builder()
+                            .add("Id", Type.TEXT)
+                            .add("Address", Type.TEXT)
+                            .repair(true)
+                            .build()
+            );
+            sqlStorageHandler.setPriority(100);
+            staticInstanceData.registerHandler(sqlStorageHandler);
+        }
+
+        playerData.setAutoLoad(10, TimeUnit.SECONDS);
+        playerData.setAutoSave(10, TimeUnit.SECONDS);
+        staticInstanceData.setAutoLoad(10, TimeUnit.SECONDS);
+        staticInstanceData.setAutoSave(10, TimeUnit.SECONDS);
+
+        TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
+            playerData.load(true);
+            staticInstanceData.load(true);
+        }, 2, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Reloads the controller
+     */
+    public void reload() {
+        TerraBungeeController.logger.info("Reloading the controller!");
+        loadData();
+    }
+
+    /**
+     * Migrates data from the local storage to the database
+     */
+    public void migrate() {
+        PlayerManager.getInstance().getPlayers().migrate(0);
+        InstanceManager.getInstance().getStorableStaticInstances().migrate(0);
     }
 
     private String prop(String n) {
@@ -98,43 +183,4 @@ public class ConfigHandler {
     private void order() {
         config.setCategoryPropertyOrder(category, categories.get(category));
     }
-
-    public void loadStaticInstances() {
-        if (staticInstanceFile.exists())
-        {
-            String json = null;
-            try
-            {
-                Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting()
-                        .create();
-                json = FileUtils.readFileToString(staticInstanceFile, "UTF-8");
-                InstanceManager.setInstance(gson.fromJson(json, InstanceManager.class));
-                InstanceManager.getInstance();
-                saveStaticInstances();
-            }
-            catch (Throwable e)
-            {
-                e.printStackTrace();
-                System.err.println("\n" + json);
-            }
-            return;
-        }
-
-        InstanceManager.setInstance(new InstanceManager());
-        InstanceManager.getInstance();
-        saveStaticInstances();
-    }
-
-    public void saveStaticInstances() {
-        try
-        {
-            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
-            FileUtils.writeStringToFile(staticInstanceFile, gson.toJson(InstanceManager.getInstance()), "UTF-8");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
 }

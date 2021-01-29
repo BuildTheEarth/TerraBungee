@@ -1,6 +1,8 @@
 package com.noahhusby.terrabungee.controller.command;
 
 import com.noahhusby.terrabungee.controller.command.controller.HelpCommand;
+import com.noahhusby.terrabungee.controller.command.controller.MigrateCommand;
+import com.noahhusby.terrabungee.controller.command.controller.ReloadCommand;
 import com.noahhusby.terrabungee.controller.command.controller.StopCommand;
 import com.noahhusby.terrabungee.controller.command.instance.AddStaticCommand;
 import com.noahhusby.terrabungee.controller.command.instance.DefaultServerCommand;
@@ -21,6 +23,8 @@ public class CommandManager {
     private CommandManager() {
         register(new HelpCommand());
         register(new StopCommand());
+        register(new ReloadCommand());
+        register(new MigrateCommand());
         register(new AddStaticCommand());
         register(new RemoveStaticCommand());
         register(new ListStaticCommand());

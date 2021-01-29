@@ -31,11 +31,17 @@ public class ControllerPlayer extends TBPlayer {
         this.attributes = attributes;
     }
 
+    public void setLastSeen(long lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
     public void setOnline(boolean online) {
         this.online = online;
         if(!online) {
             setServer(null);
             setProxy(null);
+        } else {
+            setLastSeen(System.currentTimeMillis());
         }
     }
 
@@ -47,6 +53,8 @@ public class ControllerPlayer extends TBPlayer {
         copy.setAttributes(attributes);
         copy.setProxy(proxy);
         copy.setServer(server);
+        copy.setLastSeen(lastSeen);
+
 
         return copy;
     }
