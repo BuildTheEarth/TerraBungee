@@ -9,6 +9,7 @@ import io.javalin.websocket.WsContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class ServiceManager {
     private static ServiceManager instance;
@@ -164,5 +165,13 @@ public class ServiceManager {
 
         services.add(service);
         return service;
+    }
+
+    public void runIntentAction(ServiceIntent intent, Consumer<TerraBungeeService> service) {
+        for(TerraBungeeService s : services) {
+            if(s.getStatus() == ServiceStatus.ONLINE && s.getIntents().contains(intent)) {
+                service.accept(s);
+            }
+        }
     }
 }

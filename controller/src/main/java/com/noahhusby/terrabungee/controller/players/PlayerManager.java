@@ -6,7 +6,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.noahhusby.lib.data.storage.StorageList;
+import com.noahhusby.terrabungee.api.ServiceIntent;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
+import com.noahhusby.terrabungee.controller.network.C2S.C2SPlayerJoinEventPacket;
+import com.noahhusby.terrabungee.controller.network.C2S.C2SPlayerQuitEventPacket;
+import com.noahhusby.terrabungee.controller.network.NetworkManager;
+import com.noahhusby.terrabungee.controller.services.ServiceManager;
 
 import java.util.List;
 import java.util.Map;
@@ -28,9 +33,7 @@ public class PlayerManager {
 
     private PlayerManager() {
         // A questionable way to load players into the registry if
-        TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
-            manipulate(players -> {});
-        }, 10, TimeUnit.SECONDS);
+        TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> manipulate(players -> {}), 10, TimeUnit.SECONDS);
     }
 
     private final ExecutorService manipulationThread = Executors.newSingleThreadExecutor(
@@ -66,9 +69,13 @@ public class PlayerManager {
             for(ControllerPlayer p : ps)
                 playerMap.put(p.getUniqueID(), p);
 
+            Map<UUID, ControllerPlayer> playerJoinQuitMap = Maps.newHashMap();
+
             playerMap.forEach((uuid, controllerPlayer) -> {
-                if(controllerPlayer.getProxy() != null && controllerPlayer.getProxy().equals(id))
+                if(controllerPlayer.getProxy() != null && controllerPlayer.getProxy().equals(id)) {
                     controllerPlayer.setOnline(false);
+                    playerJoinQuitMap.put(uuid, controllerPlayer);
+                }
             });
 
             for(ControllerPlayer p : players) {
@@ -82,6 +89,16 @@ public class PlayerManager {
                 player.setServer(p.getServer());
                 player.setOnline(true);
                 player.setProxy(id);
+
+                if(!playerJoinQuitMap.containsKey(p.getUniqueID())) {
+                    ServiceManager.getInstance().runIntentAction(ServiceIntent.EVENT_PLAYER_JOIN_QUIT, service -> NetworkManager.getInstance().send(new C2SPlayerJoinEventPacket(player, service)));
+                }
+
+                playerJoinQuitMap.remove(p.getUniqueID());
+            }
+
+            for(ControllerPlayer p : playerJoinQuitMap.values()) {
+                ServiceManager.getInstance().runIntentAction(ServiceIntent.EVENT_PLAYER_JOIN_QUIT, service -> NetworkManager.getInstance().send(new C2SPlayerQuitEventPacket(p, service)));
             }
         });
     }
