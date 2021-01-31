@@ -1,0 +1,33 @@
+package com.noahhusby.terrabungee.controller.discord;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Noah Husby
+ */
+@RequiredArgsConstructor
+public class DiscordConfig {
+    @Expose
+    @SerializedName("GuildID")
+    @Getter private final long guildId;
+    @Expose
+    @SerializedName("NotificationChannel")
+    @Getter @Setter private long notificationChannel;
+    @Expose
+    @SerializedName("AdminRoles")
+    @Getter private final List<Long> adminRoles = new ArrayList<>();
+    @Expose
+    @SerializedName("ModeratorRoles")
+    @Getter private final List<Long> moderatorRoles = new ArrayList<>();
+    @Expose
+    @SerializedName("StandardRoles")
+    @Getter private final List<Long> standardRoles = new ArrayList<>();
+    //TODO: Standard roles make no fucking sense
+}

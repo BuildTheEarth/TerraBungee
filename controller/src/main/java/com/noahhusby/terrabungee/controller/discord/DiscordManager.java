@@ -1,8 +1,10 @@
 package com.noahhusby.terrabungee.controller.discord;
 
+import com.noahhusby.lib.data.storage.StorageList;
 import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
 import com.noahhusby.terrabungee.controller.config.ConfigHandler;
+import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -30,7 +32,8 @@ public class DiscordManager {
 
     private JDA bot;
     private TextChannel channel;
-    private static final ExecutorService botThread = TerraBungeeUtil.newSingleThreadExecutor("terrabungee-bot");
+    private final ExecutorService botThread = TerraBungeeUtil.newSingleThreadExecutor("terrabungee-bot");
+    @Getter private final StorageList<DiscordConfig> discordConfigs = new StorageList<>(DiscordConfig.class);
 
     private DiscordManager() {
         if(ConfigHandler.botToken.equalsIgnoreCase("")) return;
@@ -57,7 +60,7 @@ public class DiscordManager {
                 if(!adminRole) {
                     g.createRole().setMentionable(true).setName("TBAdmin").submit();
                 }
-            }, 5, TimeUnit.SECONDS);
+            }, 2, TimeUnit.SECONDS);
         });
     }
 
@@ -85,6 +88,15 @@ public class DiscordManager {
 
             channel.sendMessage(buildEmbed(emb::build)).submit();
         });
+    }
+
+    public DiscordConfig getConfigByGuild(Guild guild) {
+        for(DiscordConfig config : getDiscordConfigs()) {
+            if(guild.getIdLong() == config.getGuildId()) {
+                return config;
+            }
+        }
+        return null;
     }
 }
 

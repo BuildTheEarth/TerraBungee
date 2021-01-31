@@ -1,5 +1,7 @@
 package com.noahhusby.terrabungee.controller.discord.commands;
 
+import com.noahhusby.terrabungee.controller.discord.UserPermission;
+import com.noahhusby.terrabungee.controller.discord.commands.setup.SetupDiscordCommand;
 import com.noahhusby.terrabungee.controller.discord.commands.util.PingDiscordCommand;
 import com.noahhusby.terrabungee.controller.discord.commands.util.StatusDiscordCommand;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -21,6 +23,8 @@ public class DiscordCommandManager {
     private DiscordCommandManager() {
         register(new PingDiscordCommand());
         register(new StatusDiscordCommand());
+
+        register(new SetupDiscordCommand());
     }
 
     private final List<IDiscordCommand> commands = new ArrayList<>();
@@ -29,10 +33,10 @@ public class DiscordCommandManager {
         commands.add(command);
     }
 
-    public void execute(String command, User user, TextChannel channel, OffsetDateTime executionTime, String[] args) {
+    public void execute(String command, UserPermission permission, User user, TextChannel channel, OffsetDateTime executionTime, String[] args) {
         for(IDiscordCommand c : commands) {
             if(c.getName().equalsIgnoreCase(command)) {
-                c.execute(user, channel, executionTime, args);
+                c.execute(user, permission, channel, executionTime, args);
                 return;
             }
         }

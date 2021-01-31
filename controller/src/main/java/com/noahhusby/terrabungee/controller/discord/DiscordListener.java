@@ -2,6 +2,8 @@ package com.noahhusby.terrabungee.controller.discord;
 
 import com.noahhusby.terrabungee.controller.Constants;
 import com.noahhusby.terrabungee.controller.discord.commands.DiscordCommandManager;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -16,7 +18,39 @@ public class DiscordListener extends ListenerAdapter {
             String[] message = e.getMessage().getContentRaw().replace(Constants.discordPrefix, "").split(" ");
             if(message.length == 0) return;
             String[] args = message.length == 1 ? new String[]{} : selectArray(message, 1);
-            DiscordCommandManager.getInstance().execute(message[0], e.getAuthor(), e.getMessage().getTextChannel(), e.getMessage().getTimeCreated(), args);
+
+            UserPermission permission = UserPermission.NONE;
+            DiscordConfig config = DiscordManager.getInstance().getConfigByGuild(e.getMessage().getGuild());
+            Member m = e.getMessage().getMember();
+
+            if(m != null) {
+                for(Role r : m.getRoles()) {
+                    if(r.getName().equalsIgnoreCase("TBAdmin")) {
+                        permission = UserPermission.ADMIN;
+                        break;
+                    }
+                }
+
+                if(config != null && permission != UserPermission.ADMIN) {
+                    for(Role r : m.getRoles()) {
+                        if(config.getAdminRoles().contains(r.getIdLong())) {
+                            comparePermission(permission, UserPermission.ADMIN);
+                        }
+
+                        if(config.getModeratorRoles().contains(r.getIdLong())) {
+                            comparePermission(permission, UserPermission.MODERATOR);
+                        }
+
+                        if(config.getStandardRoles().contains(r.getIdLong())) {
+                            comparePermission(permission, UserPermission.STANDARD);
+                        }
+                    }
+                }
+            }
+
+
+
+            DiscordCommandManager.getInstance().execute(message[0], permission, e.getAuthor(), e.getMessage().getTextChannel(), e.getMessage().getTimeCreated(), args);
         }
     }
 
@@ -32,5 +66,18 @@ public class DiscordListener extends ListenerAdapter {
             array.add(args[i]);
 
         return array.toArray(array.toArray(new String[array.size()]));
+    }
+
+    private void comparePermission(UserPermission current, UserPermission updated) {
+        switch (updated) {
+            case ADMIN:
+                current = UserPermission.ADMIN;
+                break;
+            case MODERATOR:
+                if(current != UserPermission.ADMIN) current = UserPermission.MODERATOR;
+                break;
+            case STANDARD:
+                if(current != UserPermission.ADMIN && current != UserPermission.MODERATOR) current = UserPermission.STANDARD;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.noahhusby.terrabungee.controller.discord.commands.util;
 
 import com.noahhusby.terrabungee.controller.discord.DiscordManager;
+import com.noahhusby.terrabungee.controller.discord.UserPermission;
 import com.noahhusby.terrabungee.controller.discord.commands.IDiscordCommand;
 import com.noahhusby.terrabungee.controller.players.PlayerManager;
 import com.noahhusby.terrabungee.controller.services.ServiceManager;
@@ -20,7 +21,7 @@ public class StatusDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void execute(User user, TextChannel channel, OffsetDateTime executionTime, String[] args) {
+    public void execute(User user, UserPermission permission, TextChannel channel, OffsetDateTime executionTime, String[] args) {
         channel.sendMessage(DiscordManager.getInstance().buildEmbed(builder -> {
             builder.setColor(Color.getHSBColor(20, 100, 50));
             builder.setTitle("System Status");

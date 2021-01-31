@@ -13,6 +13,8 @@ import com.noahhusby.lib.data.storage.compare.ValueComparator;
 import com.noahhusby.lib.data.storage.handlers.LocalStorageHandler;
 import com.noahhusby.lib.data.storage.handlers.SQLStorageHandler;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
+import com.noahhusby.terrabungee.controller.discord.DiscordConfig;
+import com.noahhusby.terrabungee.controller.discord.DiscordManager;
 import com.noahhusby.terrabungee.controller.players.PlayerManager;
 import com.noahhusby.terrabungee.controller.services.InstanceManager;
 import net.minecraftforge.common.config.Configuration;
@@ -38,6 +40,7 @@ public class ConfigHandler {
 
     private File staticInstanceFile;
     private File playerDataFile;
+    private File discordConfigFile;
 
     private Configuration config;
 
@@ -53,7 +56,8 @@ public class ConfigHandler {
     public static String sqlPassword;
     public static String sqlDb;
 
-    public static String botToken;
+    //TODO: God no
+    public static String botToken = "";
     public static String guildID;
     public static String channelID;
 
@@ -62,8 +66,12 @@ public class ConfigHandler {
         if(!configFile.exists())
             TerraBungeeController.logger.warning("Generating a new config file! Please fill out terrabungee.cfg before continuing.");
 
-        staticInstanceFile = new File(System.getProperty("user.dir"), "instances.json");
-        playerDataFile = new File(System.getProperty("user.dir"), "players.json");
+        File localDb = new File(System.getProperty("user.dir"), "local");
+        if(!localDb.exists()) localDb.mkdir();
+
+        staticInstanceFile = new File(localDb, "instances.json");
+        playerDataFile = new File(localDb, "players.json");
+        discordConfigFile = new File(localDb, "discord.json");
 
         config = new Configuration(configFile);
         loadData();
@@ -73,16 +81,6 @@ public class ConfigHandler {
      * Reloads all data/data fields. Called upon startup or reload
      */
     public void loadData() {
-        Storage playerData = PlayerManager.getInstance().getPlayers();
-        playerData.clearHandlers();
-        if(playerData.getComparator() instanceof CutComparator)
-            playerData.setComparator(new ValueComparator("UUID"));
-
-        Storage staticInstanceData = InstanceManager.getInstance().getStorableStaticInstances();
-        staticInstanceData.clearHandlers();
-        if(staticInstanceData.getComparator() instanceof CutComparator)
-            staticInstanceData.setComparator(new ValueComparator("Id"));
-
         config.load();
 
         cat("General", "General settings for the TerraBungee Controller");
@@ -108,8 +106,25 @@ public class ConfigHandler {
         order();
         if(config.hasChanged()) config.save();
 
+        Storage playerData = PlayerManager.getInstance().getPlayers();
+        playerData.clearHandlers();
+        if(playerData.getComparator() instanceof CutComparator)
+            playerData.setComparator(new ValueComparator("UUID"));
+
+        Storage staticInstanceData = InstanceManager.getInstance().getStorableStaticInstances();
+        staticInstanceData.clearHandlers();
+        if(staticInstanceData.getComparator() instanceof CutComparator)
+            staticInstanceData.setComparator(new ValueComparator("Id"));
+
+        Storage discordConfigData = DiscordManager.getInstance().getDiscordConfigs();
+        discordConfigData.clearHandlers();
+        if(discordConfigData.getComparator() instanceof CutComparator)
+            discordConfigData.setComparator(new ValueComparator("GuildID"));
+
+
         playerData.registerHandler(new LocalStorageHandler(playerDataFile));
         staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
+        discordConfigData.registerHandler(new LocalStorageHandler(discordConfigFile));
 
         {
             SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
@@ -140,14 +155,33 @@ public class ConfigHandler {
             staticInstanceData.registerHandler(sqlStorageHandler);
         }
 
+        {
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
+                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "DiscordConfig",
+                    Structure.builder()
+                            .add("GuildID", Type.TEXT)
+                            .add("NotificationChannel", Type.TEXT)
+                            .add("AdminRoles", Type.TEXT)
+                            .add("ModeratorRoles", Type.TEXT)
+                            .add("StandardRoles", Type.TEXT)
+                            .repair(true)
+                            .build()
+            );
+            sqlStorageHandler.setPriority(100);
+            discordConfigData.registerHandler(sqlStorageHandler);
+        }
+
         playerData.setAutoLoad(10, TimeUnit.SECONDS);
         playerData.setAutoSave(10, TimeUnit.SECONDS);
         staticInstanceData.setAutoLoad(10, TimeUnit.SECONDS);
         staticInstanceData.setAutoSave(10, TimeUnit.SECONDS);
+        discordConfigData.setAutoLoad(10, TimeUnit.SECONDS);
+        discordConfigData.setAutoSave(10, TimeUnit.SECONDS);
 
         TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
             playerData.load(true);
             staticInstanceData.load(true);
+            discordConfigData.load(true);
         }, 2, TimeUnit.SECONDS);
     }
 
@@ -165,6 +199,7 @@ public class ConfigHandler {
     public void migrate() {
         PlayerManager.getInstance().getPlayers().migrate(0);
         InstanceManager.getInstance().getStorableStaticInstances().migrate(0);
+        DiscordManager.getInstance().getDiscordConfigs().migrate(0);
     }
 
     private String prop(String n) {

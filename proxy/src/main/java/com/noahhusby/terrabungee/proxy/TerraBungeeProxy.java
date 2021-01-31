@@ -5,8 +5,11 @@
 
 package com.noahhusby.terrabungee.proxy;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
@@ -52,9 +55,11 @@ public class TerraBungeeProxy extends Plugin implements Listener {
 			e.getPlayer().connect(ProxyServer.getInstance().getServerInfo(ConfigHandler.queueServer));
 		 */
 	}
+
 	
 	@Override
 	public void onDisable() {
+
 		instance = null;
 		tb.discard();
 	}

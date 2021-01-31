@@ -5,6 +5,7 @@ import com.noahhusby.terrabungee.api.Constants;
 import com.noahhusby.terrabungee.api.services.TerraBungeeService;
 import com.noahhusby.terrabungee.controller.network.IC2SPacket;
 import com.noahhusby.terrabungee.controller.network.ServicePacket;
+import com.noahhusby.terrabungee.controller.players.PlayerManager;
 import com.noahhusby.terrabungee.controller.services.InstanceManager;
 import com.noahhusby.terrabungee.controller.services.ServiceManager;
 
@@ -28,6 +29,8 @@ public class C2SKeepAlivePacket implements IC2SPacket {
         data.addProperty("version", com.noahhusby.terrabungee.controller.Constants.version);
         data.addProperty("total_services", ServiceManager.getInstance().getServices().size());
         data.addProperty("total_disconnected_services", ServiceManager.getInstance().getTotalDisconnectedServices());
+        data.addProperty("total_players", PlayerManager.getInstance().getTotalPlayers());
+        data.addProperty("total_online_players", PlayerManager.getInstance().getTotalOnlinePlayers());
     }
 
     @Override

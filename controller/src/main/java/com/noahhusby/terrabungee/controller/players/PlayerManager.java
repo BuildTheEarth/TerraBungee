@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.noahhusby.lib.data.storage.StorageList;
+import com.noahhusby.terrabungee.controller.TerraBungeeController;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,10 @@ public class PlayerManager {
     }
 
     private PlayerManager() {
+        // A questionable way to load players into the registry if
+        TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
+            manipulate(players -> {});
+        }, 10, TimeUnit.SECONDS);
     }
 
     private final ExecutorService manipulationThread = Executors.newSingleThreadExecutor(
@@ -45,6 +50,14 @@ public class PlayerManager {
 
     public Map<UUID, ControllerPlayer> getOnlinePlayerRegistry() {
         return onlinePlayerRegistry;
+    }
+
+    public int getTotalPlayers() {
+        return players.size();
+    }
+
+    public int getTotalOnlinePlayers() {
+        return onlinePlayerRegistry.size();
     }
 
     public void proxyPlayerDrop(String id, List<ControllerPlayer> players) {
