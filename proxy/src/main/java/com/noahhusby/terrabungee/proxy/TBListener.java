@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.api.events.EventListener;
 import com.noahhusby.terrabungee.api.events.player.OnlineCacheHitEvent;
+import com.noahhusby.terrabungee.api.events.player.PlayerJoinEvent;
 import com.noahhusby.terrabungee.api.events.service.InstanceUpdateEvent;
 import com.noahhusby.terrabungee.api.players.TBPlayer;
 import com.noahhusby.terrabungee.api.services.Instance;

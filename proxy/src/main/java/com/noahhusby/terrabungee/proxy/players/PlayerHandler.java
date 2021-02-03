@@ -24,7 +24,7 @@ public class PlayerHandler {
     private PlayerHandler() {
         TaskScheduler scheduler = ProxyServer.getInstance().getScheduler();
         scheduler.schedule(TerraBungeeProxy.getInstance(), () -> scheduler.runAsync(TerraBungeeProxy.getInstance(), () -> {
-            if(TerraBungeeProxy.tb == null) return;
+            if(TerraBungeeProxy.tb == null || !TerraBungeeProxy.tb.getNetworkManager().isConnectionEstablished()) return;
             JsonArray array = new JsonArray();
             for(ProxiedPlayer p : ProxyServer.getInstance().getPlayers()) {
                 JsonObject player = new JsonObject();

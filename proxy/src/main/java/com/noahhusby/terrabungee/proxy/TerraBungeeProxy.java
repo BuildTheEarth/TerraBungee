@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.noahhusby.terrabungee.api.TerraBungeeAPI;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
@@ -37,7 +38,10 @@ public class TerraBungeeProxy extends Plugin implements Listener {
 		ConfigHandler.getInstance();
 		PlayerHandler.getInstance();
 
-		tb = new TerraBungee(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
+		// Set local handler
+		TerraBungeeAPI.setLocalHandler(player -> player.getProxy().equalsIgnoreCase(ConfigHandler.serviceID));
+
+		tb = TerraBungeeAPI.createService(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
 		tb.setAutoReconnect(true);
 		tb.connect();
 		tb.enableIntents(ServiceIntent.INSTANCE_UPDATE);
@@ -59,7 +63,6 @@ public class TerraBungeeProxy extends Plugin implements Listener {
 	
 	@Override
 	public void onDisable() {
-
 		instance = null;
 		tb.discard();
 	}
