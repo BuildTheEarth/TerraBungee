@@ -8,6 +8,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id 'net.linguica.maven-settings' version '0.5'
 }
 
 group = 'com.noahhusby'
@@ -18,10 +19,13 @@ targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
-    mavenLocal()
     maven {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+    maven {
+        name 'buildtheearth'
+        url 'https://maven.noahhusby.com/repository/buildtheearth'
     }
 }
 

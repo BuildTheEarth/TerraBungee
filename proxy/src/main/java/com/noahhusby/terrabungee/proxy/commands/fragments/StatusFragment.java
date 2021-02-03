@@ -5,7 +5,7 @@
 
 package com.noahhusby.terrabungee.proxy.commands.fragments;
 
-import com.noahhusby.terrabungee.api.Controller;
+import com.noahhusby.terrabungee.api.util.TBStats;
 import com.noahhusby.terrabungee.proxy.Constants;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.commands.ICommandFragment;
@@ -17,13 +17,14 @@ public class StatusFragment implements ICommandFragment {
     @Override
     public void execute(CommandSender sender, String[] args) {
         sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "TerraBungee Status:"));
-        Controller controller = TerraBungeeProxy.tb.getController();
+        TBStats stats = TerraBungeeProxy.tb.getStats();
+        TBStats.ControllerStats controller = stats.getControllerStats();
         if(controller.isOnline()) {
             sender.sendMessage(ChatUtil.combine(ChatColor.GOLD, "Controller: ", ChatColor.GREEN, "Online"));
             sender.sendMessage(ChatUtil.combine(ChatColor.GOLD, "System Status: ", ChatColor.GREEN, "Great"));
             sender.sendMessage(ChatUtil.combine(ChatColor.GOLD, "Version: ", ChatColor.GREEN, controller.getVersion()));
-            sender.sendMessage(ChatUtil.combine(ChatColor.GRAY,  "Total Services: ", ChatColor.BLUE, controller.getTotalServices()));
-            sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "Total Disconnected Services: ", ChatColor.BLUE, controller.getTotalDisconnectedServices()));
+            sender.sendMessage(ChatUtil.combine(ChatColor.GRAY,  "Total Services: ", ChatColor.BLUE, stats.getTotalServices()));
+            sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "Total Disconnected Services: ", ChatColor.BLUE, stats.getTotalDisconnectedServices()));
         } else {
             sender.sendMessage(ChatUtil.combine(ChatColor.GOLD, "Controller: ", ChatColor.RED, "Disconnected"));
         }

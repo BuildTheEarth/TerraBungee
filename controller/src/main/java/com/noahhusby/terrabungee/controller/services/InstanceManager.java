@@ -69,6 +69,7 @@ public class InstanceManager {
      * @return All instances
      */
     public List<Instance> getInstances(boolean discarded) {
+        updateInstances();
         List<Instance> instances = new ArrayList<>();
         for(TerraBungeeService s : ServiceManager.getInstance().getServices(ServiceType.INSTANCE))
             if(discarded || s.getStatus() != ServiceStatus.DISCARDED) instances.add((Instance) s);

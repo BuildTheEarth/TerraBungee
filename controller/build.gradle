@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id 'net.linguica.maven-settings' version '0.5'
 }
 
 group 'com.noahhusby'
@@ -9,10 +10,13 @@ version '1.0.2'
 mainClassName = 'com.noahhusby.terrabungee.controller.TerraBungeeControllerApplication'
 
 repositories {
+    maven {
+        name 'buildtheearth'
+        url 'https://maven.noahhusby.com/repository/buildtheearth'
+    }
     mavenCentral()
     mavenLocal()
     jcenter()
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
