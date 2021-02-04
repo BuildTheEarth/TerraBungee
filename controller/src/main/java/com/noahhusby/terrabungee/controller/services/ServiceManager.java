@@ -88,7 +88,7 @@ public class ServiceManager {
      * @return TerraBungeeService
      */
     public TerraBungeeService getService(String id) {
-        for(TerraBungeeService s : services) {
+        for(TerraBungeeService s : ImmutableList.copyOf(services)) {
             if(s.getId().equalsIgnoreCase(id)) {
                 return s;
             }
