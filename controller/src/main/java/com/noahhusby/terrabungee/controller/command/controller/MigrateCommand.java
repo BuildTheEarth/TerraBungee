@@ -21,16 +21,18 @@ public class MigrateCommand implements ICommand {
 
     @Override
     public void execute(String[] args) {
-        if(args.length == 0) {
-            TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Type ", ConsoleColor.YELLOW, "migrate confirm",
-                    ConsoleColor.BLUE, " to migrate the data!");
-        }
-
-        if(!args[0].equalsIgnoreCase("confirm")) {
+        if(args.length == 1) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Type ", ConsoleColor.YELLOW, "migrate confirm",
                     ConsoleColor.BLUE, " to migrate the data!");
             return;
         }
+
+        if(!args[1].equalsIgnoreCase("confirm")) {
+            TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Type ", ConsoleColor.YELLOW, "migrate confirm",
+                    ConsoleColor.BLUE, " to migrate the data!");
+            return;
+        }
+
         TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, "Successfully migrated data!");
         ConfigHandler.getInstance().migrate();
     }
