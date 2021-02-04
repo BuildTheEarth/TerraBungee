@@ -1,13 +1,23 @@
 package com.noahhusby.terrabungee.controller.services;
 
+import com.google.common.collect.ImmutableList;
 import com.noahhusby.terrabungee.api.ServiceIntent;
 import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.api.services.*;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
+import com.noahhusby.terrabungee.controller.discord.DiscordManager;
+import com.noahhusby.terrabungee.controller.discord.embeds.ServiceOfflineEmbed;
+import com.noahhusby.terrabungee.controller.discord.embeds.ServiceReconnectedEmbed;
+import com.noahhusby.terrabungee.controller.network.C2S.C2SInstanceUpdatePacket;
+import com.noahhusby.terrabungee.controller.network.C2S.C2SOnlinePlayerCacheHitPacket;
+import com.noahhusby.terrabungee.controller.network.NetworkManager;
 import io.javalin.websocket.WsContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -23,23 +33,29 @@ public class ServiceManager {
     private String defaultServer = "";
 
     private ServiceManager() {
-        TerraBungeeUtil.newSingleThreadScheduledExecutor("terrabungee-service-checker")
+        TerraBungeeController.getInstance().getGeneralThreads()
                 .scheduleAtFixedRate(new ServiceChecker(), 0, 2, TimeUnit.SECONDS);
+        registerIntent(ServiceIntent.INSTANCE_UPDATE, 2, s -> NetworkManager.getInstance().send(new C2SInstanceUpdatePacket(s)));
+        registerIntent(ServiceIntent.ONLINE_PLAYER_UPDATE, 2, s -> NetworkManager.getInstance().send(new C2SOnlinePlayerCacheHitPacket(s)));
     }
+
+    private final ScheduledExecutorService intentThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-intents");
 
     /**
      * Gets all services created regardless of state (unless discarded)
      * @return All services created
      */
     public List<TerraBungeeService> getServices() {
-        return services;
+        return ImmutableList.copyOf(services);
     }
 
     public int getTotalDisconnectedServices() {
         int x = 0;
-        for(TerraBungeeService s : services)
-            if(s.getStatus() == ServiceStatus.LOST_CONNECTION) x++;
-
+        for(TerraBungeeService s : ImmutableList.copyOf(services)) {
+            if(s.getStatus() == ServiceStatus.LOST_CONNECTION) {
+                x++;
+            }
+        }
         return x;
     }
 
@@ -50,9 +66,11 @@ public class ServiceManager {
      */
     public List<TerraBungeeService> getServices(ServiceType type) {
         List<TerraBungeeService> typeServices = new ArrayList<>();
-        for(TerraBungeeService s : services)
-            if(s.getType() == type) typeServices.add(s);
-
+        for(TerraBungeeService s : ImmutableList.copyOf(services)) {
+            if(s.getType() == type) {
+                typeServices.add(s);
+            }
+        }
         return typeServices;
     }
 
@@ -70,8 +88,11 @@ public class ServiceManager {
      * @return TerraBungeeService
      */
     public TerraBungeeService getService(String id) {
-        for(TerraBungeeService s : services)
-            if(s.getId().equalsIgnoreCase(id)) return s;
+        for(TerraBungeeService s : services) {
+            if(s.getId().equalsIgnoreCase(id)) {
+                return s;
+            }
+        }
         return null;
     }
 
@@ -167,10 +188,54 @@ public class ServiceManager {
         return service;
     }
 
+    /**
+     * Assigns an action to services with a given intent on a clock
+     * @param intent {@link ServiceIntent}
+     * @param seconds Time (in seconds) that the intent action should be triggered
+     * @param service {@link Consumer<TerraBungeeService>}
+     */
+    public void registerIntent(ServiceIntent intent, int seconds, Consumer<TerraBungeeService> service) {
+        intentThreads.scheduleAtFixedRate(() -> runIntentAction(intent, service), 0, seconds, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Runs a specific action on all services with a specific intent
+     * @param intent {@link ServiceIntent}
+     * @param service {@link Consumer<TerraBungeeService>}
+     */
     public void runIntentAction(ServiceIntent intent, Consumer<TerraBungeeService> service) {
-        for(TerraBungeeService s : services) {
+        for(TerraBungeeService s : ImmutableList.copyOf(services)) {
             if(s.getStatus() == ServiceStatus.ONLINE && s.getIntents().contains(intent)) {
-                service.accept(s);
+                intentThreads.submit(() -> service.accept(s));
+            }
+        }
+    }
+
+    /**
+     * A runnable class that checks the connection status of each service
+     */
+    private static class ServiceChecker implements Runnable {
+
+        private final Map<String, ServiceStatus> serviceStatus = new HashMap<>();
+
+        @Override
+        public void run() {
+            for(Map.Entry<String, ServiceStatus> s : serviceStatus.entrySet()) {
+                TerraBungeeService service = ServiceManager.getInstance().getService(s.getKey());
+                if(service == null) continue;
+                if(s.getValue() == ServiceStatus.ONLINE && service.getStatus() == ServiceStatus.LOST_CONNECTION) {
+                    TerraBungeeController.logger.warning("Service has lost connection with the controller: " + s.getKey());
+                    DiscordManager.getInstance().send(new ServiceOfflineEmbed(service));
+                }
+                if(s.getValue() == ServiceStatus.LOST_CONNECTION && service.getStatus() == ServiceStatus.ONLINE) {
+                    TerraBungeeController.logger.warning("Service has reconnected with the controller: " + s.getKey());
+                    DiscordManager.getInstance().send(new ServiceReconnectedEmbed(service));
+                }
+            }
+
+            serviceStatus.clear();
+            for(TerraBungeeService s : ServiceManager.getInstance().getServices()) {
+                serviceStatus.put(s.getId(), s.getStatus());
             }
         }
     }

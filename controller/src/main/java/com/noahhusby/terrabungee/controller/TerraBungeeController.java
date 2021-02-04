@@ -1,7 +1,6 @@
 package com.noahhusby.terrabungee.controller;
 
 import ch.qos.logback.classic.Level;
-import com.google.gson.Gson;
 import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.controller.config.ConfigHandler;
 import com.noahhusby.terrabungee.controller.console.TerraBungeeConsole;
@@ -9,12 +8,10 @@ import com.noahhusby.terrabungee.controller.discord.DiscordManager;
 import com.noahhusby.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
 import com.noahhusby.terrabungee.controller.discord.embeds.ControllerStoppedEmbed;
 import com.noahhusby.terrabungee.controller.network.NetworkManager;
-import com.noahhusby.terrabungee.controller.services.ServiceChecker;
 import io.javalin.Javalin;
 import lombok.Getter;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 

@@ -22,7 +22,7 @@ public class InstanceManager {
         updateInstances();
     }
 
-    @Getter public StorageList<StorableStaticInstance> storableStaticInstances = new StorageList<>(StorableStaticInstance.class);
+    @Getter private StorageList<StorableStaticInstance> storableStaticInstances = new StorageList<>(StorableStaticInstance.class);
 
     public boolean addStaticInstance(ITerraBungeeService service, String id, String address) {
         for(StorableStaticInstance s : storableStaticInstances)
