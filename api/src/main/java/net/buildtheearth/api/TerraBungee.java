@@ -1,0 +1,41 @@
+package net.buildtheearth.api;
+
+import lombok.Getter;
+import net.buildtheearth.api.plugin.PluginManager;
+
+import java.util.logging.Logger;
+
+/**
+ * @author Noah Husby
+ */
+public abstract class TerraBungee {
+    @Getter
+    private static TerraBungee instance;
+
+    public static void setInstance(TerraBungee instance) {
+        TerraBungee.instance = instance;
+    }
+
+    protected abstract void start();
+
+    /**
+     * Gets the version of the current controller.
+     *
+     * @return the version of this controller
+     */
+    public abstract String getVersion();
+
+    /**
+     * Gets the logger for the controller
+     *
+     * @return the {@link Logger} instance
+     */
+    public abstract Logger getLogger();
+
+    /**
+     * Gets the plugin manager for the controller
+     *
+     * @return the {@link PluginManager instance}
+     */
+    public abstract PluginManager getPluginManager();
+}

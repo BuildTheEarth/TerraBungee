@@ -1,0 +1,4 @@
+dependencies {
+    compileOnly "org.yaml:snakeyaml:1.28"
+    compileOnly group: 'com.google.guava', name: 'guava', version: '29.0-jre'
+}

@@ -12,7 +12,7 @@ import net.md_5.bungee.api.CommandSender;
 
 public class TerraBungeeAdminCommand extends CommandFragmentManager {
     public TerraBungeeAdminCommand() {
-        super("terrabungeeadmin", "", new String[]{"tba"});
+        super("terrabungeeadmin", "", new String[]{ "tba" });
         setCommandBase("tba");
         setTitle("TerraBungee Admin Commands");
 
@@ -22,7 +22,7 @@ public class TerraBungeeAdminCommand extends CommandFragmentManager {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(!hasAdmin(sender)) {
+        if (!hasAdmin(sender)) {
             sender.sendMessage(ChatUtil.getNoPermission());
             return;
         }

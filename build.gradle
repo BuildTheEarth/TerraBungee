@@ -1,0 +1,116 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
+}
+
+def versionDir = "${buildDir}/generated-version"
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    apply plugin: "com.github.johnrengelman.shadow"
+    apply plugin: "java"
+    apply plugin: "maven-publish"
+
+    ext {
+        tbVersion = "1.1.0." + ('git rev-list --count HEAD'.execute().text.trim())
+
+        husbyVersion = "8998939c90"
+        lombokVersion = "1.18.18"
+    }
+
+    group "net.buildtheearth"
+    version "$tbVersion"
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    repositories {
+        mavenCentral()
+        maven {
+            name = "JitPack"
+            url = "https://jitpack.io/"
+        }
+        maven {
+            name = 'papermc-repo'
+            url = 'https://papermc.io/repo/repository/maven-public/'
+        }
+        maven {
+            name = 'codemc-snapshots'
+            url = 'https://repo.codemc.io/repository/maven-snapshots'
+        }
+        jcenter()
+    }
+
+    dependencies {
+        if (!("common".equalsIgnoreCase(project.name))) {
+            compile project(":common")
+        }
+
+        compileOnly "org.projectlombok:lombok:$lombokVersion"
+        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+        testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    }
+
+    publishing {
+        repositories {
+            if (project.hasProperty("noahhusbyMavenUsername") && project.hasProperty("noahhusbyMavenPassword")) {
+                maven {
+                    credentials {
+                        username = "$noahhusbyMavenUsername"
+                        password = "$noahhusbyMavenPassword"
+                    }
+
+                    name = "buildtheearth"
+                    url = "https://maven.noahhusby.com/repository/buildtheearth/"
+                }
+            }
+        }
+
+        publications {
+            maven(MavenPublication) {
+                groupId = "net.buildtheearth"
+                artifactId = "terrabungee-" + project.name
+                version = project.version
+
+                from components.java
+            }
+        }
+    }
+
+    if (project.name.contains("api") || project.name.contains("client")) {
+        publish.dependsOn(publishToMavenLocal)
+        shadowJar.dependsOn(publish)
+    }
+}
+
+dependencies {
+    for (Project prj : project.allprojects) {
+        if (!"terrabungee".equalsIgnoreCase(prj.name) && prj.parent.name.equalsIgnoreCase("terrabungee")) {
+            compile project(":" + prj.name)
+        }
+    }
+}
+
+sourceSets {
+    main {
+        output.dir(versionDir, builtBy: 'generateVersionProperties')
+    }
+}
+
+task generateVersionProperties {
+    doLast {
+        def propertiesFile = file "$versionDir/version.properties"
+        propertiesFile.parentFile.mkdirs()
+        def properties = new Properties()
+        properties.setProperty("version", tbVersion.toString())
+        propertiesFile.withWriter { properties.store(it, null) }
+    }
+}
+
+build.dependsOn shadowJar
+processResources.dependsOn generateVersionProperties

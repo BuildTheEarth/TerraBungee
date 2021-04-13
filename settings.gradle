@@ -1,0 +1,7 @@
+rootProject.name = 'TerraBungee'
+include 'common'
+include 'api'
+include 'controller'
+include 'client'
+include 'proxy'
+

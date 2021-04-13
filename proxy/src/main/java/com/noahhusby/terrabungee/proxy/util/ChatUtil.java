@@ -16,7 +16,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 @UtilityClass
 public class ChatUtil {
     public static TextComponent title() {
-        return new TextComponent(Constants.prefix.replace("&","\u00A7"));
+        return new TextComponent(Constants.prefix.replace("&", "\u00A7"));
     }
 
     public static TextComponent titleAndCombine(Object... objects) {
@@ -31,28 +31,33 @@ public class ChatUtil {
         TextComponent textComponent = title ? title() : new TextComponent("");
         StringBuilder builder = null;
         ChatColor lastFormat = null;
-        for(Object o : objects) {
-            if(o instanceof TextComponent) {
-                if(builder != null) {
+        for (Object o : objects) {
+            if (o instanceof TextComponent) {
+                if (builder != null) {
                     textComponent.addExtra(new TextComponent(builder.toString()));
                     builder = null;
                 }
 
                 TextComponent component = (TextComponent) o;
-                if(component.getColor() == null && lastFormat != null)
+                if (component.getColor() == null && lastFormat != null) {
                     component.setColor(lastFormat);
+                }
 
                 textComponent.addExtra(component);
             } else {
-                if(o instanceof ChatColor)
+                if (o instanceof ChatColor) {
                     lastFormat = (ChatColor) o;
-                if(builder == null) builder = new StringBuilder();
+                }
+                if (builder == null) {
+                    builder = new StringBuilder();
+                }
                 builder.append(o);
             }
         }
 
-        if(builder != null)
+        if (builder != null) {
             textComponent.addExtra(new TextComponent(builder.toString()));
+        }
         return textComponent;
     }
 

@@ -5,69 +5,63 @@
 
 package com.noahhusby.terrabungee.proxy;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Logger;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.noahhusby.terrabungee.api.TerraBungeeAPI;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
-import com.noahhusby.terrabungee.api.ServiceIntent;
-import com.noahhusby.terrabungee.api.TerraBungee;
-import com.noahhusby.terrabungee.api.services.ServiceType;
 import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
+import net.buildtheearth.terrabungee.client.TerraBungeeAPI;
+import net.buildtheearth.terrabungee.client.TerraBungeeClient;
+import net.buildtheearth.terrabungee.common.services.ServiceIntent;
+import net.buildtheearth.terrabungee.common.services.ServiceType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
+import java.util.logging.Logger;
+
 public class TerraBungeeProxy extends Plugin implements Listener {
     private static TerraBungeeProxy instance = null;
-    public static TerraBungee tb;
+    public static TerraBungeeClient tb;
     public static Logger LOGGER;
 
-	@Override
-	public void onEnable() {
-		LOGGER = getLogger();
-		instance = this;
+    @Override
+    public void onEnable() {
+        LOGGER = getLogger();
+        instance = this;
 
-		ProxyServer.getInstance().getPluginManager().registerListener(this, this);
-		ConfigHandler.getInstance();
-		PlayerHandler.getInstance();
+        ProxyServer.getInstance().getPluginManager().registerListener(this, this);
+        ConfigHandler.getInstance();
+        PlayerHandler.getInstance();
 
-		// Set local handler
-		TerraBungeeAPI.setLocalHandler(player -> player.getProxy().equalsIgnoreCase(ConfigHandler.serviceID));
+        tb = TerraBungeeAPI.createService(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
+        tb.setAutoReconnect(true);
+        tb.connect();
+        tb.enableIntents(ServiceIntent.INSTANCE_UPDATE);
 
-		tb = TerraBungeeAPI.createService(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
-		tb.setAutoReconnect(true);
-		tb.connect();
-		tb.enableIntents(ServiceIntent.INSTANCE_UPDATE);
+        tb.addListener(new TBListener());
 
-		tb.addListener(new TBListener());
+        getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
+        getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
+    }
 
-		getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
-		getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
-	}
-
-	@EventHandler
-	public void onProxyJoin(ServerConnectEvent e) {
+    @EventHandler
+    public void onProxyJoin(ServerConnectEvent e) {
 		/*
 		if(e.getReason() == ServerConnectEvent.Reason.JOIN_PROXY && !ConfigHandler.queueServer.equals(""))
 			e.getPlayer().connect(ProxyServer.getInstance().getServerInfo(ConfigHandler.queueServer));
 		 */
-	}
+    }
 
-	
-	@Override
-	public void onDisable() {
-		instance = null;
-		tb.discard();
-	}
-	
-	public static TerraBungeeProxy getInstance() {
-		return instance;
-	}
+
+    @Override
+    public void onDisable() {
+        instance = null;
+        tb.discard();
+    }
+
+    public static TerraBungeeProxy getInstance() {
+        return instance;
+    }
 }

@@ -36,13 +36,15 @@ public abstract class CommandFragmentManager extends Command {
     }
 
     protected void setCommandBase(String b) {
-        this.commandBase = "/"+b+" ";
+        this.commandBase = "/" + b + " ";
     }
 
     protected void executeFragment(CommandSender sender, String[] args) {
         if (args.length != 0) {
             ArrayList<String> dataList = new ArrayList<>();
-            for (int x = 1; x < args.length; x++) dataList.add(args[x]);
+            for (int x = 1; x < args.length; x++) {
+                dataList.add(args[x]);
+            }
 
             String[] data = dataList.toArray(new String[dataList.size()]);
             for (ICommandFragment f : commandFragments) {
@@ -57,15 +59,15 @@ public abstract class CommandFragmentManager extends Command {
 
     private void displayCommands(CommandSender sender, String[] args) {
         sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, title + ":"));
-        for(ICommandFragment f : commandFragments) {
+        for (ICommandFragment f : commandFragments) {
 
             TextComponent message = new TextComponent();
             message.addExtra(ChatUtil.combine(ChatColor.YELLOW, commandBase));
             message.addExtra(ChatUtil.combine(ChatColor.GREEN, String.format("%s ", f.getName())));
-            if(f.getArguments() != null) {
-                for(int x = 0; x < f.getArguments().length; x++) {
+            if (f.getArguments() != null) {
+                for (int x = 0; x < f.getArguments().length; x++) {
                     String argument = f.getArguments()[x];
-                    if(argument.startsWith("<")) {
+                    if (argument.startsWith("<")) {
                         message.addExtra(ChatUtil.combine(ChatColor.RED, String.format("%s ", argument)));
                     } else {
                         message.addExtra(ChatUtil.combine(ChatColor.GRAY, String.format("%s ", argument)));

@@ -19,7 +19,9 @@ public class ConfigHandler {
     private static ConfigHandler instance;
 
     public static ConfigHandler getInstance() {
-        if(instance == null) instance = new ConfigHandler();
+        if (instance == null) {
+            instance = new ConfigHandler();
+        }
         return instance;
     }
 
@@ -31,8 +33,9 @@ public class ConfigHandler {
     private Configuration config;
 
     private ConfigHandler() {
-        if (!plugin.getDataFolder().exists())
+        if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();
+        }
 
         File file = new File(plugin.getDataFolder(), "config.yml");
         if (!file.exists()) {

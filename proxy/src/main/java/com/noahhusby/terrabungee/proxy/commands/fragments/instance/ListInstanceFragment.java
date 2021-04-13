@@ -5,10 +5,10 @@
 
 package com.noahhusby.terrabungee.proxy.commands.fragments.instance;
 
-import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.commands.ICommandFragment;
 import com.noahhusby.terrabungee.proxy.util.ChatUtil;
+import net.buildtheearth.terrabungee.common.services.Instance;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -21,8 +21,8 @@ public class ListInstanceFragment implements ICommandFragment {
     public void execute(CommandSender sender, String[] args) {
         TextComponent list = ChatUtil.titleAndCombine(ChatColor.RED, "Instances: ");
         boolean first = true;
-        for(Instance i : TerraBungeeProxy.tb.getInstanceManager().getInstances()) {
-            if(first) {
+        for (Instance i : TerraBungeeProxy.tb.getInstanceManager().getInstances()) {
+            if (first) {
                 first = false;
             } else {
                 list.addExtra(ChatUtil.combine(ChatColor.GRAY, ", "));

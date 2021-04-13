@@ -7,7 +7,6 @@ package com.noahhusby.terrabungee.proxy;
 
 public class Constants {
     public static final String prefix = "&4&lTB &8&l> ";
-    public static final String version = "1.0.3";
 
     public static final String playerUpdatePacket = "player_update";
     public static final String playerMoveID = "move_player";

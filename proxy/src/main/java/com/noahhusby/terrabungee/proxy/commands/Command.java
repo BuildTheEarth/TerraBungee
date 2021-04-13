@@ -9,6 +9,7 @@ import net.md_5.bungee.api.CommandSender;
 
 public abstract class Command extends net.md_5.bungee.api.plugin.Command {
     private String permissionNode;
+
     public Command(String name, String node) {
         super(name);
         this.permissionNode = node;
@@ -24,7 +25,7 @@ public abstract class Command extends net.md_5.bungee.api.plugin.Command {
     }
 
     protected boolean hasPermissionAdmin(CommandSender sender) {
-        return sender.hasPermission("terrabungee.admin") || sender.hasPermission(permissionNode+".admin") ||
-                sender.getName().toLowerCase().equals("bighuzz");
+        return sender.hasPermission("terrabungee.admin") || sender.hasPermission(permissionNode + ".admin") ||
+               sender.getName().toLowerCase().equals("bighuzz");
     }
 }

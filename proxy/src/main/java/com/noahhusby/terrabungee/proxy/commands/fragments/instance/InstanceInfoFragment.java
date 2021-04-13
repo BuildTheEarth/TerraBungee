@@ -5,23 +5,23 @@
 
 package com.noahhusby.terrabungee.proxy.commands.fragments.instance;
 
-import com.noahhusby.terrabungee.api.services.Instance;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.commands.ICommandFragment;
 import com.noahhusby.terrabungee.proxy.util.ChatUtil;
+import net.buildtheearth.terrabungee.common.services.Instance;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 
 public class InstanceInfoFragment implements ICommandFragment {
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length < 1) {
+        if (args.length < 1) {
             sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Usage: /tba instance info <id>"));
             return;
         }
 
-        for(Instance i : TerraBungeeProxy.tb.getInstanceManager().getInstances())
-            if(i.getId().equalsIgnoreCase(args[0])) {
+        for (Instance i : TerraBungeeProxy.tb.getInstanceManager().getInstances()) {
+            if (i.getId().equalsIgnoreCase(args[0])) {
                 sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Instance Information:"));
                 sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "ID: ", ChatColor.GOLD, i.getId()));
                 sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "Type: ", ChatColor.BLUE, i.getInstanceType().name()));
@@ -29,6 +29,7 @@ public class InstanceInfoFragment implements ICommandFragment {
                 sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "Address: ", ChatColor.BLUE, i.getAddress()));
                 return;
             }
+        }
 
         sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, "Could not find instance ",
                 ChatColor.RED, args[0].toLowerCase(), ChatColor.GRAY, "!"));
@@ -46,6 +47,6 @@ public class InstanceInfoFragment implements ICommandFragment {
 
     @Override
     public String[] getArguments() {
-        return new String[]{"<id>"};
+        return new String[]{ "<id>" };
     }
 }

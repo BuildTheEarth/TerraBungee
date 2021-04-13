@@ -5,8 +5,8 @@
 
 package com.noahhusby.terrabungee.proxy.util;
 
-import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
+import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 
