@@ -82,7 +82,7 @@ allprojects {
         }
     }
 
-    if (project.name.contains("api") || project.name.contains("client")) {
+    if (project.name.contains("api") || project.name.contains("client") || project.name.contains("common")) {
         publish.dependsOn(publishToMavenLocal)
         shadowJar.dependsOn(publish)
     }

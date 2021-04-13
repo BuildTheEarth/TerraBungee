@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import lombok.Getter;
 import lombok.NonNull;
 import net.buildtheearth.api.TerraBungee;
 import org.yaml.snakeyaml.Yaml;
@@ -30,6 +31,7 @@ public final class PluginManager {
 
     private final Yaml yaml;
     private final Map<String, Plugin> plugins = Maps.newLinkedHashMap();
+    @Getter
     private final Map<String, Command> commandMap = Maps.newHashMap();
     private Map<String, PluginDescription> toLoad = Maps.newHashMap();
     private final Multimap<Plugin, Command> commandsByPlugin = ArrayListMultimap.create();

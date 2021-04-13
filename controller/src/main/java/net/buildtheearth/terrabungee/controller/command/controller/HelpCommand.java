@@ -1,5 +1,6 @@
 package net.buildtheearth.terrabungee.controller.command.controller;
 
+import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.terrabungee.controller.command.CommandManager;
 import net.buildtheearth.terrabungee.controller.console.ConsoleColor;
@@ -23,6 +24,9 @@ public class HelpCommand extends Command {
             TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW, command.getName(), ConsoleColor.WHITE, " - ",
                     ConsoleColor.GREEN, command.getPurpose());
         }
-
+        for(Command command : TerraBungee.getInstance().getPluginManager().getCommandMap().values()) {
+            TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW, command.getName(), ConsoleColor.WHITE, " - ",
+                    ConsoleColor.GREEN, command.getPurpose());
+        }
     }
 }
