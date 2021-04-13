@@ -8,13 +8,18 @@ import com.noahhusby.lib.data.sql.MySQL;
 import com.noahhusby.lib.data.sql.structure.Structure;
 import com.noahhusby.lib.data.sql.structure.Type;
 import com.noahhusby.lib.data.storage.Storage;
+import com.noahhusby.lib.data.storage.StorageList;
+import com.noahhusby.lib.data.storage.compare.Comparator;
 import com.noahhusby.lib.data.storage.compare.CutComparator;
 import com.noahhusby.lib.data.storage.compare.ValueComparator;
 import com.noahhusby.lib.data.storage.handlers.LocalStorageHandler;
 import com.noahhusby.lib.data.storage.handlers.SQLStorageHandler;
+import com.noahhusby.lib.data.storage.handlers.StorageHandler;
+import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
 import com.noahhusby.terrabungee.controller.discord.DiscordConfig;
 import com.noahhusby.terrabungee.controller.discord.DiscordManager;
+import com.noahhusby.terrabungee.controller.players.ControllerPlayer;
 import com.noahhusby.terrabungee.controller.players.PlayerManager;
 import com.noahhusby.terrabungee.controller.services.InstanceManager;
 import net.minecraftforge.common.config.Configuration;
@@ -107,20 +112,17 @@ public class ConfigHandler {
         if(config.hasChanged()) config.save();
 
         Storage playerData = PlayerManager.getInstance().getPlayers();
-        playerData.clearHandlers();
-        if(playerData.getComparator() instanceof CutComparator)
-            playerData.setComparator(new ValueComparator("UUID"));
+        playerData.destroy();
+        ((StorageList) playerData).clear();
 
         Storage staticInstanceData = InstanceManager.getInstance().getStorableStaticInstances();
-        staticInstanceData.clearHandlers();
-        if(staticInstanceData.getComparator() instanceof CutComparator)
-            staticInstanceData.setComparator(new ValueComparator("Id"));
+        staticInstanceData.destroy();
+        ((StorageList) staticInstanceData).clear();
 
         Storage discordConfigData = DiscordManager.getInstance().getDiscordConfigs();
         discordConfigData.clearHandlers();
-        if(discordConfigData.getComparator() instanceof CutComparator)
-            discordConfigData.setComparator(new ValueComparator("GuildID"));
-
+        staticInstanceData.destroy();
+        ((StorageList) staticInstanceData).clear();
 
         playerData.registerHandler(new LocalStorageHandler(playerDataFile));
         staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
@@ -171,17 +173,14 @@ public class ConfigHandler {
             discordConfigData.registerHandler(sqlStorageHandler);
         }
 
-        playerData.setAutoLoad(10, TimeUnit.SECONDS);
-        playerData.setAutoSave(10, TimeUnit.SECONDS);
-        staticInstanceData.setAutoLoad(10, TimeUnit.SECONDS);
-        staticInstanceData.setAutoSave(10, TimeUnit.SECONDS);
-        discordConfigData.setAutoLoad(10, TimeUnit.SECONDS);
-        discordConfigData.setAutoSave(10, TimeUnit.SECONDS);
-
         TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
-            playerData.load(true);
-            staticInstanceData.load(true);
-            discordConfigData.load(true);
+            playerData.loadAsync();
+            //playerData.setAutoLoad(10, TimeUnit.SECONDS);
+            playerData.setAutoSave(10, TimeUnit.SECONDS);
+            staticInstanceData.setAutoLoad(10, TimeUnit.SECONDS);
+            staticInstanceData.setAutoSave(10, TimeUnit.SECONDS);
+            discordConfigData.setAutoLoad(10, TimeUnit.SECONDS);
+            discordConfigData.setAutoSave(10, TimeUnit.SECONDS);
         }, 2, TimeUnit.SECONDS);
     }
 

@@ -1,6 +1,7 @@
 package com.noahhusby.terrabungee.controller;
 
 import ch.qos.logback.classic.Level;
+import com.noahhusby.terrabungee.PluginManager;
 import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.controller.config.ConfigHandler;
 import com.noahhusby.terrabungee.controller.console.TerraBungeeConsole;
@@ -8,10 +9,13 @@ import com.noahhusby.terrabungee.controller.discord.DiscordManager;
 import com.noahhusby.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
 import com.noahhusby.terrabungee.controller.discord.embeds.ControllerStoppedEmbed;
 import com.noahhusby.terrabungee.controller.network.NetworkManager;
+import com.noahhusby.terrabungee.controller.services.ServiceManager;
+import com.zaxxer.hikari.HikariConfig;
 import io.javalin.Javalin;
 import lombok.Getter;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +24,9 @@ public class TerraBungeeController {
     private Javalin webServer;
     public static TerraBungeeConsole logger;
 
-    @Getter private ScheduledExecutorService generalThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(8, "terrabungee-general");
+    PluginManager manager = new PluginManager(this);
+
+    @Getter private ScheduledExecutorService generalThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-general");
     @Getter private static TerraBungeeController instance;
 
     public static boolean isTerraBungeeRunning = true;
@@ -33,9 +39,20 @@ public class TerraBungeeController {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("io.javalin.Javalin")).setLevel(Level.WARN);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.eclipse")).setLevel(Level.WARN);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(Level.WARN);
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.HikariConfig")).setLevel(Level.INFO);
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.pool.HikariPool")).setLevel(Level.INFO);
+
+        File f = new File(System.getProperty("user.dir"), "plugins");
+        f.mkdir();
+
+
 
         ConfigHandler.getInstance();
         splash();
+        manager.detectPlugins(f);
+        manager.loadPlugins();
+        manager.enablePlugins();
+        ServiceManager.getInstance();
         DiscordManager.getInstance();
 
         generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);

@@ -28,7 +28,7 @@ public class DefaultServerCommand implements ICommand {
         String id = args[1];
 
         boolean matched = false;
-        for(ITerraBungeeService s : ServiceManager.getInstance().getServices()) {
+        for(ITerraBungeeService s : ServiceManager.getInstance().getServices().values()) {
             if(s.getId().equalsIgnoreCase(id)) {
                 matched = true;
                 if(s instanceof Instance) {

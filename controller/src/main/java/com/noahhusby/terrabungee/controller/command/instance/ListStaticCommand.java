@@ -22,7 +22,7 @@ public class ListStaticCommand implements ICommand {
 
         TerraBungeeConsole.sendMessage(ConsoleColor.BLUE, "Static Instances:");
 
-        for(StorableStaticInstance s : InstanceManager.getInstance().storableStaticInstances) {
+        for(StorableStaticInstance s : InstanceManager.getInstance().getStorableStaticInstances()) {
             TerraBungeeConsole.sendMessage(ConsoleColor.BLUE, s.id, ConsoleColor.WHITE, " - ",
                     ConsoleColor.RED, s.address);
         }

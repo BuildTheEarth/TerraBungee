@@ -1,9 +1,6 @@
 package com.noahhusby.terrabungee.controller.players;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.noahhusby.lib.data.storage.StorageList;
 import com.noahhusby.terrabungee.api.ServiceIntent;
@@ -15,10 +12,10 @@ import com.noahhusby.terrabungee.controller.services.ServiceManager;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -63,11 +60,12 @@ public class PlayerManager {
         return onlinePlayerRegistry.size();
     }
 
-    public void proxyPlayerDrop(String id, List<ControllerPlayer> players) {
+    public void proxyPlayerDrop(String id, List<ControllerPlayer> playerDrop) {
         manipulate(ps -> {
             Map<UUID, ControllerPlayer> playerMap = Maps.newHashMap();
-            for(ControllerPlayer p : ps)
+            for(ControllerPlayer p : ps) {
                 playerMap.put(p.getUniqueID(), p);
+            }
 
             Map<UUID, ControllerPlayer> playerJoinQuitMap = Maps.newHashMap();
 
@@ -78,8 +76,13 @@ public class PlayerManager {
                 }
             });
 
-            for(ControllerPlayer p : players) {
+            for(ControllerPlayer p : playerDrop) {
                 ControllerPlayer player = playerMap.get(p.getUniqueID());
+
+                if(player == null && playerRegistry.containsKey(p.getUniqueID())) {
+                    continue;
+                }
+
                 if(player == null) {
                     ps.add(p);
                     continue;
@@ -108,6 +111,7 @@ public class PlayerManager {
             for(ControllerPlayer p : ps) {
                 if(p.getUniqueID().equals(uuid)) {
                     p.setAttributes(attributes);
+                    ps.saveAsync();
                     return;
                 }
             }

@@ -1,11 +1,13 @@
 package com.noahhusby.terrabungee.controller.players;
 
+import com.noahhusby.lib.data.storage.Key;
 import com.noahhusby.terrabungee.api.players.TBPlayer;
 import com.noahhusby.terrabungee.api.util.EventHashMap;
 
 import java.util.Map;
 import java.util.UUID;
 
+@Key("UUID")
 public class ControllerPlayer extends TBPlayer {
     public ControllerPlayer(UUID uuid) {
         super(uuid);

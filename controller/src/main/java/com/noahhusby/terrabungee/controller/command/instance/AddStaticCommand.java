@@ -27,7 +27,7 @@ public class AddStaticCommand implements ICommand {
         String id = args[1];
         String address = args[2];
 
-        for(StorableStaticInstance s : InstanceManager.getInstance().storableStaticInstances) {
+        for(StorableStaticInstance s : InstanceManager.getInstance().getStorableStaticInstances()) {
             if(s.id.equalsIgnoreCase(id)) {
                 TerraBungeeConsole.sendMessage(ConsoleColor.RED, "The static instance ", ConsoleColor.BLUE,
                         id, ConsoleColor.RED, " already exists!");

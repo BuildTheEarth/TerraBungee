@@ -27,7 +27,7 @@ public class RemoveStaticCommand implements ICommand {
         String id = args[1];
 
         StorableStaticInstance remove = null;
-        for(StorableStaticInstance s : InstanceManager.getInstance().storableStaticInstances) {
+        for(StorableStaticInstance s : InstanceManager.getInstance().getStorableStaticInstances()) {
             if(s.id.equalsIgnoreCase(id)) {
                 remove = s;
             }

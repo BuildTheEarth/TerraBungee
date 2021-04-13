@@ -27,6 +27,7 @@ public class PlayerHandler {
             if(TerraBungeeProxy.tb == null || !TerraBungeeProxy.tb.getNetworkManager().isConnectionEstablished()) return;
             JsonArray array = new JsonArray();
             for(ProxiedPlayer p : ProxyServer.getInstance().getPlayers()) {
+                if(p.getServer() == null || p.getServer().getInfo() == null) continue;
                 JsonObject player = new JsonObject();
                 player.addProperty("uuid", p.getUniqueId().toString());
                 player.addProperty("name", p.getName());

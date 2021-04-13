@@ -2,7 +2,6 @@ package com.noahhusby.terrabungee.controller.services;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.annotations.Expose;
 import com.noahhusby.lib.data.storage.StorageList;
 import com.noahhusby.terrabungee.api.services.*;
 import com.noahhusby.terrabungee.controller.TerraBungeeController;
@@ -11,7 +10,6 @@ import com.noahhusby.terrabungee.controller.discord.embeds.StaticInstanceAddedEm
 import com.noahhusby.terrabungee.controller.discord.embeds.StaticInstanceRemovedEmbed;
 import lombok.Getter;
 
-import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -88,22 +86,33 @@ public class InstanceManager {
      */
     private void updateInstances() {
         List<TerraBungeeService> currentInstances = ServiceManager.getInstance().getServices(ServiceType.INSTANCE);
+        List<Instance> removalInstances = Lists.newArrayList();
 
         // STATIC INSTANCES
-        // TODO: Redo instance object and change this
-        List<Instance> removeStaticInstances = Lists.newArrayList();
+        Map<String, String> staticInstanceMap = Maps.newHashMap();
+        for(StorableStaticInstance s : storableStaticInstances) {
+            staticInstanceMap.put(s.id, s.address);
+        }
         for(TerraBungeeService s : currentInstances) {
             Instance instance = (Instance) s;
             if(instance.getInstanceType() == Instance.InstanceType.STATIC) {
-                removeStaticInstances.add(instance);
+                if(!staticInstanceMap.containsKey(instance.getId())) {
+                    removalInstances.add(instance);
+                } else {
+                    if(!instance.getAddress().equalsIgnoreCase(staticInstanceMap.get(instance.getId()))) {
+                        removalInstances.add(instance);
+                    } else {
+                        staticInstanceMap.remove(instance.getId());
+                    }
+                }
             }
         }
-        for(Instance i : removeStaticInstances) {
-            ServiceManager.getInstance().discardService(i, true);
-        }
-        for(StorableStaticInstance s : storableStaticInstances) {
-            ServiceManager.getInstance().createService(new Instance(s.id, s.address, true, true, "", ServiceStatus.ONLINE.name()
+        for(Map.Entry<String, String> e : staticInstanceMap.entrySet()) {
+            ServiceManager.getInstance().createService(new Instance(e.getKey(), e.getValue(), true, true, "", ServiceStatus.ONLINE.name()
                     , Instance.InstanceType.STATIC), true);
+        }
+        for(Instance i : removalInstances) {
+            ServiceManager.getInstance().discardService(i, true);
         }
     }
 }

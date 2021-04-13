@@ -1,6 +1,8 @@
 package com.noahhusby.terrabungee.controller.services;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.noahhusby.terrabungee.api.ServiceIntent;
 import com.noahhusby.terrabungee.api.TerraBungeeUtil;
 import com.noahhusby.terrabungee.api.services.*;
@@ -12,31 +14,33 @@ import com.noahhusby.terrabungee.controller.network.C2S.C2SInstanceUpdatePacket;
 import com.noahhusby.terrabungee.controller.network.C2S.C2SOnlinePlayerCacheHitPacket;
 import com.noahhusby.terrabungee.controller.network.NetworkManager;
 import io.javalin.websocket.WsContext;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class ServiceManager {
-    private static ServiceManager instance;
+    private static ServiceManager instance = null;
 
     public static ServiceManager getInstance() {
-        if(instance == null) instance = new ServiceManager();
-        return instance;
+        return instance == null ? instance = new ServiceManager() : instance;
     }
 
-    private List<TerraBungeeService> services = new ArrayList<>();
+
+    private final Map<String, TerraBungeeService> services = new CaseInsensitiveMap<>();
     private String defaultServer = "";
 
     private ServiceManager() {
-        TerraBungeeController.getInstance().getGeneralThreads()
-                .scheduleAtFixedRate(new ServiceChecker(), 0, 2, TimeUnit.SECONDS);
         registerIntent(ServiceIntent.INSTANCE_UPDATE, 2, s -> NetworkManager.getInstance().send(new C2SInstanceUpdatePacket(s)));
         registerIntent(ServiceIntent.ONLINE_PLAYER_UPDATE, 2, s -> NetworkManager.getInstance().send(new C2SOnlinePlayerCacheHitPacket(s)));
+        TerraBungeeController.getInstance().getGeneralThreads()
+                .scheduleAtFixedRate(new ServiceChecker(), 1, 2, TimeUnit.SECONDS);
     }
 
     private final ScheduledExecutorService intentThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-intents");
@@ -45,13 +49,13 @@ public class ServiceManager {
      * Gets all services created regardless of state (unless discarded)
      * @return All services created
      */
-    public List<TerraBungeeService> getServices() {
-        return ImmutableList.copyOf(services);
+    public Map<String, TerraBungeeService> getServices() {
+        return ImmutableMap.copyOf(services);
     }
 
     public int getTotalDisconnectedServices() {
         int x = 0;
-        for(TerraBungeeService s : ImmutableList.copyOf(services)) {
+        for(TerraBungeeService s : ImmutableMap.copyOf(services).values()) {
             if(s.getStatus() == ServiceStatus.LOST_CONNECTION) {
                 x++;
             }
@@ -66,7 +70,7 @@ public class ServiceManager {
      */
     public List<TerraBungeeService> getServices(ServiceType type) {
         List<TerraBungeeService> typeServices = new ArrayList<>();
-        for(TerraBungeeService s : ImmutableList.copyOf(services)) {
+        for(TerraBungeeService s : ImmutableMap.copyOf(services).values()) {
             if(s.getType() == type) {
                 typeServices.add(s);
             }
@@ -88,12 +92,7 @@ public class ServiceManager {
      * @return TerraBungeeService
      */
     public TerraBungeeService getService(String id) {
-        for(TerraBungeeService s : ImmutableList.copyOf(services)) {
-            if(s.getId().equalsIgnoreCase(id)) {
-                return s;
-            }
-        }
-        return null;
+        return services.get(id);
     }
 
     /**
@@ -184,7 +183,7 @@ public class ServiceManager {
         service.setStatus(ServiceStatus.AWAIT_INIT);
         if(staticService) service.setStatus(ServiceStatus.STATIC);
 
-        services.add(service);
+        services.put(service.getId(), service);
         return service;
     }
 
@@ -195,7 +194,7 @@ public class ServiceManager {
      * @param service {@link Consumer<TerraBungeeService>}
      */
     public void registerIntent(ServiceIntent intent, int seconds, Consumer<TerraBungeeService> service) {
-        intentThreads.scheduleAtFixedRate(() -> runIntentAction(intent, service), 0, seconds, TimeUnit.SECONDS);
+        intentThreads.scheduleAtFixedRate(() -> runIntentAction(intent, service), 1, seconds, TimeUnit.SECONDS);
     }
 
     /**
@@ -204,7 +203,7 @@ public class ServiceManager {
      * @param service {@link Consumer<TerraBungeeService>}
      */
     public void runIntentAction(ServiceIntent intent, Consumer<TerraBungeeService> service) {
-        for(TerraBungeeService s : ImmutableList.copyOf(services)) {
+        for(TerraBungeeService s : ImmutableMap.copyOf(services).values()) {
             if(s.getStatus() == ServiceStatus.ONLINE && s.getIntents().contains(intent)) {
                 intentThreads.submit(() -> service.accept(s));
             }
@@ -214,7 +213,7 @@ public class ServiceManager {
     /**
      * A runnable class that checks the connection status of each service
      */
-    private static class ServiceChecker implements Runnable {
+    public static class ServiceChecker implements Runnable {
 
         private final Map<String, ServiceStatus> serviceStatus = new HashMap<>();
 
@@ -234,7 +233,7 @@ public class ServiceManager {
             }
 
             serviceStatus.clear();
-            for(TerraBungeeService s : ServiceManager.getInstance().getServices()) {
+            for(TerraBungeeService s : ServiceManager.getInstance().getServices().values()) {
                 serviceStatus.put(s.getId(), s.getStatus());
             }
         }
