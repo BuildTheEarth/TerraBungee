@@ -7,6 +7,7 @@ import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.NonNull;
 import net.buildtheearth.api.TerraBungee;
+import net.buildtheearth.api.network.IC2SPacket;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
@@ -36,6 +37,10 @@ public final class PluginManager {
     private Map<String, PluginDescription> toLoad = Maps.newHashMap();
     private final Multimap<Plugin, Command> commandsByPlugin = ArrayListMultimap.create();
 
+    private final Map<String, IC2SPacket> packetMap = Maps.newHashMap();
+    private final Multimap<Plugin, IC2SPacket> packetsByPlugin = ArrayListMultimap.create();
+
+
     public PluginManager(TerraBungee controller) {
         this.controller = controller;
         Constructor yamlConstructor = new Constructor();
@@ -50,18 +55,36 @@ public final class PluginManager {
         commandsByPlugin.put(plugin, command);
     }
 
+    public void registerPacket(Plugin plugin, IC2SPacket packet) {
+        packetMap.put(packet.getID(), packet);
+        packetsByPlugin.put(plugin, packet);
+    }
+
     public void unregisterCommand(Command command) {
         while (commandMap.values().remove(command)) {
-            ;
         }
         commandsByPlugin.values().remove(command);
+    }
+
+    public void unregisterPacket(IC2SPacket packet) {
+        while(packetMap.values().remove(packet)) {
+        }
+        packetsByPlugin.values().remove(packet);
     }
 
     public void unregisterCommands(Plugin plugin) {
         for (Iterator<Command> it = commandsByPlugin.get(plugin).iterator(); it.hasNext(); ) {
             Command command = it.next();
             while (commandMap.values().remove(command)) {
-                ;
+            }
+            it.remove();
+        }
+    }
+
+    public void unregisterPackets(Plugin plugin) {
+        for (Iterator<IC2SPacket> it = packetsByPlugin.get(plugin).iterator(); it.hasNext(); ) {
+            IC2SPacket packet = it.next();
+            while (packetMap.values().remove(packet)) {
             }
             it.remove();
         }
