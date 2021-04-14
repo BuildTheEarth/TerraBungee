@@ -14,9 +14,11 @@
 
 package net.buildtheearth.terrabungee.controller.network;
 
+import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.JsonUtils;
 import io.javalin.websocket.WsContext;
+import lombok.Getter;
 import net.buildtheearth.api.network.IC2SPacket;
 import net.buildtheearth.api.network.INetworkManager;
 import net.buildtheearth.api.network.IS2CPacket;
@@ -33,20 +35,17 @@ import net.buildtheearth.terrabungee.controller.network.S2C.S2CServiceMessagePac
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CSetServiceStatusPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CUpdateAttributeID;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 public class NetworkManager implements INetworkManager {
     private static NetworkManager instance;
 
     public static NetworkManager getInstance() {
-        if (instance == null) {
-            instance = new NetworkManager();
-        }
-        return instance;
+        return instance == null ? instance = new NetworkManager() : instance;
     }
 
-    private final List<IS2CPacket> registeredServicePackets = new ArrayList<>();
+    @Getter
+    private final Map<String, IS2CPacket> packets = Maps.newHashMap();
 
     private NetworkManager() {
         register(new S2CKeepAlivePacket());
@@ -68,12 +67,11 @@ public class NetworkManager implements INetworkManager {
         ServicePacket sp = new ServicePacket(client, id);
         JsonObject data = payload.get("data").getAsJsonObject();
 
-        for (IS2CPacket s : registeredServicePackets) {
-            if (s.getID().equalsIgnoreCase(type)) {
-                Response response = new Response(sp, salt);
-                s.onMessage(sp, data, response);
-                send(new C2SResponsePacket(response));
-            }
+        IS2CPacket packet = packets.get(type);
+        if(packet != null) {
+            Response response = new Response(sp, salt);
+            packet.onMessage(sp, data, response);
+            send(new C2SResponsePacket(response));
         }
     }
 
@@ -96,6 +94,6 @@ public class NetworkManager implements INetworkManager {
 
     @Override
     public void register(IS2CPacket packet) {
-        registeredServicePackets.add(packet);
+        packets.put(packet.getID(), packet);
     }
 }
