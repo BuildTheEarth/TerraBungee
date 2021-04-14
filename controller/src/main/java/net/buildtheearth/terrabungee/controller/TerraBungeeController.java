@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -36,8 +37,10 @@ public class TerraBungeeController extends TerraBungee {
     @Getter
     private static TerraBungeeController instance;
 
-    public static boolean isTerraBungeeRunning = true;
-    public static boolean isTBQueuedForTermination = false;
+    @Getter
+    private boolean running = true;
+
+    private WSServer server;
 
     protected TerraBungeeController() {
     }
@@ -68,25 +71,24 @@ public class TerraBungeeController extends TerraBungee {
 
         generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);
 
-        WSServer server = new WSServer(new InetSocketAddress(ConfigHandler.host, ConfigHandler.port));
+        server = new WSServer(new InetSocketAddress(ConfigHandler.host, ConfigHandler.port));
         new Thread(server).start();
-
-        generalThreads.scheduleAtFixedRate(() -> {
-            if (!isTerraBungeeRunning && !isTBQueuedForTermination) {
-                isTBQueuedForTermination = true;
-                DiscordManager.getInstance().send(new ControllerStoppedEmbed());
-                try {
-                    server.stop();
-                } catch (IOException | InterruptedException ignored) {
-                }
-            } else if (isTBQueuedForTermination) {
-                System.exit(0);
-            }
-        }, 0, 5, TimeUnit.SECONDS);
-
 
         logger.info("TerraBungee Controller Started!");
         logger.start();
+    }
+
+    @Override
+    public void end() {
+        running = false;
+        getLogger().info("Shutting down the controller!");
+        DiscordManager.getInstance().send(new ControllerStoppedEmbed());
+        try {
+            server.stop();
+        } catch (IOException | InterruptedException ignored) {
+        }
+        generalThreads.shutdownNow();
+        Executors.newSingleThreadScheduledExecutor().schedule(() -> System.exit(0), 1, TimeUnit.SECONDS);
     }
 
     @Override

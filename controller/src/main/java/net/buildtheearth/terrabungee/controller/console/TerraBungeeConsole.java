@@ -1,5 +1,6 @@
 package net.buildtheearth.terrabungee.controller.console;
 
+import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.command.CommandManager;
 import org.jline.reader.LineReader;
@@ -21,7 +22,7 @@ public class TerraBungeeConsole extends Logger {
 
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new SimpleFormatter() {
-            private static final String format = "[%1$tT %2$S] [%3$s]: %4$s %n";
+            private static final String format = "[%1$tT %2$S]: %4$s %n";
 
             @Override
             public synchronized String format(LogRecord lr) {
@@ -53,7 +54,7 @@ public class TerraBungeeConsole extends Logger {
         try {
             LineReader reader = LineReaderBuilder.builder().terminal(TerminalBuilder.terminal()).build();
             String line;
-            while ((line = reader.readLine("> ")) != null && TerraBungeeController.isTerraBungeeRunning) {
+            while ((line = reader.readLine("> ")) != null && TerraBungeeController.getInstance().isRunning()) {
                 if (line.equalsIgnoreCase("")) {
                     continue;
                 }

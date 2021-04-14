@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.controller.console;
+package net.buildtheearth.api.util;
 
 public enum ConsoleColor {
     //Color end string, color reset

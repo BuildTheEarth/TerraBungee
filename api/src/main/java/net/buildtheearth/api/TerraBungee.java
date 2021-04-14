@@ -20,6 +20,11 @@ public abstract class TerraBungee {
     protected abstract void start();
 
     /**
+     * Shuts down the current controller
+     */
+    public abstract void end();
+
+    /**
      * Gets the version of the current controller.
      *
      * @return the version of this controller

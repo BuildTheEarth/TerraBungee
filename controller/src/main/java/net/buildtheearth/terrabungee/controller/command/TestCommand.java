@@ -3,7 +3,7 @@ package net.buildtheearth.terrabungee.controller.command;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
-import net.buildtheearth.terrabungee.controller.console.ConsoleColor;
+import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
