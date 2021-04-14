@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
-import net.buildtheearth.terrabungee.controller.network.IC2SPacket;
-import net.buildtheearth.terrabungee.controller.network.ServicePacket;
+import net.buildtheearth.api.network.IC2SPacket;
+import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 

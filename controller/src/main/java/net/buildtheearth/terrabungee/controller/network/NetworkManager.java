@@ -17,6 +17,11 @@ package net.buildtheearth.terrabungee.controller.network;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.JsonUtils;
 import io.javalin.websocket.WsContext;
+import net.buildtheearth.api.network.IC2SPacket;
+import net.buildtheearth.api.network.INetworkManager;
+import net.buildtheearth.api.network.IS2CPacket;
+import net.buildtheearth.api.network.Response;
+import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SResponsePacket;
 import net.buildtheearth.terrabungee.controller.network.P2C.P2CUpdatePlayersPacket;
@@ -31,7 +36,7 @@ import net.buildtheearth.terrabungee.controller.network.S2C.S2CUpdateAttributeID
 import java.util.ArrayList;
 import java.util.List;
 
-public class NetworkManager {
+public class NetworkManager implements INetworkManager {
     private static NetworkManager instance;
 
     public static NetworkManager getInstance() {
@@ -44,26 +49,16 @@ public class NetworkManager {
     private final List<IS2CPacket> registeredServicePackets = new ArrayList<>();
 
     private NetworkManager() {
-        registerServicePacket(new S2CKeepAlivePacket());
-        registerServicePacket(new S2CAddStaticInstancePacket());
-        registerServicePacket(new S2CRemoveStaticInstancePacket());
-        registerServicePacket(new S2CServiceMessagePacket());
-        registerServicePacket(new S2CSetServiceStatusPacket());
-        registerServicePacket(new P2CUpdatePlayersPacket());
-        registerServicePacket(new S2CRetrieveUncachedPlayerPacket());
-        registerServicePacket(new S2CUpdateAttributeID());
+        register(new S2CKeepAlivePacket());
+        register(new S2CAddStaticInstancePacket());
+        register(new S2CRemoveStaticInstancePacket());
+        register(new S2CServiceMessagePacket());
+        register(new S2CSetServiceStatusPacket());
+        register(new P2CUpdatePlayersPacket());
+        register(new S2CRetrieveUncachedPlayerPacket());
+        register(new S2CUpdateAttributeID());
     }
 
-    private void registerServicePacket(IS2CPacket packet) {
-        registeredServicePackets.add(packet);
-    }
-
-    /**
-     * Will be executed upon incoming payload for Redis/Websocket
-     *
-     * @param client Websocket client
-     * @param p      Raw string data
-     */
     public void onIncomingPayload(WsContext client, String p) {
         JsonObject payload = JsonUtils.parseString(p).getAsJsonObject();
         String salt = payload.get("salt").getAsString();
@@ -97,5 +92,10 @@ public class NetworkManager {
         payload.add("data", packetData);
 
         servicePacket.getClient().send(TerraBungeeUtil.GSON.toJson(payload));
+    }
+
+    @Override
+    public void register(IS2CPacket packet) {
+        registeredServicePackets.add(packet);
     }
 }

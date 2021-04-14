@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.controller.network;
+package net.buildtheearth.api.network;
 
 import com.google.gson.JsonObject;
 

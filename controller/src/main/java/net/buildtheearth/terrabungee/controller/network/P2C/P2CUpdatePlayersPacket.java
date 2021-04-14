@@ -4,9 +4,9 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.buildtheearth.terrabungee.controller.network.IS2CPacket;
-import net.buildtheearth.terrabungee.controller.network.Response;
-import net.buildtheearth.terrabungee.controller.network.ServicePacket;
+import net.buildtheearth.api.network.IS2CPacket;
+import net.buildtheearth.api.network.Response;
+import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.controller.players.ControllerPlayer;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 

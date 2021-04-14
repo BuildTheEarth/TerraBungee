@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import io.javalin.Javalin;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
+import net.buildtheearth.api.network.INetworkManager;
 import net.buildtheearth.api.plugin.PluginManager;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
@@ -98,6 +99,11 @@ public class TerraBungeeController extends TerraBungee {
     @Override
     public Logger getLogger() {
         return logger;
+    }
+
+    @Override
+    public INetworkManager getNetworkManager() {
+        return NetworkManager.getInstance();
     }
 
     public void splash() {

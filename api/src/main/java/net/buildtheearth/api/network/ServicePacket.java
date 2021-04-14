@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.controller.network;
+package net.buildtheearth.api.network;
 
 import io.javalin.websocket.WsContext;
 import net.buildtheearth.terrabungee.common.services.TerraBungeeService;

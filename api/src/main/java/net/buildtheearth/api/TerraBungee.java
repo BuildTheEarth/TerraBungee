@@ -1,6 +1,7 @@
 package net.buildtheearth.api;
 
 import lombok.Getter;
+import net.buildtheearth.api.network.INetworkManager;
 import net.buildtheearth.api.plugin.PluginManager;
 
 import java.util.logging.Logger;
@@ -38,4 +39,11 @@ public abstract class TerraBungee {
      * @return the {@link PluginManager instance}
      */
     public abstract PluginManager getPluginManager();
+
+    /**
+     * Gets the network manager for the controller
+     *
+     * @return the {@link INetworkManager} instance
+     */
+    public abstract INetworkManager getNetworkManager();
 }

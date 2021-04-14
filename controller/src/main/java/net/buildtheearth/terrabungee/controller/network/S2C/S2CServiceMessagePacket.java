@@ -3,10 +3,10 @@ package net.buildtheearth.terrabungee.controller.network.S2C;
 import com.google.gson.JsonObject;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SServiceMessagePacket;
-import net.buildtheearth.terrabungee.controller.network.IS2CPacket;
+import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
-import net.buildtheearth.terrabungee.controller.network.Response;
-import net.buildtheearth.terrabungee.controller.network.ServicePacket;
+import net.buildtheearth.api.network.Response;
+import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
 public class S2CServiceMessagePacket implements IS2CPacket {

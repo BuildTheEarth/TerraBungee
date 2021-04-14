@@ -5,9 +5,9 @@ import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.services.ServiceStatus;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ServiceDiscardedEmbed;
-import net.buildtheearth.terrabungee.controller.network.IS2CPacket;
-import net.buildtheearth.terrabungee.controller.network.Response;
-import net.buildtheearth.terrabungee.controller.network.ServicePacket;
+import net.buildtheearth.api.network.IS2CPacket;
+import net.buildtheearth.api.network.Response;
+import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
 public class S2CSetServiceStatusPacket implements IS2CPacket {
