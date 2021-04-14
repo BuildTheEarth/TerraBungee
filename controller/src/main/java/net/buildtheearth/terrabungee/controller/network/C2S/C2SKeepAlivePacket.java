@@ -1,6 +1,7 @@
 package net.buildtheearth.terrabungee.controller.network.C2S;
 
 import com.google.gson.JsonObject;
+import lombok.RequiredArgsConstructor;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.IC2SPacket;
 import net.buildtheearth.api.network.ServicePacket;
@@ -9,13 +10,10 @@ import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
+@RequiredArgsConstructor
 public class C2SKeepAlivePacket implements IC2SPacket {
 
     private final TerraBungeeService service;
-
-    public C2SKeepAlivePacket(TerraBungeeService service) {
-        this.service = service;
-    }
 
     @Override
     public String getID() {

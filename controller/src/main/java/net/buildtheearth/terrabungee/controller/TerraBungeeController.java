@@ -33,7 +33,7 @@ public class TerraBungeeController extends TerraBungee {
     private PluginManager pluginManager;
 
     @Getter
-    private ScheduledExecutorService generalThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-general");
+    private final ScheduledExecutorService generalThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-general");
     @Getter
     private static TerraBungeeController instance;
 
