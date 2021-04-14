@@ -1,5 +1,6 @@
 package net.buildtheearth.terrabungee.controller.console;
 
+import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.command.CommandManager;
@@ -58,9 +59,14 @@ public class TerraBungeeConsole extends Logger {
                 if (line.equalsIgnoreCase("")) {
                     continue;
                 }
-                if (!CommandManager.getInstance().execute(line)) {
-                    System.out.println(ConsoleColor.RED.toString() + "Unknown Command! Type `help` for more commands!" +
-                                       ConsoleColor.RESET);
+                try {
+                    if (!CommandManager.getInstance().execute(line)) {
+                        System.out.println(ConsoleColor.RED.toString() + "Unknown Command! Type `help` for more commands!" +
+                                           ConsoleColor.RESET);
+                    }
+                } catch (Exception e) {
+                    TerraBungee.getInstance().getLogger().log(Level.SEVERE, "There was an error executing the command!", e);
+                    System.out.println();
                 }
             }
         } catch (IOException e) {
