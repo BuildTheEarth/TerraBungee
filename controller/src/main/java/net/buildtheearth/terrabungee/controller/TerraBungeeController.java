@@ -1,7 +1,6 @@
 package net.buildtheearth.terrabungee.controller;
 
 import ch.qos.logback.classic.Level;
-import io.javalin.Javalin;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.INetworkManager;
@@ -14,17 +13,19 @@ import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStoppedEmbed;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
+import net.buildtheearth.terrabungee.controller.network.WSServer;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 
 public class TerraBungeeController extends TerraBungee {
-    private Javalin webServer;
     public static TerraBungeeConsole logger;
 
     @Getter
@@ -67,20 +68,17 @@ public class TerraBungeeController extends TerraBungee {
 
         generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);
 
-        webServer = Javalin.create(config -> {
-            config.showJavalinBanner = false;
-            config.logIfServerNotStarted = false;
-        }).start(ConfigHandler.host, ConfigHandler.port);
-
-        generalThreads.schedule(() -> {
-            webServer.ws("/", wsHandler -> wsHandler.onMessage(ctx -> NetworkManager.getInstance().onIncomingPayload(ctx, ctx.message())));
-            logger.info("Starting WebSocket Server!");
-        }, 2, TimeUnit.SECONDS);
+        WSServer server = new WSServer(new InetSocketAddress(ConfigHandler.host, ConfigHandler.port));
+        new Thread(server).start();
 
         generalThreads.scheduleAtFixedRate(() -> {
             if (!isTerraBungeeRunning && !isTBQueuedForTermination) {
                 isTBQueuedForTermination = true;
                 DiscordManager.getInstance().send(new ControllerStoppedEmbed());
+                try {
+                    server.stop();
+                } catch (IOException | InterruptedException ignored) {
+                }
             } else if (isTBQueuedForTermination) {
                 System.exit(0);
             }

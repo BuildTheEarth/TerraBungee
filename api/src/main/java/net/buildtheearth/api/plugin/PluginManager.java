@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.IC2SPacket;
+import net.buildtheearth.api.network.IS2CPacket;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
@@ -36,9 +37,9 @@ public final class PluginManager {
     private final Map<String, Command> commandMap = Maps.newHashMap();
     private Map<String, PluginDescription> toLoad = Maps.newHashMap();
     private final Multimap<Plugin, Command> commandsByPlugin = ArrayListMultimap.create();
-
-    private final Map<String, IC2SPacket> packetMap = Maps.newHashMap();
-    private final Multimap<Plugin, IC2SPacket> packetsByPlugin = ArrayListMultimap.create();
+    @Getter
+    private final Map<String, IS2CPacket> packetMap = Maps.newHashMap();
+    private final Multimap<Plugin, IS2CPacket> packetsByPlugin = ArrayListMultimap.create();
 
 
     public PluginManager(TerraBungee controller) {
@@ -55,7 +56,7 @@ public final class PluginManager {
         commandsByPlugin.put(plugin, command);
     }
 
-    public void registerPacket(Plugin plugin, IC2SPacket packet) {
+    public void registerPacket(Plugin plugin, IS2CPacket packet) {
         packetMap.put(packet.getID(), packet);
         packetsByPlugin.put(plugin, packet);
     }
@@ -67,7 +68,7 @@ public final class PluginManager {
     }
 
     public void unregisterPacket(IC2SPacket packet) {
-        while(packetMap.values().remove(packet)) {
+        while (packetMap.values().remove(packet)) {
         }
         packetsByPlugin.values().remove(packet);
     }
@@ -82,8 +83,8 @@ public final class PluginManager {
     }
 
     public void unregisterPackets(Plugin plugin) {
-        for (Iterator<IC2SPacket> it = packetsByPlugin.get(plugin).iterator(); it.hasNext(); ) {
-            IC2SPacket packet = it.next();
+        for (Iterator<IS2CPacket> it = packetsByPlugin.get(plugin).iterator(); it.hasNext(); ) {
+            IS2CPacket packet = it.next();
             while (packetMap.values().remove(packet)) {
             }
             it.remove();
@@ -172,7 +173,6 @@ public final class PluginManager {
                     }
 
                 } catch (Exception e) {
-
                 }
             }
         }

@@ -1,6 +1,6 @@
 package net.buildtheearth.terrabungee.controller.discord.commands;
 
-import net.buildtheearth.terrabungee.controller.discord.UserPermission;
+import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.controller.discord.commands.setup.SetupDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.util.PingDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.util.StatusDiscordCommand;
@@ -24,7 +24,6 @@ public class DiscordCommandManager {
     private DiscordCommandManager() {
         register(new PingDiscordCommand());
         register(new StatusDiscordCommand());
-
         register(new SetupDiscordCommand());
     }
 

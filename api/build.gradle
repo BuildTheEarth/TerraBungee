@@ -2,5 +2,6 @@ dependencies {
     compileOnly "org.yaml:snakeyaml:1.28"
     compileOnly "com.google.code.gson:gson:2.8.6"
     compileOnly "io.javalin:javalin:3.10.1"
+    compileOnly "org.java-websocket:Java-WebSocket:1.5.1"
     compileOnly group: 'com.google.guava', name: 'guava', version: '29.0-jre'
 }

@@ -24,7 +24,7 @@ public class HelpCommand extends Command {
             TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW, command.getName(), ConsoleColor.WHITE, " - ",
                     ConsoleColor.GREEN, command.getPurpose());
         }
-        for(Command command : TerraBungee.getInstance().getPluginManager().getCommandMap().values()) {
+        for (Command command : TerraBungee.getInstance().getPluginManager().getCommandMap().values()) {
             TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW, command.getName(), ConsoleColor.WHITE, " - ",
                     ConsoleColor.GREEN, command.getPurpose());
         }

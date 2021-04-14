@@ -1,7 +1,7 @@
 package net.buildtheearth.terrabungee.controller.discord.commands.util;
 
+import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
-import net.buildtheearth.terrabungee.controller.discord.UserPermission;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;

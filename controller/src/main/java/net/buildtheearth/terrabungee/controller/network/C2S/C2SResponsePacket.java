@@ -1,10 +1,10 @@
 package net.buildtheearth.terrabungee.controller.network.C2S;
 
 import com.google.gson.JsonObject;
-import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.api.network.IC2SPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
+import net.buildtheearth.terrabungee.common.Constants;
 
 public class C2SResponsePacket implements IC2SPacket {
     private final Response response;

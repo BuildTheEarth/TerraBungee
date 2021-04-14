@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.controller.discord;
+package net.buildtheearth.api.discord;
 
 /**
  * @author Noah Husby

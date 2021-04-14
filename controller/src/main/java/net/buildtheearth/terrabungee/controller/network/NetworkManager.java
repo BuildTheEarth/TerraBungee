@@ -17,8 +17,8 @@ package net.buildtheearth.terrabungee.controller.network;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.JsonUtils;
-import io.javalin.websocket.WsContext;
 import lombok.Getter;
+import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.IC2SPacket;
 import net.buildtheearth.api.network.INetworkManager;
 import net.buildtheearth.api.network.IS2CPacket;
@@ -34,6 +34,7 @@ import net.buildtheearth.terrabungee.controller.network.S2C.S2CRetrieveUncachedP
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CServiceMessagePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CSetServiceStatusPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CUpdateAttributeID;
+import org.java_websocket.WebSocket;
 
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class NetworkManager implements INetworkManager {
         register(new S2CUpdateAttributeID());
     }
 
-    public void onIncomingPayload(WsContext client, String p) {
+    public void onIncomingPayload(WebSocket client, String p) {
         JsonObject payload = JsonUtils.parseString(p).getAsJsonObject();
         String salt = payload.get("salt").getAsString();
         String id = payload.get("id").getAsString();
@@ -68,13 +69,18 @@ public class NetworkManager implements INetworkManager {
         JsonObject data = payload.get("data").getAsJsonObject();
 
         IS2CPacket packet = packets.get(type);
-        if(packet != null) {
+        if (packet == null) {
+            packet = TerraBungee.getInstance().getPluginManager().getPacketMap().get(type);
+        }
+
+        if (packet != null) {
             Response response = new Response(sp, salt);
             packet.onMessage(sp, data, response);
             send(new C2SResponsePacket(response));
         }
     }
 
+    @Override
     public void send(IC2SPacket packet) {
         ServicePacket servicePacket = packet.getServicePacket();
         if (servicePacket == null) {
@@ -92,7 +98,6 @@ public class NetworkManager implements INetworkManager {
         servicePacket.getClient().send(TerraBungeeUtil.GSON.toJson(payload));
     }
 
-    @Override
     public void register(IS2CPacket packet) {
         packets.put(packet.getID(), packet);
     }

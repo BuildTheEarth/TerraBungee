@@ -2,7 +2,6 @@ package net.buildtheearth.terrabungee.controller.services;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import io.javalin.websocket.WsContext;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.services.Custom;
 import net.buildtheearth.terrabungee.common.services.Proxy;
@@ -17,6 +16,7 @@ import net.buildtheearth.terrabungee.controller.discord.embeds.ServiceReconnecte
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SInstanceUpdatePacket;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SOnlinePlayerCacheHitPacket;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
+import org.java_websocket.WebSocket;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,7 +107,7 @@ public class ServiceManager {
      * @param client  The websocket client
      * @param intents The intents
      */
-    public void initService(ServiceType type, String ID, WsContext client, List<ServiceIntent> intents) {
+    public void initService(ServiceType type, String ID, WebSocket client, List<ServiceIntent> intents) {
         if (getService(ID) != null) {
             getService(ID).setIntents(intents);
             getService(ID).setClient(client);

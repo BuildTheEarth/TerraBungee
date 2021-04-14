@@ -1,5 +1,6 @@
 package net.buildtheearth.terrabungee.controller.discord;
 
+import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.controller.ControllerConstants;
 import net.buildtheearth.terrabungee.controller.discord.commands.DiscordCommandManager;
 import net.dv8tion.jda.api.entities.Member;

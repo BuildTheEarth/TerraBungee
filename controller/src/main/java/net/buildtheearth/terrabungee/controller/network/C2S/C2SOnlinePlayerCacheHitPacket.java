@@ -2,12 +2,12 @@ package net.buildtheearth.terrabungee.controller.network.C2S;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.buildtheearth.api.network.IC2SPacket;
+import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
-import net.buildtheearth.api.network.IC2SPacket;
-import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
 /**

@@ -1,8 +1,8 @@
 package net.buildtheearth.terrabungee.controller.discord.commands.setup;
 
+import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.controller.discord.DiscordConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
-import net.buildtheearth.terrabungee.controller.discord.UserPermission;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
