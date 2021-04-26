@@ -146,7 +146,7 @@ public class ServiceManager {
      */
     public void discardService(TerraBungeeService service, boolean remove) {
         if (remove) {
-            services.remove(service);
+            services.remove(service.getId());
             return;
         }
 

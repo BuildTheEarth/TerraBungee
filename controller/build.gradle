@@ -13,3 +13,11 @@ dependencies {
     compile "com.zaxxer:HikariCP:4.0.3"
     compile "org.java-websocket:Java-WebSocket:1.5.1"
 }
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'net.buildtheearth.terrabungee.controller.TerraBungeeLauncher'
+        )
+    }
+}

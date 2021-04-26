@@ -23,7 +23,7 @@ public class TestCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        for (TBPlayer p : PlayerManager.getInstance().getPlayersRegistry().values()) {
+        for (TBPlayer p : PlayerManager.getInstance().getPlayers().values()) {
             System.out.println(p.getUniqueID() + ", " + p.getName());
             if (p.getName().equalsIgnoreCase(args[1])) {
                 TerraBungeeConsole.sendMessage(ConsoleColor.BLUE, TerraBungeeUtil.GSON.toJson(p.getAttributes()));

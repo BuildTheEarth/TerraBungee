@@ -22,14 +22,14 @@ public class S2CRetrieveUncachedPlayerPacket implements IS2CPacket {
         String name = data.get("name").getAsString();
         try {
             UUID uuid = UUID.fromString(name);
-            TBPlayer player = PlayerManager.getInstance().getPlayersRegistry().get(uuid);
+            TBPlayer player = PlayerManager.getInstance().getPlayers().get(uuid);
             if (player == null) {
                 throw new IllegalArgumentException();
             }
             response.setData(TerraBungeeUtil.GSON.toJsonTree(player).getAsJsonObject());
             return;
         } catch (IllegalArgumentException e) {
-            for (TBPlayer player : PlayerManager.getInstance().getPlayersRegistry().values()) {
+            for (TBPlayer player : PlayerManager.getInstance().getPlayers().values()) {
                 if (player.getName().equalsIgnoreCase(name)) {
                     response.setData(TerraBungeeUtil.GSON.toJsonTree(player).getAsJsonObject());
                     return;

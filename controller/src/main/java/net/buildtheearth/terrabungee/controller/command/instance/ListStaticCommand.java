@@ -22,7 +22,7 @@ public class ListStaticCommand extends Command {
 
         TerraBungeeConsole.sendMessage(ConsoleColor.BLUE, "Static Instances:");
 
-        for (StorableStaticInstance s : InstanceManager.getInstance().getStorableStaticInstances()) {
+        for (StorableStaticInstance s : InstanceManager.getInstance().getStaticInstances().values()) {
             TerraBungeeConsole.sendMessage(ConsoleColor.BLUE, s.id, ConsoleColor.WHITE, " - ",
                     ConsoleColor.RED, s.address);
         }

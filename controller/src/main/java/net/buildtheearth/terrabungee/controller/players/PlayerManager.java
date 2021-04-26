@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.noahhusby.lib.data.storage.StorageHashMap;
 import com.noahhusby.lib.data.storage.StorageList;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
@@ -31,23 +32,17 @@ public class PlayerManager {
     }
 
     private PlayerManager() {
-        // A questionable way to load players into the registry if
-        TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> manipulate(players -> {}), 10, TimeUnit.SECONDS);
     }
 
     private final ExecutorService manipulationThread = Executors.newSingleThreadExecutor(
             new ThreadFactoryBuilder().setNameFormat("player-manipulation-%d").build());
 
-    private final StorageList<ControllerPlayer> players = new StorageList<>(ControllerPlayer.class);
-    private Map<UUID, ControllerPlayer> playerRegistry = Maps.newHashMap();
+    private final StorageHashMap<UUID, ControllerPlayer> players = new StorageHashMap<>(UUID.class, ControllerPlayer.class);
+
     private Map<UUID, ControllerPlayer> onlinePlayerRegistry = Maps.newHashMap();
 
-    public StorageList<ControllerPlayer> getPlayers() {
+    public StorageHashMap<UUID, ControllerPlayer> getPlayers() {
         return players;
-    }
-
-    public Map<UUID, ControllerPlayer> getPlayersRegistry() {
-        return playerRegistry;
     }
 
     public Map<UUID, ControllerPlayer> getOnlinePlayerRegistry() {
@@ -63,31 +58,21 @@ public class PlayerManager {
     }
 
     public void proxyPlayerDrop(String id, List<ControllerPlayer> playerDrop) {
-        manipulate(ps -> {
-            Map<UUID, ControllerPlayer> playerMap = Maps.newHashMap();
-            for (ControllerPlayer p : ps) {
-                playerMap.put(p.getUniqueID(), p);
+        manipulate(() -> {
+            Map<UUID, ControllerPlayer> playerJoinQuitMap = Maps.newHashMap();
+            for(Map.Entry<UUID, ControllerPlayer> e : ImmutableMap.copyOf(players).entrySet()) {
+                ControllerPlayer player = e.getValue();
+                if(player.getProxy() != null && player.getProxy().equals(id)) {
+                    player.setOnline(false);
+                    playerJoinQuitMap.put(e.getKey(), e.getValue());
+                }
             }
 
-            Map<UUID, ControllerPlayer> playerJoinQuitMap = Maps.newHashMap();
-
-            playerMap.forEach((uuid, controllerPlayer) -> {
-                if (controllerPlayer.getProxy() != null && controllerPlayer.getProxy().equals(id)) {
-                    controllerPlayer.setOnline(false);
-                    playerJoinQuitMap.put(uuid, controllerPlayer);
-                }
-            });
-
             for (ControllerPlayer p : playerDrop) {
-                ControllerPlayer player = playerMap.get(p.getUniqueID());
-
-                if (player == null && playerRegistry.containsKey(p.getUniqueID())) {
-                    continue;
-                }
-
-                if (player == null) {
-                    ps.add(p);
-                    continue;
+                ControllerPlayer player = players.putIfAbsent(p.getUniqueID(), p);
+                if(player == null) {
+                    players.put(p.getUniqueID(), p);
+                    return;
                 }
 
                 player.setName(p.getName());
@@ -109,35 +94,26 @@ public class PlayerManager {
     }
 
     public void updateAttribute(UUID uuid, Map<String, Object> attributes) {
-        manipulate(ps -> {
-            for (ControllerPlayer p : ps) {
-                if (p.getUniqueID().equals(uuid)) {
-                    p.setAttributes(attributes);
-                    ps.saveAsync();
-                    return;
-                }
+        manipulate(() -> {
+            ControllerPlayer player = players.get(uuid);
+            if(player != null) {
+                player.setAttributes(attributes);
+                //players.saveAsync();
             }
         });
     }
 
-    private void manipulate(Consumer<StorageList<ControllerPlayer>> p) {
-        manipulationThread.submit(() -> p.accept(players));
+    private void manipulate(Runnable runnable) {
+        manipulationThread.submit(runnable);
         manipulationThread.submit(() -> {
-            Map<UUID, ControllerPlayer> all = Maps.newHashMap();
             Map<UUID, ControllerPlayer> online = Maps.newHashMap();
 
-            for (ControllerPlayer e : ImmutableList.copyOf(players)) {
-                if (all.containsKey(e.getUniqueID())) {
-                    players.remove(e);
-                } else {
-                    all.put(e.getUniqueID(), e.deepCopy());
-                    if (e.isOnline()) {
-                        online.put(e.getUniqueID(), e.deepCopy());
-                    }
+            for(ControllerPlayer p : ImmutableList.copyOf(players.values())) {
+                if(p.isOnline()) {
+                    online.put(p.getUniqueID(), p);
                 }
             }
 
-            playerRegistry = ImmutableMap.copyOf(all);
             onlinePlayerRegistry = ImmutableMap.copyOf(online);
         });
     }

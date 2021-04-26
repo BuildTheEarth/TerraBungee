@@ -27,7 +27,7 @@ public class RemoveStaticCommand extends Command {
         String id = args[1];
 
         StorableStaticInstance remove = null;
-        for (StorableStaticInstance s : InstanceManager.getInstance().getStorableStaticInstances()) {
+        for (StorableStaticInstance s : InstanceManager.getInstance().getStaticInstances().values()) {
             if (s.id.equalsIgnoreCase(id)) {
                 remove = s;
             }

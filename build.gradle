@@ -17,7 +17,7 @@ allprojects {
     ext {
         tbVersion = "1.1.0." + ('git rev-list --count HEAD'.execute().text.trim())
 
-        husbyVersion = "8998939c90"
+        husbyVersion = "12d71f0dd4"
         lombokVersion = "1.18.18"
     }
 
@@ -86,6 +86,22 @@ allprojects {
         publish.dependsOn(publishToMavenLocal)
         shadowJar.dependsOn(publish)
     }
+
+    sourceSets {
+        main {
+            output.dir(versionDir, builtBy: 'generateVersionProperties')
+        }
+    }
+
+    task generateVersionProperties {
+        doLast {
+            def propertiesFile = file "$versionDir/version.properties"
+            propertiesFile.parentFile.mkdirs()
+            def properties = new Properties()
+            properties.setProperty("version", tbVersion.toString())
+            propertiesFile.withWriter { properties.store(it, null) }
+        }
+    }
 }
 
 dependencies {
@@ -93,22 +109,6 @@ dependencies {
         if (!"terrabungee".equalsIgnoreCase(prj.name) && prj.parent.name.equalsIgnoreCase("terrabungee")) {
             compile project(":" + prj.name)
         }
-    }
-}
-
-sourceSets {
-    main {
-        output.dir(versionDir, builtBy: 'generateVersionProperties')
-    }
-}
-
-task generateVersionProperties {
-    doLast {
-        def propertiesFile = file "$versionDir/version.properties"
-        propertiesFile.parentFile.mkdirs()
-        def properties = new Properties()
-        properties.setProperty("version", tbVersion.toString())
-        propertiesFile.withWriter { properties.store(it, null) }
     }
 }
 

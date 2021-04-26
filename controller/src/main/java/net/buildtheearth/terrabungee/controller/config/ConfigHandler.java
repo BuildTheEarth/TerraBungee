@@ -6,7 +6,9 @@ import com.noahhusby.lib.data.sql.MySQL;
 import com.noahhusby.lib.data.sql.structure.Structure;
 import com.noahhusby.lib.data.sql.structure.Type;
 import com.noahhusby.lib.data.storage.Storage;
+import com.noahhusby.lib.data.storage.StorageHashMap;
 import com.noahhusby.lib.data.storage.StorageList;
+import com.noahhusby.lib.data.storage.StorageTreeMap;
 import com.noahhusby.lib.data.storage.handlers.LocalStorageHandler;
 import com.noahhusby.lib.data.storage.handlers.SQLStorageHandler;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
@@ -52,6 +54,7 @@ public class ConfigHandler {
     public static String sqlUser;
     public static String sqlPassword;
     public static String sqlDb;
+    public static boolean localEnabled;
 
     //TODO: God no
     public static String botToken = "";
@@ -95,6 +98,7 @@ public class ConfigHandler {
         sqlUser = config.getString(prop("Username"), category, "", "The username for the database.");
         sqlPassword = config.getString(prop("Password"), category, "", "The password for the database.");
         sqlDb = config.getString(prop("Database"), category, "", "The name of the database.");
+        localEnabled = config.getBoolean(prop("Local Storage"), category, false, "Should data be stored locally as well");
 
         order();
 
@@ -110,20 +114,21 @@ public class ConfigHandler {
 
         Storage playerData = PlayerManager.getInstance().getPlayers();
         playerData.destroy();
-        ((StorageList) playerData).clear();
+        ((StorageHashMap) playerData).clear();
 
-        Storage staticInstanceData = InstanceManager.getInstance().getStorableStaticInstances();
+        Storage staticInstanceData = InstanceManager.getInstance().getStaticInstances();
         staticInstanceData.destroy();
-        ((StorageList) staticInstanceData).clear();
+        ((StorageTreeMap) staticInstanceData).clear();
 
         Storage discordConfigData = DiscordManager.getInstance().getDiscordConfigs();
         discordConfigData.clearHandlers();
-        staticInstanceData.destroy();
-        ((StorageList) staticInstanceData).clear();
+        ((StorageList) discordConfigData).clear();
 
-        playerData.registerHandler(new LocalStorageHandler(playerDataFile));
-        staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
-        discordConfigData.registerHandler(new LocalStorageHandler(discordConfigFile));
+        if(localEnabled) {
+            playerData.registerHandler(new LocalStorageHandler(playerDataFile));
+            staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
+            discordConfigData.registerHandler(new LocalStorageHandler(discordConfigFile));
+        }
 
         {
             SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
@@ -171,9 +176,10 @@ public class ConfigHandler {
         }
 
         TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
-            playerData.loadAsync();
-            //playerData.setAutoLoad(10, TimeUnit.SECONDS);
-            playerData.setAutoSave(10, TimeUnit.SECONDS);
+            TerraBungeeController.getInstance().getGeneralThreads().scheduleAtFixedRate(() -> {
+                playerData.load();
+                playerData.save();
+            }, 0, 10, TimeUnit.SECONDS);
             staticInstanceData.setAutoLoad(10, TimeUnit.SECONDS);
             staticInstanceData.setAutoSave(10, TimeUnit.SECONDS);
             discordConfigData.setAutoLoad(10, TimeUnit.SECONDS);
@@ -194,7 +200,7 @@ public class ConfigHandler {
      */
     public void migrate() {
         PlayerManager.getInstance().getPlayers().migrate(0);
-        InstanceManager.getInstance().getStorableStaticInstances().migrate(0);
+        InstanceManager.getInstance().getStaticInstances().migrate(0);
         DiscordManager.getInstance().getDiscordConfigs().migrate(0);
     }
 

@@ -2,7 +2,9 @@ package net.buildtheearth.terrabungee.controller.services;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.noahhusby.lib.data.storage.StorageHashMap;
 import com.noahhusby.lib.data.storage.StorageList;
+import com.noahhusby.lib.data.storage.StorageTreeMap;
 import lombok.Getter;
 import net.buildtheearth.terrabungee.common.services.Instance;
 import net.buildtheearth.terrabungee.common.services.ServiceStatus;
@@ -15,22 +17,20 @@ import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceRem
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class InstanceManager {
-    private static InstanceManager instance = null;
-
-    public static InstanceManager getInstance() {
-        return instance == null ? instance = new InstanceManager() : instance;
-    }
+    @Getter
+    private static final InstanceManager instance = new InstanceManager();
 
     public InstanceManager() {
-        TerraBungeeController.getInstance().getGeneralThreads().scheduleAtFixedRate(this::updateInstances, 0, 2, TimeUnit.SECONDS);
+        staticInstances.onLoadEvent(this::updateInstances);
     }
 
     @Getter
-    private final StorageList<StorableStaticInstance> storableStaticInstances = new StorageList<>(StorableStaticInstance.class);
+    private final StorageTreeMap<String, StorableStaticInstance> staticInstances = new StorageTreeMap<>(String.class, StorableStaticInstance.class, String.CASE_INSENSITIVE_ORDER);
 
     /**
      * Add a static instance
@@ -41,12 +41,11 @@ public class InstanceManager {
      * @return True if successfully added, false if not
      */
     public boolean addStaticInstance(TerraBungeeService service, String id, String address) {
-        for (StorableStaticInstance s : storableStaticInstances) {
-            if (s.id.equalsIgnoreCase(id)) {
-                return false;
-            }
+        if(staticInstances.containsKey(id)) {
+            return false;
         }
-        storableStaticInstances.add(new StorableStaticInstance(id, address));
+        staticInstances.put(id, new StorableStaticInstance(id, address));
+        updateInstances();
         DiscordManager.getInstance().send(new StaticInstanceAddedEmbed(service, id));
         return true;
     }
@@ -59,10 +58,11 @@ public class InstanceManager {
      * @return True if successfully removed, false if not
      */
     public boolean removeStaticInstance(TerraBungeeService service, String id) {
-        boolean removed = storableStaticInstances.removeIf(s -> s.id.equalsIgnoreCase(id));
-        if (removed) {
+        boolean removed = (staticInstances.remove(id) != null);
+         if (removed) {
             DiscordManager.getInstance().send(new StaticInstanceRemovedEmbed(service, id));
-        }
+            updateInstances();
+         }
         return removed;
     }
 
@@ -96,30 +96,23 @@ public class InstanceManager {
      * Updates the master list of services from instances
      */
     private void updateInstances() {
+        Map<String, StorableStaticInstance> temp = Maps.newHashMap(staticInstances);
         List<TerraBungeeService> currentInstances = ServiceManager.getInstance().getServices(ServiceType.INSTANCE);
         List<Instance> removalInstances = Lists.newArrayList();
-
-        // STATIC INSTANCES
-        Map<String, String> staticInstanceMap = Maps.newHashMap();
-        for (StorableStaticInstance s : storableStaticInstances) {
-            staticInstanceMap.put(s.id, s.address);
-        }
-        for (TerraBungeeService s : currentInstances) {
-            Instance instance = (Instance) s;
-            if (instance.getInstanceType() == Instance.InstanceType.STATIC) {
-                if (!staticInstanceMap.containsKey(instance.getId())) {
-                    removalInstances.add(instance);
+        for(TerraBungeeService s : currentInstances) {
+            Instance i = (Instance) s;
+            if(!temp.containsKey(s.getId())) {
+                removalInstances.add(i);
+            } else {
+                if(!i.getAddress().equalsIgnoreCase(temp.get(i.getId()).address)) {
+                    removalInstances.add(i);
                 } else {
-                    if (!instance.getAddress().equalsIgnoreCase(staticInstanceMap.get(instance.getId()))) {
-                        removalInstances.add(instance);
-                    } else {
-                        staticInstanceMap.remove(instance.getId());
-                    }
+                    temp.remove(i.getId());
                 }
             }
         }
-        for (Map.Entry<String, String> e : staticInstanceMap.entrySet()) {
-            ServiceManager.getInstance().createService(new Instance(e.getKey(), e.getValue(), true, true, "", ServiceStatus.ONLINE.name()
+        for (Map.Entry<String, StorableStaticInstance> e : temp.entrySet()) {
+            ServiceManager.getInstance().createService(new Instance(e.getKey(), e.getValue().address, true, true, "", ServiceStatus.ONLINE.name()
                     , Instance.InstanceType.STATIC), true);
         }
         for (Instance i : removalInstances) {
