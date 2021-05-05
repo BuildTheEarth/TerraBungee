@@ -2,6 +2,7 @@ package net.buildtheearth.api;
 
 import lombok.Getter;
 import net.buildtheearth.api.network.INetworkManager;
+import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.api.plugin.PluginManager;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 
@@ -56,20 +57,20 @@ public abstract class TerraBungee {
     public abstract INetworkManager getNetworkManager();
 
     /**
-     * Gets {@link TBPlayer} from the controller
+     * Gets {@link ControllerPlayer} from the controller
      * @param uuid UUID of player
      *
-     * @return {@link TBPlayer}
+     * @return {@link ControllerPlayer}
      */
-    public abstract TBPlayer getPlayer(UUID uuid);
+    public abstract ControllerPlayer getPlayer(UUID uuid);
 
     /**
-     * Gets {@link TBPlayer} from the controller
+     * Gets {@link ControllerPlayer} from the controller
      * @param username Username of player
      *
-     * @return {@link TBPlayer}
+     * @return {@link ControllerPlayer}
      */
-    public abstract TBPlayer getPlayer(String username);
+    public abstract ControllerPlayer getPlayer(String username);
 
     /**
      * Gets root folder of controller

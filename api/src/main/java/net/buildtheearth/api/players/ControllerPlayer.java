@@ -55,8 +55,6 @@ public class ControllerPlayer extends TBPlayer {
         copy.setProxy(proxy);
         copy.setServer(server);
         copy.setLastSeen(lastSeen);
-
-
         return copy;
     }
 }

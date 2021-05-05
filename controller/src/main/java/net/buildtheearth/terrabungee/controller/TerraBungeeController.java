@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.INetworkManager;
+import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.api.plugin.PluginManager;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
@@ -119,12 +120,12 @@ public class TerraBungeeController extends TerraBungee {
     }
 
     @Override
-    public TBPlayer getPlayer(UUID uuid) {
+    public ControllerPlayer getPlayer(UUID uuid) {
         return PlayerManager.getInstance().getPlayers().get(uuid);
     }
 
     @Override
-    public TBPlayer getPlayer(String username) {
+    public ControllerPlayer getPlayer(String username) {
         return null;
     }
 
