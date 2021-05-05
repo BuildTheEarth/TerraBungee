@@ -3,7 +3,9 @@ package net.buildtheearth.api;
 import lombok.Getter;
 import net.buildtheearth.api.network.INetworkManager;
 import net.buildtheearth.api.plugin.PluginManager;
+import net.buildtheearth.terrabungee.common.players.TBPlayer;
 
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -51,4 +53,20 @@ public abstract class TerraBungee {
      * @return the {@link INetworkManager} instance
      */
     public abstract INetworkManager getNetworkManager();
+
+    /**
+     * Gets {@link TBPlayer} from the controller
+     * @param uuid UUID of player
+     *
+     * @return {@link TBPlayer}
+     */
+    public abstract TBPlayer getPlayer(UUID uuid);
+
+    /**
+     * Gets {@link TBPlayer} from the controller
+     * @param username Username of player
+     *
+     * @return {@link TBPlayer}
+     */
+    public abstract TBPlayer getPlayer(String username);
 }

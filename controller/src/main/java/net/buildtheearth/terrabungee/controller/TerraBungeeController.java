@@ -7,6 +7,7 @@ import net.buildtheearth.api.network.INetworkManager;
 import net.buildtheearth.api.plugin.PluginManager;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
+import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
@@ -14,12 +15,14 @@ import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStarted
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStoppedEmbed;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.network.WSServer;
+import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -104,6 +107,16 @@ public class TerraBungeeController extends TerraBungee {
     @Override
     public INetworkManager getNetworkManager() {
         return NetworkManager.getInstance();
+    }
+
+    @Override
+    public TBPlayer getPlayer(UUID uuid) {
+        return PlayerManager.getInstance().getPlayers().get(uuid);
+    }
+
+    @Override
+    public TBPlayer getPlayer(String username) {
+        return null;
     }
 
     public void splash() {
