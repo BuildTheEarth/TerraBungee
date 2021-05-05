@@ -77,4 +77,11 @@ public abstract class TerraBungee {
      * @return root {@link File} of controller
      */
     public abstract File getFolder();
+
+    /**
+     * Gets plugin folder of controller
+     *
+     * @return plugin {@link File} of controller
+     */
+    public abstract File getPluginFolder();
 }

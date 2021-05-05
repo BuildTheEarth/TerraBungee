@@ -36,6 +36,9 @@ public class TerraBungeeController extends TerraBungee {
     private File folder;
 
     @Getter
+    private File pluginFolder;
+
+    @Getter
     private PluginManager pluginManager;
 
     @Getter
@@ -67,12 +70,12 @@ public class TerraBungeeController extends TerraBungee {
 
         pluginManager = new PluginManager(this);
 
-        File f = new File(folder, "plugins");
-        f.mkdir();
+        pluginFolder = new File(folder, "plugins");
+        pluginFolder.mkdir();
 
         ConfigHandler.getInstance();
         splash();
-        pluginManager.detectPlugins(f);
+        pluginManager.detectPlugins(pluginFolder);
         pluginManager.loadPlugins();
         pluginManager.enablePlugins();
         ServiceManager.getInstance();

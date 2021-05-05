@@ -20,7 +20,7 @@ public abstract class Plugin {
     protected void init(PluginDescription description) {
         this.description = description;
         logger = new PluginLogger(description.getName());
-        pluginFolder = new File(TerraBungee.getInstance().getFolder(), description.getName());
+        pluginFolder = new File(TerraBungee.getInstance().getPluginFolder(), description.getName());
     }
 
     public abstract void onEnable();
