@@ -5,6 +5,7 @@ import net.buildtheearth.api.network.INetworkManager;
 import net.buildtheearth.api.plugin.PluginManager;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 
+import java.io.File;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -69,4 +70,11 @@ public abstract class TerraBungee {
      * @return {@link TBPlayer}
      */
     public abstract TBPlayer getPlayer(String username);
+
+    /**
+     * Gets root folder of controller
+     *
+     * @return root {@link File} of controller
+     */
+    public abstract File getFolder();
 }

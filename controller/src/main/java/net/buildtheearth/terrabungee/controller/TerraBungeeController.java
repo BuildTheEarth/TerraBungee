@@ -33,6 +33,9 @@ public class TerraBungeeController extends TerraBungee {
     public static TerraBungeeConsole logger;
 
     @Getter
+    private File folder;
+
+    @Getter
     private PluginManager pluginManager;
 
     @Getter
@@ -59,9 +62,12 @@ public class TerraBungeeController extends TerraBungee {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.HikariConfig")).setLevel(Level.INFO);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.pool.HikariPool")).setLevel(Level.INFO);
 
+        folder = new File(System.getProperty("user.dir"));
+        folder.mkdir();
+
         pluginManager = new PluginManager(this);
 
-        File f = new File(System.getProperty("user.dir"), "plugins");
+        File f = new File(folder, "plugins");
         f.mkdir();
 
         ConfigHandler.getInstance();
