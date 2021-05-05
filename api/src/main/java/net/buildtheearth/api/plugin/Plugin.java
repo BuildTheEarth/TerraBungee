@@ -17,6 +17,11 @@ public abstract class Plugin {
     @Getter
     private File pluginFolder;
 
+    public Plugin() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        ((PluginClassloader) classLoader).init(this);
+    }
+
     protected void init(PluginDescription description) {
         this.description = description;
         logger = new PluginLogger(description.getName());

@@ -141,5 +141,6 @@ public final class PluginClassloader extends URLClassLoader {
         }
 
         this.plugin = plugin;
+        plugin.init(desc);
     }
 }

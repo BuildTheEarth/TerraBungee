@@ -68,10 +68,10 @@ public class TerraBungeeController extends TerraBungee {
         folder = new File(System.getProperty("user.dir"));
         folder.mkdir();
 
-        pluginManager = new PluginManager(this);
-
         pluginFolder = new File(folder, "plugins");
         pluginFolder.mkdir();
+
+        pluginManager = new PluginManager(this);
 
         ConfigHandler.getInstance();
         splash();
