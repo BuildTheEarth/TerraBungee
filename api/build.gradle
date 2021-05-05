@@ -3,5 +3,6 @@ dependencies {
     compileOnly "com.google.code.gson:gson:2.8.6"
     compileOnly "io.javalin:javalin:3.10.1"
     compileOnly "org.java-websocket:Java-WebSocket:1.5.1"
+    compileOnly "com.github.noahhusby.HusbyLib:data:3c6ad811b2"
     compileOnly group: 'com.google.guava', name: 'guava', version: '29.0-jre'
 }

@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
-import net.buildtheearth.terrabungee.controller.players.ControllerPlayer;
+import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
 import java.util.List;

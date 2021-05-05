@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.controller.players;
+package net.buildtheearth.api.players;
 
 import com.noahhusby.lib.data.storage.Key;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
