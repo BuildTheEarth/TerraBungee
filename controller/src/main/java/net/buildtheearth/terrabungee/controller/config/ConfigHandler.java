@@ -176,10 +176,8 @@ public class ConfigHandler {
         }
 
         TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
-            TerraBungeeController.getInstance().getGeneralThreads().scheduleAtFixedRate(() -> {
-                playerData.load();
-                playerData.save();
-            }, 0, 10, TimeUnit.SECONDS);
+            playerData.load();
+            playerData.setAutoSave(10, TimeUnit.SECONDS);
             staticInstanceData.setAutoLoad(10, TimeUnit.SECONDS);
             staticInstanceData.setAutoSave(10, TimeUnit.SECONDS);
             discordConfigData.setAutoLoad(10, TimeUnit.SECONDS);
