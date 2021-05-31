@@ -9,6 +9,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -80,6 +81,7 @@ public class TerraBungeeConsole extends Logger {
             builder.append(o.toString());
         }
 
+        builder.append(ConsoleColor.RESET);
         System.out.println(builder.toString());
     }
 }
