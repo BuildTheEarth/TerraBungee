@@ -14,6 +14,7 @@ import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceAddedEmbed;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceRemovedEmbed;
+import net.buildtheearth.terrabungee.controller.modules.Module;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +22,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class InstanceManager {
+public class InstanceManager implements Module {
     @Getter
     private static final InstanceManager instance = new InstanceManager();
-
-    public InstanceManager() {
-        staticInstances.onLoadEvent(this::updateInstances);
-    }
 
     @Getter
     private final StorageTreeMap<String, StorableStaticInstance> staticInstances = new StorageTreeMap<>(String.class, StorableStaticInstance.class, String.CASE_INSENSITIVE_ORDER);
@@ -118,5 +115,20 @@ public class InstanceManager {
         for (Instance i : removalInstances) {
             ServiceManager.getInstance().discardService(i, true);
         }
+    }
+
+    @Override
+    public void onEnable() {
+        staticInstances.onLoadEvent(this::updateInstances);
+    }
+
+    @Override
+    public void onDisable() {
+
+    }
+
+    @Override
+    public String getModuleName() {
+        return "Instances";
     }
 }

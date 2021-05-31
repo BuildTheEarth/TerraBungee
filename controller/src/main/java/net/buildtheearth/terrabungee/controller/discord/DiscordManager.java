@@ -5,6 +5,7 @@ import lombok.Getter;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
+import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -20,14 +21,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class DiscordManager {
+public class DiscordManager implements Module {
     private static DiscordManager instance = null;
 
     public static DiscordManager getInstance() {
-        if (instance == null) {
-            instance = new DiscordManager();
-        }
-        return instance;
+        return instance == null ? instance = new DiscordManager() : instance;
     }
 
     private JDA bot;
@@ -35,13 +33,6 @@ public class DiscordManager {
     private final ExecutorService botThread = TerraBungeeUtil.newSingleThreadExecutor("terrabungee-bot");
     @Getter
     private final StorageList<DiscordConfig> discordConfigs = new StorageList<>(DiscordConfig.class);
-
-    private DiscordManager() {
-        if (ConfigHandler.botToken.equalsIgnoreCase("")) {
-            return;
-        }
-        loadBot();
-    }
 
     public void loadBot() {
         botThread.submit(() -> {
@@ -110,6 +101,26 @@ public class DiscordManager {
             }
         }
         return null;
+    }
+
+    @Override
+    public void onEnable() {
+        if (ConfigHandler.botToken.equalsIgnoreCase("")) {
+            return;
+        }
+        loadBot();
+    }
+
+    @Override
+    public void onDisable() {
+        if(bot != null) {
+            bot.shutdown();
+        }
+    }
+
+    @Override
+    public String getModuleName() {
+        return "Discord";
     }
 }
 

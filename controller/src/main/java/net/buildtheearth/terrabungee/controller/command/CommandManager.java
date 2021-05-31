@@ -10,30 +10,19 @@ import net.buildtheearth.terrabungee.controller.command.instance.AddStaticComman
 import net.buildtheearth.terrabungee.controller.command.instance.DefaultServerCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.ListStaticCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.RemoveStaticCommand;
+import net.buildtheearth.terrabungee.controller.modules.Module;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandManager {
+public class CommandManager implements Module {
     private static CommandManager instance = null;
 
     public static CommandManager getInstance() {
-        if (instance == null) {
-            instance = new CommandManager();
-        }
-        return instance;
+        return instance == null ? instance = new CommandManager() : instance;
     }
 
     private CommandManager() {
-        register(new HelpCommand());
-        register(new StopCommand());
-        register(new ReloadCommand());
-        register(new MigrateCommand());
-        register(new AddStaticCommand());
-        register(new RemoveStaticCommand());
-        register(new ListStaticCommand());
-        register(new DefaultServerCommand());
-        register(new TestCommand());
     }
 
     private final List<Command> controllerCommands = new ArrayList<>();
@@ -61,5 +50,28 @@ public class CommandManager {
         }
 
         return false;
+    }
+
+    @Override
+    public void onEnable() {
+        register(new HelpCommand());
+        register(new StopCommand());
+        register(new ReloadCommand());
+        register(new MigrateCommand());
+        register(new AddStaticCommand());
+        register(new RemoveStaticCommand());
+        register(new ListStaticCommand());
+        register(new DefaultServerCommand());
+        register(new TestCommand());
+    }
+
+    @Override
+    public void onDisable() {
+        controllerCommands.clear();
+    }
+
+    @Override
+    public String getModuleName() {
+        return "Commands";
     }
 }

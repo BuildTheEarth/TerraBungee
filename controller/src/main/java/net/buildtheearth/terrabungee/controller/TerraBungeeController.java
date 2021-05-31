@@ -9,14 +9,17 @@ import net.buildtheearth.api.plugin.PluginManager;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
+import net.buildtheearth.terrabungee.controller.command.CommandManager;
 import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStoppedEmbed;
+import net.buildtheearth.terrabungee.controller.modules.ModuleHandler;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.network.WSServer;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
+import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import org.slf4j.LoggerFactory;
 
@@ -79,13 +82,14 @@ public class TerraBungeeController extends TerraBungee {
         pluginManager.detectPlugins(pluginFolder);
         pluginManager.loadPlugins();
         pluginManager.enablePlugins();
-        ServiceManager.getInstance();
-        DiscordManager.getInstance();
 
-        generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);
+        ModuleHandler.getInstance().registerModules(InstanceManager.getInstance(), ServiceManager.getInstance(), PlayerManager.getInstance(), NetworkManager.getInstance(), DiscordManager.getInstance(), CommandManager.getInstance());
+        ModuleHandler.getInstance().enableAll();
 
         server = new WSServer(new InetSocketAddress(ConfigHandler.host, ConfigHandler.port));
         new Thread(server).start();
+
+        generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);
 
         logger.info("TerraBungee Controller Started!");
         logger.start();
@@ -96,6 +100,7 @@ public class TerraBungeeController extends TerraBungee {
         running = false;
         getLogger().info("Shutting down the controller!");
         DiscordManager.getInstance().send(new ControllerStoppedEmbed());
+        ModuleHandler.getInstance().disableAll();
         try {
             server.stop();
         } catch (IOException | InterruptedException ignored) {

@@ -13,6 +13,7 @@ import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ServiceOfflineEmbed;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ServiceReconnectedEmbed;
+import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SInstanceUpdatePacket;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SOnlinePlayerCacheHitPacket;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
@@ -26,23 +27,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class ServiceManager {
+public class ServiceManager implements Module {
     private static ServiceManager instance = null;
 
     public static ServiceManager getInstance() {
         return instance == null ? instance = new ServiceManager() : instance;
     }
 
-
     private final Map<String, TerraBungeeService> services = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
     private String defaultServer = "";
-
-    private ServiceManager() {
-        registerIntent(ServiceIntent.INSTANCE_UPDATE, 2, s -> NetworkManager.getInstance().send(new C2SInstanceUpdatePacket(s)));
-        registerIntent(ServiceIntent.ONLINE_PLAYER_UPDATE, 2, s -> NetworkManager.getInstance().send(new C2SOnlinePlayerCacheHitPacket(s)));
-        TerraBungeeController.getInstance().getGeneralThreads()
-                .scheduleAtFixedRate(new ServiceChecker(), 1, 2, TimeUnit.SECONDS);
-    }
 
     private final ScheduledExecutorService intentThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-intents");
 
@@ -208,7 +201,7 @@ public class ServiceManager {
      * @param seconds Time (in seconds) that the intent action should be triggered
      * @param service {@link Consumer<TerraBungeeService>}
      */
-    public void registerIntent(ServiceIntent intent, int seconds, Consumer<TerraBungeeService> service) {
+    private void registerIntent(ServiceIntent intent, int seconds, Consumer<TerraBungeeService> service) {
         intentThreads.scheduleAtFixedRate(() -> runIntentAction(intent, service), 1, seconds, TimeUnit.SECONDS);
     }
 
@@ -224,6 +217,23 @@ public class ServiceManager {
                 intentThreads.submit(() -> service.accept(s));
             }
         }
+    }
+
+    @Override
+    public void onEnable() {
+        registerIntent(ServiceIntent.INSTANCE_UPDATE, 2, s -> NetworkManager.getInstance().send(new C2SInstanceUpdatePacket(s)));
+        registerIntent(ServiceIntent.ONLINE_PLAYER_UPDATE, 2, s -> NetworkManager.getInstance().send(new C2SOnlinePlayerCacheHitPacket(s)));
+        TerraBungeeController.getInstance().getGeneralThreads().scheduleAtFixedRate(new ServiceChecker(), 1, 2, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void onDisable() {
+        intentThreads.shutdownNow();
+    }
+
+    @Override
+    public String getModuleName() {
+        return "Services";
     }
 
     /**

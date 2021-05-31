@@ -7,6 +7,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.noahhusby.lib.data.storage.StorageHashMap;
 import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
+import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerJoinEventPacket;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerQuitEventPacket;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
@@ -21,14 +22,11 @@ import java.util.concurrent.Executors;
 /**
  * @author Noah Husby
  */
-public class PlayerManager {
+public class PlayerManager implements Module {
     private static PlayerManager instance = null;
 
     public static PlayerManager getInstance() {
         return instance == null ? instance = new PlayerManager() : instance;
-    }
-
-    private PlayerManager() {
     }
 
     private final ExecutorService manipulationThread = Executors.newSingleThreadExecutor(
@@ -113,5 +111,20 @@ public class PlayerManager {
 
             onlinePlayerRegistry = ImmutableMap.copyOf(online);
         });
+    }
+
+    @Override
+    public void onEnable() {
+
+    }
+
+    @Override
+    public void onDisable() {
+
+    }
+
+    @Override
+    public String getModuleName() {
+        return "Players";
     }
 }

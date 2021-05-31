@@ -25,6 +25,7 @@ import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
+import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SResponsePacket;
 import net.buildtheearth.terrabungee.controller.network.P2C.P2CUpdatePlayersPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CAddStaticInstancePacket;
@@ -38,7 +39,7 @@ import org.java_websocket.WebSocket;
 
 import java.util.Map;
 
-public class NetworkManager implements INetworkManager {
+public class NetworkManager implements INetworkManager, Module {
     private static NetworkManager instance;
 
     public static NetworkManager getInstance() {
@@ -47,17 +48,6 @@ public class NetworkManager implements INetworkManager {
 
     @Getter
     private final Map<String, IS2CPacket> packets = Maps.newHashMap();
-
-    private NetworkManager() {
-        register(new S2CKeepAlivePacket());
-        register(new S2CAddStaticInstancePacket());
-        register(new S2CRemoveStaticInstancePacket());
-        register(new S2CServiceMessagePacket());
-        register(new S2CSetServiceStatusPacket());
-        register(new P2CUpdatePlayersPacket());
-        register(new S2CRetrieveUncachedPlayerPacket());
-        register(new S2CUpdateAttributeID());
-    }
 
     public void onIncomingPayload(WebSocket client, String p) {
         JsonObject payload = JsonUtils.parseString(p).getAsJsonObject();
@@ -100,5 +90,27 @@ public class NetworkManager implements INetworkManager {
 
     public void register(IS2CPacket packet) {
         packets.put(packet.getID(), packet);
+    }
+
+    @Override
+    public void onEnable() {
+        register(new S2CKeepAlivePacket());
+        register(new S2CAddStaticInstancePacket());
+        register(new S2CRemoveStaticInstancePacket());
+        register(new S2CServiceMessagePacket());
+        register(new S2CSetServiceStatusPacket());
+        register(new P2CUpdatePlayersPacket());
+        register(new S2CRetrieveUncachedPlayerPacket());
+        register(new S2CUpdateAttributeID());
+    }
+
+    @Override
+    public void onDisable() {
+        packets.clear();
+    }
+
+    @Override
+    public String getModuleName() {
+        return "Network";
     }
 }
