@@ -29,6 +29,7 @@ import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SResponsePacket;
 import net.buildtheearth.terrabungee.controller.network.P2C.P2CUpdatePlayersPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CAddStaticInstancePacket;
+import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CIsBannedPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CKeepAlivePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CRemoveStaticInstancePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CRetrieveUncachedPlayerPacket;
@@ -102,6 +103,7 @@ public class NetworkManager implements INetworkManager, Module {
         register(new P2CUpdatePlayersPacket());
         register(new S2CRetrieveUncachedPlayerPacket());
         register(new S2CUpdateAttributeID());
+        register(new S2CIsBannedPacket());
     }
 
     @Override

@@ -39,6 +39,7 @@ public class ConfigHandler {
 
     private File staticInstanceFile;
     private File playerDataFile;
+    private File punishmentFile;
     private File discordConfigFile;
 
     private Configuration config;
@@ -75,6 +76,7 @@ public class ConfigHandler {
         staticInstanceFile = new File(localDb, "instances.json");
         playerDataFile = new File(localDb, "players.json");
         discordConfigFile = new File(localDb, "discord.json");
+        punishmentFile = new File(localDb, "punishments.json");
 
         config = new Configuration(configFile);
         loadData();
@@ -116,6 +118,10 @@ public class ConfigHandler {
         playerData.destroy();
         ((StorageHashMap) playerData).clear();
 
+        Storage punishmentData = PlayerManager.getInstance().getPunishments();
+        punishmentData.destroy();
+        ((StorageHashMap) playerData).clear();
+
         Storage staticInstanceData = InstanceManager.getInstance().getStaticInstances();
         staticInstanceData.destroy();
         ((StorageTreeMap) staticInstanceData).clear();
@@ -126,6 +132,7 @@ public class ConfigHandler {
 
         if(localEnabled) {
             playerData.registerHandler(new LocalStorageHandler(playerDataFile));
+            playerData.registerHandler(new LocalStorageHandler(punishmentFile));
             staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
             discordConfigData.registerHandler(new LocalStorageHandler(discordConfigFile));
         }
@@ -144,6 +151,25 @@ public class ConfigHandler {
             );
             sqlStorageHandler.setPriority(100);
             playerData.registerHandler(sqlStorageHandler);
+        }
+
+        {
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
+                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "Punishments",
+                    Structure.builder()
+                            .add("Id", Type.INT)
+                            .add("Type", Type.TEXT)
+                            .add("Staff", Type.TEXT)
+                            .add("Player", Type.TEXT)
+                            .add("Start", Type.TEXT)
+                            .add("End", Type.TEXT)
+                            .add("Reason", Type.TEXT)
+                            .add("History", Type.TEXT)
+                            .repair(true)
+                            .build()
+            );
+            sqlStorageHandler.setPriority(100);
+            punishmentData.registerHandler(sqlStorageHandler);
         }
 
         {
@@ -178,6 +204,8 @@ public class ConfigHandler {
         TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
             playerData.load();
             playerData.setAutoSave(10, TimeUnit.SECONDS);
+            punishmentData.load();
+            punishmentData.setAutoSave(10, TimeUnit.SECONDS);
             staticInstanceData.setAutoLoad(10, TimeUnit.SECONDS);
             staticInstanceData.setAutoSave(10, TimeUnit.SECONDS);
             discordConfigData.setAutoLoad(10, TimeUnit.SECONDS);

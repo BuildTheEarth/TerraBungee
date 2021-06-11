@@ -68,6 +68,8 @@ public class TerraBungeeController extends TerraBungee {
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(Level.WARN);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.HikariConfig")).setLevel(Level.INFO);
         ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.pool.HikariPool")).setLevel(Level.INFO);
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.util.DriverDataSource")).setLevel(Level.INFO);
+
 
         folder = new File(System.getProperty("user.dir"));
         folder.mkdir();

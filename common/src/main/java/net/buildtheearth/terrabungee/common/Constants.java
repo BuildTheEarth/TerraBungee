@@ -44,5 +44,10 @@ public class Constants {
     public static final String playerJoinEventID = "player_join_event";
     public static final String playerQuitEventID = "player_quit_event";
 
+    /*
+     * Punishment Packets
+     */
+    public static final String isBannedID = "punishment_is_banned";
+
     public static final String serviceMessageID = "service_message";
 }
