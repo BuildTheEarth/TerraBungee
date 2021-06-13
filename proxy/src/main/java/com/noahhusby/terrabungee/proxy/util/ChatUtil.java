@@ -65,6 +65,10 @@ public class ChatUtil {
         return combine(ChatColor.RED, "You do not have permission to use this command");
     }
 
+    public static TextComponent getNoContact() {
+        return titleAndCombine(ChatColor.RED, "Unable to contact the controller! Please try again.");
+    }
+
     public static TextComponent getPlayerOnly() {
         return titleAndCombine(ChatColor.RED, "This command can only be executed by players!");
     }

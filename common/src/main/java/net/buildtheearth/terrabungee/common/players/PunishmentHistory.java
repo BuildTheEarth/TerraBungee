@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -20,7 +21,7 @@ public class PunishmentHistory {
     @Expose
     private Type type;
     @Expose
-    private Date date;
+    private LocalDateTime date;
     @Expose
     private JsonObject data;
 

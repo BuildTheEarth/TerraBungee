@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.storage.StorageHashMap;
 import lombok.Getter;
@@ -22,8 +24,10 @@ import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerQuitEventPa
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.network.proxy.C2PProxyBanDisconnectPacket;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
+import net.buildtheearth.terrabungee.controller.util.LocalDateTimeSerializer;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -140,9 +144,9 @@ public class PlayerManager implements Module {
      * @param end End date of punishment
      * @param reason Reason for punishment
      */
-    public void ban(@NonNull UUID staff, @NonNull UUID player, Date end, @NonNull String reason) {
+    public void ban(@NonNull UUID staff, @NonNull UUID player, LocalDateTime end, @NonNull String reason) {
         int punishmentId = generatePunishmentId();
-        Punishment punishment = new Punishment(punishmentId, Punishment.Type.BAN, staff, player, new Date(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, new Date(), new JsonObject())));
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.BAN, staff, player, LocalDateTime.now(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
         TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
@@ -187,11 +191,10 @@ public class PlayerManager implements Module {
 
     @Override
     public void onEnable() {
-        TerraBungeeController.getInstance().getGeneralThreads().schedule(new Runnable() {
-            @Override
-            public void run() {
-                //ban(UUID.randomUUID(), UUID.fromString("4cfa7dc1-3021-42b0-969b-224a9656cc6d"), null, "Ahhddddhaha");
-            }
+        Gson punishmentGson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer()).create();
+        punishments.setGson(punishmentGson);
+        TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
+            //ban(UUID.randomUUID(), UUID.fromString("4cfa7dc1-3021-42b0-969b-224a9656cc6d"), null, "Ahhddddhaha");
         }, 5, TimeUnit.SECONDS);
         punishments.onLoadEvent(this::updatePunishmentCache);
         punishments.onSaveEvent(this::updatePunishmentCache);

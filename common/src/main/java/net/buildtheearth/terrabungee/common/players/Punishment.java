@@ -6,6 +6,7 @@ import com.noahhusby.lib.data.storage.Key;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -31,10 +32,10 @@ public class Punishment {
     private UUID player;
     @Expose
     @SerializedName("Start")
-    private Date start;
+    private LocalDateTime start;
     @Expose
     @SerializedName("End")
-    private Date end;
+    private LocalDateTime end;
     @Expose
     @SerializedName("Reason")
     private String reason;
@@ -43,7 +44,7 @@ public class Punishment {
     private List<PunishmentHistory> history;
 
     public boolean isActive() {
-        return end == null || new Date().before(end);
+        return end == null || LocalDateTime.now().isBefore(end);
     }
 
     public enum Type {
