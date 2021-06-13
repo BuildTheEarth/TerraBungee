@@ -9,10 +9,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.network.P2CUpdatePlayersPacket;
+import com.noahhusby.terrabungee.proxy.util.ChatUtil;
+import net.buildtheearth.terrabungee.common.players.Punishment;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
 
+import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerHandler {
@@ -42,5 +49,22 @@ public class PlayerHandler {
 
             TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new P2CUpdatePlayersPacket(array));
         }), 0, 2, TimeUnit.SECONDS);
+    }
+
+    public BaseComponent getBanDisconnectMessage(Punishment punishment) {
+        TextComponent kickMessage;
+        if(punishment.getEnd() == null) {
+            kickMessage = ChatUtil.combine(ChatColor.RED, "You are permanently banned from BuildTheEarth!\n\n");
+        } else {
+            long difference = punishment.getEnd().getTime() - new Date().getTime();
+            long days = TimeUnit.MILLISECONDS.toDays(difference) % 365;
+            long hours = TimeUnit.MILLISECONDS.toHours(difference) % 24;
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(difference) % 60;
+            long seconds = TimeUnit.MILLISECONDS.toSeconds(difference) % 50;
+            kickMessage = ChatUtil.combine(ChatColor.RED, "You are temporarily banned for ", ChatColor.RESET, days, "d ", hours, "h ", minutes, "m ", seconds, "s ", ChatColor.RED, "from BuildTheEarth!\n\n");
+        }
+        kickMessage.addExtra(ChatUtil.combine(ChatColor.GRAY, "Reason: ", ChatColor.WHITE, punishment.getReason(), "\n"));
+        kickMessage.addExtra(ChatUtil.combine(ChatColor.GRAY, "Punishment ID: ", ChatColor.WHITE, "#", punishment.getId()));
+        return kickMessage;
     }
 }

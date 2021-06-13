@@ -27,7 +27,7 @@ import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SResponsePacket;
-import net.buildtheearth.terrabungee.controller.network.P2C.P2CUpdatePlayersPacket;
+import net.buildtheearth.terrabungee.controller.network.proxy.P2CUpdatePlayersPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CAddStaticInstancePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetrieveActiveBanPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CKeepAlivePacket;

@@ -13,12 +13,14 @@ import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.terrabungee.common.players.Punishment;
 import net.buildtheearth.terrabungee.common.players.PunishmentHistory;
+import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerJoinEventPacket;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerQuitEventPacket;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
+import net.buildtheearth.terrabungee.controller.network.proxy.C2PProxyBanDisconnectPacket;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
 import java.time.LocalDate;
@@ -140,8 +142,13 @@ public class PlayerManager implements Module {
      */
     public void ban(@NonNull UUID staff, @NonNull UUID player, Date end, @NonNull String reason) {
         int punishmentId = generatePunishmentId();
-        punishments.put(punishmentId, new Punishment(punishmentId, Punishment.Type.BAN, staff, player, new Date(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, new Date(), new JsonObject()))));
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.BAN, staff, player, new Date(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, new Date(), new JsonObject())));
+        punishments.put(punishmentId, punishment);
         updatePunishmentCache();
+        TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
+        if(tbPlayer != null && tbPlayer.getProxy() != null) {
+            NetworkManager.getInstance().send(new C2PProxyBanDisconnectPacket(tbPlayer.getProxy(), punishment));
+        }
     }
 
     /**

@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.controller.network.P2C;
+package net.buildtheearth.terrabungee.controller.network.proxy;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;

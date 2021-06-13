@@ -48,6 +48,8 @@ public class Constants {
      * Punishment Packets
      */
     public static final String retrieveActiveBanID = "punishment_is_banned";
+    public static final String proxyBanDisconnectID = "proxy_ban_disconnect";
+    public static final String proxyKickDisconnectID = "proxy_kick_disconnect";
 
     public static final String serviceMessageID = "service_message";
 }
