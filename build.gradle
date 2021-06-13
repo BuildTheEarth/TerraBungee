@@ -83,8 +83,8 @@ allprojects {
     }
 
     if (project.name.contains("api") || project.name.contains("client") || project.name.contains("common")) {
-        publish.dependsOn(publishToMavenLocal)
-        shadowJar.dependsOn(publish)
+        //publish.dependsOn(publishToMavenLocal)
+        //shadowJar.dependsOn(publish)
     }
 
     sourceSets {

@@ -183,7 +183,7 @@ public class PlayerManager implements Module {
         TerraBungeeController.getInstance().getGeneralThreads().schedule(new Runnable() {
             @Override
             public void run() {
-                ban(UUID.randomUUID(), UUID.randomUUID(), null, "Ahhddddhaha");
+                //ban(UUID.randomUUID(), UUID.fromString("4cfa7dc1-3021-42b0-969b-224a9656cc6d"), null, "Ahhddddhaha");
             }
         }, 5, TimeUnit.SECONDS);
         punishments.onLoadEvent(this::updatePunishmentCache);

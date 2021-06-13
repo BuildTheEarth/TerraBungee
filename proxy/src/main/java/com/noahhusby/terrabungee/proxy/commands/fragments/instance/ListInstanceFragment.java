@@ -21,7 +21,7 @@ public class ListInstanceFragment implements ICommandFragment {
     public void execute(CommandSender sender, String[] args) {
         TextComponent list = ChatUtil.titleAndCombine(ChatColor.RED, "Instances: ");
         boolean first = true;
-        for (Instance i : TerraBungeeProxy.tb.getInstanceManager().getInstances()) {
+        for (Instance i : TerraBungeeProxy.getInstance().getTerraBungee().getInstanceManager().getInstances()) {
             if (first) {
                 first = false;
             } else {

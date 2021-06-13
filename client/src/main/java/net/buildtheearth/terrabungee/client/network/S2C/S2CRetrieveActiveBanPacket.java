@@ -12,13 +12,13 @@ import java.util.UUID;
  * @author Noah Husby
  */
 @AllArgsConstructor
-public class S2CIsBannedPacket implements IS2CPacket {
+public class S2CRetrieveActiveBanPacket implements IS2CPacket {
 
     private final UUID uuid;
 
     @Override
     public String getType() {
-        return Constants.isBannedID;
+        return Constants.retrieveActiveBanID;
     }
 
     @Override

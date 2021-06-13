@@ -20,7 +20,7 @@ public class InstanceInfoFragment implements ICommandFragment {
             return;
         }
 
-        for (Instance i : TerraBungeeProxy.tb.getInstanceManager().getInstances()) {
+        for (Instance i : TerraBungeeProxy.getInstance().getTerraBungee().getInstanceManager().getInstances()) {
             if (i.getId().equalsIgnoreCase(args[0])) {
                 sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Instance Information:"));
                 sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "ID: ", ChatColor.GOLD, i.getId()));

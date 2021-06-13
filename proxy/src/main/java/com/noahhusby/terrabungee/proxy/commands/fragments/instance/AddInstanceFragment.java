@@ -23,7 +23,7 @@ public class AddInstanceFragment implements ICommandFragment {
             return;
         }
 
-        CompletableFuture<Response> response = TerraBungeeProxy.tb.getNetworkManager().send(new S2CAddStaticInstancePacket(args[0], args[1]));
+        CompletableFuture<Response> response = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CAddStaticInstancePacket(args[0], args[1]));
         response.thenAccept(r -> {
             if (r.getCode() == Response.ResponseCode.TIMED_OUT) {
                 sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "The controller was unable to be contacted. Please check the connection and try again."));

@@ -9,6 +9,7 @@ import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
 import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
+import lombok.Getter;
 import net.buildtheearth.terrabungee.client.TerraBungeeAPI;
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
@@ -23,7 +24,8 @@ import java.util.logging.Logger;
 
 public class TerraBungeeProxy extends Plugin implements Listener {
     private static TerraBungeeProxy instance = null;
-    public static TerraBungeeClient tb;
+    @Getter
+    private TerraBungeeClient terraBungee;
     public static Logger LOGGER;
 
     @Override
@@ -32,15 +34,16 @@ public class TerraBungeeProxy extends Plugin implements Listener {
         instance = this;
 
         ProxyServer.getInstance().getPluginManager().registerListener(this, this);
+        ProxyServer.getInstance().getPluginManager().registerListener(this, new ProxyListener());
         ConfigHandler.getInstance();
         PlayerHandler.getInstance();
 
-        tb = TerraBungeeAPI.createService(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
-        tb.setAutoReconnect(true);
-        tb.connect();
-        tb.enableIntents(ServiceIntent.INSTANCE_UPDATE);
+        terraBungee = TerraBungeeAPI.createService(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
+        terraBungee.setAutoReconnect(true);
+        terraBungee.connect();
+        terraBungee.enableIntents(ServiceIntent.INSTANCE_UPDATE);
 
-        tb.addListener(new TBListener());
+        terraBungee.addListener(new TBListener());
 
         getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
         getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
@@ -58,7 +61,7 @@ public class TerraBungeeProxy extends Plugin implements Listener {
     @Override
     public void onDisable() {
         instance = null;
-        tb.discard();
+        terraBungee.discard();
     }
 
     public static TerraBungeeProxy getInstance() {

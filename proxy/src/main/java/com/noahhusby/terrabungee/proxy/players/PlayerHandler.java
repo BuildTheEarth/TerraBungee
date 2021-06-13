@@ -25,7 +25,7 @@ public class PlayerHandler {
     private PlayerHandler() {
         TaskScheduler scheduler = ProxyServer.getInstance().getScheduler();
         scheduler.schedule(TerraBungeeProxy.getInstance(), () -> scheduler.runAsync(TerraBungeeProxy.getInstance(), () -> {
-            if (TerraBungeeProxy.tb == null || !TerraBungeeProxy.tb.getNetworkManager().isConnectionEstablished()) {
+            if (TerraBungeeProxy.getInstance().getTerraBungee() == null || !TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().isConnectionEstablished()) {
                 return;
             }
             JsonArray array = new JsonArray();
@@ -40,7 +40,7 @@ public class PlayerHandler {
                 array.add(player);
             }
 
-            TerraBungeeProxy.tb.getNetworkManager().send(new P2CUpdatePlayersPacket(array));
+            TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new P2CUpdatePlayersPacket(array));
         }), 0, 2, TimeUnit.SECONDS);
     }
 }

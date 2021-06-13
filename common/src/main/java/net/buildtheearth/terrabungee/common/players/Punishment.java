@@ -43,7 +43,7 @@ public class Punishment {
     private List<PunishmentHistory> history;
 
     public boolean isActive() {
-        return end == null || end.before(new Date());
+        return end == null || new Date().before(end);
     }
 
     public enum Type {

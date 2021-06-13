@@ -17,7 +17,7 @@ public class StatusFragment implements ICommandFragment {
     @Override
     public void execute(CommandSender sender, String[] args) {
         sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "TerraBungee Status:"));
-        TBStats stats = TerraBungeeProxy.tb.getStats();
+        TBStats stats = TerraBungeeProxy.getInstance().getTerraBungee().getStats();
         TBStats.ControllerStats controller = stats.getControllerStats();
         if (controller.isOnline()) {
             sender.sendMessage(ChatUtil.combine(ChatColor.GOLD, "Controller: ", ChatColor.GREEN, "Online"));
@@ -31,7 +31,7 @@ public class StatusFragment implements ICommandFragment {
 
         sender.sendMessage();
         sender.sendMessage(ChatUtil.combine(ChatColor.RED, "This Proxy:"));
-        sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "ID: ", ChatColor.BLUE, TerraBungeeProxy.tb.getId()));
+        sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "ID: ", ChatColor.BLUE, TerraBungeeProxy.getInstance().getTerraBungee().getId()));
         sender.sendMessage(ChatUtil.combine(ChatColor.GRAY, "Version: ", ChatColor.BLUE, Constants.VERSION));
     }
 

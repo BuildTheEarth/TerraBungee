@@ -47,7 +47,7 @@ public class Constants {
     /*
      * Punishment Packets
      */
-    public static final String isBannedID = "punishment_is_banned";
+    public static final String retrieveActiveBanID = "punishment_is_banned";
 
     public static final String serviceMessageID = "service_message";
 }
