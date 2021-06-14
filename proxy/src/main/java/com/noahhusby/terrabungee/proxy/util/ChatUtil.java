@@ -9,6 +9,7 @@ import com.noahhusby.terrabungee.proxy.Constants;
 import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.Arrays;
@@ -64,7 +65,7 @@ public class ChatUtil {
         return textComponent;
     }
 
-    public static void sendMessageBox(CommandSender sender, String title, TextComponent text) {
+    public static void sendMessageBox(CommandSender sender, String title, BaseComponent text) {
         sendMessageBox(sender, title, () -> sender.sendMessage(text));
     }
 

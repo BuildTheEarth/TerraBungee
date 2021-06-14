@@ -4,10 +4,12 @@ import com.google.common.reflect.TypeToken;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.util.ChatUtil;
 import com.noahhusby.terrabungee.proxy.util.ProxyUtil;
+import net.buildtheearth.terrabungee.client.network.S2C.S2CRetrievePunishmentPacket;
 import net.buildtheearth.terrabungee.client.network.S2C.S2CRetrievePunishmentsPacket;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.network.Response;
 import net.buildtheearth.terrabungee.common.players.Punishment;
+import net.buildtheearth.terrabungee.common.players.PunishmentHistory;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -38,15 +40,17 @@ public class PunishmentCommand extends Command {
             return;
         }
         if(args.length < 1) {
-            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Usage: /punishment <get | edit>"));
+            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Usage: /punishment <get | edit | inspect>"));
             return;
         }
         if(args[0].equalsIgnoreCase("get")) {
             executeGet(sender, args);
         } else if(args[0].equalsIgnoreCase("edit")) {
             executeEdit(sender, args);
+        } else if(args[0].equalsIgnoreCase("inspect")) {
+            executeInspect(sender, args);
         } else {
-            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Usage: /punishment <get | edit>"));
+            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Usage: /punishment <get | edit | inspect>"));
             return;
         }
     }
@@ -83,7 +87,7 @@ public class PunishmentCommand extends Command {
                                 .create();
                         punishmentMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverMessage));
                         TextComponent interaction = new TextComponent(ChatColor.YELLOW + "[*]");
-                        interaction.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "https://giant.gfycat.com/JitteryTerrificChimpanzee.webm"));
+                        interaction.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/punishment inspect " + punishment.getId()));
                         interaction.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Inspect the punishment").create()));
                         punishmentMessage.addExtra(interaction);
                         if(punishment.isActive()) {
@@ -103,6 +107,36 @@ public class PunishmentCommand extends Command {
     }
 
     private void executeInspect(CommandSender sender, String[] args) {
+        if(args.length < 2) {
+            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Usage: /punishment inspect <punishment id>"));
+            return;
+        }
+        try {
+            Integer.parseInt(args[1]);
+        } catch (Exception ignored) {
+            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, args[1], ChatColor.GRAY, " is not a valid number"));
+            return;
+        }
+        CompletableFuture<Response> punishmentFuture = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CRetrievePunishmentPacket(args[1]));
+        punishmentFuture.thenAccept(response -> {
+            if(response.getCode() == Response.ResponseCode.ERROR) {
+                sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "That punishment does not exist"));
+                return;
+            }
+            Punishment punishment = TerraBungeeUtil.GSON.fromJson(response.getData().get("punishment"), Punishment.class);
+            BaseComponent inspectMessage = ChatUtil.combine(ChatColor.YELLOW, "ID: ", ChatColor.WHITE, punishment.getId(), "\n");
+            inspectMessage.addExtra(ChatUtil.combine(ChatColor.YELLOW, "Player: ", ChatColor.WHITE, response.getData().get("playerName").getAsString(), "\n"));
+            inspectMessage.addExtra(ChatUtil.combine(ChatColor.YELLOW, "Type: ", ChatColor.WHITE, punishment.getType().name(), "\n\n"));
 
+            inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "Staff: ", ChatColor.WHITE, response.getData().get("staffName").getAsString(), "\n"));
+            inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "Start: ", ChatColor.WHITE, ProxyUtil.toReadableTime(punishment.getStart()), "\n"));
+            inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "End: ", ChatColor.WHITE, punishment.getEnd() == null ? "None" : ProxyUtil.toReadableTime(punishment.getEnd()), "\n\n"));
+
+            inspectMessage.addExtra(ChatUtil.combine(ChatColor.RED, "History:\n"));
+            for(PunishmentHistory history : punishment.getHistory()) {
+                inspectMessage.addExtra(ChatUtil.combine(ChatColor.GRAY, "[", ProxyUtil.toReadableTime(history.getDate()), "] ", ChatColor.DARK_GRAY, "> ", ChatColor.WHITE, history.getType().name()));
+            }
+            ChatUtil.sendMessageBox(sender, ChatColor.YELLOW + "" + ChatColor.BOLD + "Punishment Report", inspectMessage);
+        });
     }
 }
