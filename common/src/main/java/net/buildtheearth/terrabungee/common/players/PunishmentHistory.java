@@ -26,6 +26,6 @@ public class PunishmentHistory {
     private JsonObject data;
 
     public enum Type {
-        CREATION, EDIT_TIME, EDIT_REASON
+        CREATION, EDIT_TIME, EDIT_REASON, DEACTIVATE
     }
 }

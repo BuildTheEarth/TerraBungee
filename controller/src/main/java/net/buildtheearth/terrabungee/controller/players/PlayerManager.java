@@ -14,6 +14,7 @@ import lombok.NonNull;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.terrabungee.common.players.Punishment;
+import net.buildtheearth.terrabungee.common.players.PunishmentEditAction;
 import net.buildtheearth.terrabungee.common.players.PunishmentHistory;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
@@ -175,6 +176,46 @@ public class PlayerManager implements Module {
         if(tbPlayer != null && tbPlayer.getProxy() != null) {
             NetworkManager.getInstance().send(new C2PProxyKickDisconnectPacket(tbPlayer.getProxy(), punishment));
         }
+    }
+
+    public void editPunishment(int id, PunishmentEditAction action, JsonObject data) {
+        Punishment punishment = getPunishments().get(id);
+        UUID staff = UUID.fromString(data.get("staff").getAsString());
+        if(punishment == null) {
+            return;
+        }
+        if(action == PunishmentEditAction.REASON) {
+            String reason = data.get("reason").getAsString();
+            JsonObject historyData = new JsonObject();
+            historyData.addProperty("old", punishment.getReason());
+            historyData.addProperty("new", reason);
+            punishment.setReason(reason);
+            punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.EDIT_REASON, LocalDateTime.now(), historyData));
+        } else if(action == PunishmentEditAction.END) {
+            String daysString = data.get("days").getAsString();
+            int days;
+            try {
+                days = Integer.parseInt(daysString);
+            } catch (NumberFormatException ignored) {
+                return;
+            }
+            JsonObject historyData = new JsonObject();
+            historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
+            LocalDateTime end = punishment.getStart().plusDays(days);
+            historyData.addProperty("new", end.toString());
+            punishment.setEnd(end);
+            punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.EDIT_TIME, LocalDateTime.now(), historyData));
+        } else if(action == PunishmentEditAction.DEACTIVATE) {
+            if(punishment.isActive()) {
+                JsonObject historyData = new JsonObject();
+                historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
+                LocalDateTime end = LocalDateTime.now();
+                historyData.addProperty("new", end.toString());
+                punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.DEACTIVATE, LocalDateTime.now(), historyData));
+            }
+        }
+        updatePunishmentCache();
+        punishments.saveAsync();
     }
 
     /**

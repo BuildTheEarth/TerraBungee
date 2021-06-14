@@ -54,6 +54,7 @@ public class Constants {
     public static final String kickPlayerID = "punishment_kick_player";
     public static final String retrievePunishmentsID = "punishments_retrieve";
     public static final String retrievePunishmentID = "punishment_retrieve";
+    public static final String editPunishmentID = "edit_punishment";
 
     public static final String serviceMessageID = "service_message";
 }

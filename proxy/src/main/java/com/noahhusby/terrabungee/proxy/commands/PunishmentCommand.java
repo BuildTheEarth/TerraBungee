@@ -128,6 +128,8 @@ public class PunishmentCommand extends Command {
             inspectMessage.addExtra(ChatUtil.combine(ChatColor.YELLOW, "Player: ", ChatColor.WHITE, response.getData().get("playerName").getAsString(), "\n"));
             inspectMessage.addExtra(ChatUtil.combine(ChatColor.YELLOW, "Type: ", ChatColor.WHITE, punishment.getType().name(), "\n\n"));
 
+            inspectMessage.addExtra(ChatUtil.combine(ChatColor.YELLOW, "Reason: ", ChatColor.WHITE, punishment.getReason(), "\n\n"));
+
             inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "Staff: ", ChatColor.WHITE, response.getData().get("staffName").getAsString(), "\n"));
             inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "Start: ", ChatColor.WHITE, ProxyUtil.toReadableTime(punishment.getStart()), "\n"));
             inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "End: ", ChatColor.WHITE, punishment.getEnd() == null ? "None" : ProxyUtil.toReadableTime(punishment.getEnd()), "\n\n"));
