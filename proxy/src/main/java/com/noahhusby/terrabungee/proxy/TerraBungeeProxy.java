@@ -6,6 +6,7 @@
 package com.noahhusby.terrabungee.proxy;
 
 import com.noahhusby.terrabungee.proxy.commands.GBanCommand;
+import com.noahhusby.terrabungee.proxy.commands.GKickCommand;
 import com.noahhusby.terrabungee.proxy.commands.PunishmentCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
@@ -50,6 +51,7 @@ public class TerraBungeeProxy extends Plugin implements Listener {
         terraBungee.getNetworkManager().register(new C2PProxyKickDisconnectPacket());
         terraBungee.addListener(new TBListener());
 
+        getProxy().getPluginManager().registerCommand(this, new GKickCommand());
         getProxy().getPluginManager().registerCommand(this, new GBanCommand());
         getProxy().getPluginManager().registerCommand(this, new PunishmentCommand());
         getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());

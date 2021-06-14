@@ -23,6 +23,7 @@ import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerJoinEventPa
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerQuitEventPacket;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.network.proxy.C2PProxyBanDisconnectPacket;
+import net.buildtheearth.terrabungee.controller.network.proxy.C2PProxyKickDisconnectPacket;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.buildtheearth.terrabungee.controller.util.LocalDateTimeSerializer;
 
@@ -172,7 +173,7 @@ public class PlayerManager implements Module {
         updatePunishmentCache();
         TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
         if(tbPlayer != null && tbPlayer.getProxy() != null) {
-            NetworkManager.getInstance().send(new C2PProxyBanDisconnectPacket(tbPlayer.getProxy(), punishment));
+            NetworkManager.getInstance().send(new C2PProxyKickDisconnectPacket(tbPlayer.getProxy(), punishment));
         }
     }
 

@@ -51,6 +51,7 @@ public class Constants {
     public static final String proxyBanDisconnectID = "proxy_ban_disconnect";
     public static final String proxyKickDisconnectID = "proxy_kick_disconnect";
     public static final String banPlayerID = "punishment_ban_player";
+    public static final String kickPlayerID = "punishment_kick_player";
     public static final String retrievePunishmentsID = "punishments_retrieve";
     public static final String retrievePunishmentID = "punishment_retrieve";
 

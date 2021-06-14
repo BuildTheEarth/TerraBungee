@@ -28,6 +28,7 @@ import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SResponsePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CBanPlayerPacket;
+import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CKickPlayerPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetrievePunishmentPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetrievePunishmentsPacket;
 import net.buildtheearth.terrabungee.controller.network.proxy.P2CUpdatePlayersPacket;
@@ -110,6 +111,7 @@ public class NetworkManager implements INetworkManager, Module {
         register(new S2CBanPlayerPacket());
         register(new S2CRetrievePunishmentsPacket());
         register(new S2CRetrievePunishmentPacket());
+        register(new S2CKickPlayerPacket());
     }
 
     @Override
