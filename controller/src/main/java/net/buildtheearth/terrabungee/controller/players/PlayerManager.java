@@ -211,9 +211,11 @@ public class PlayerManager implements Module {
                 historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
                 LocalDateTime end = LocalDateTime.now();
                 historyData.addProperty("new", end.toString());
+                punishment.setEnd(end);
                 punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.DEACTIVATE, LocalDateTime.now(), historyData));
             }
         }
+        punishments.put(id, punishment);
         updatePunishmentCache();
         punishments.saveAsync();
     }
