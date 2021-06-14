@@ -156,6 +156,27 @@ public class PlayerManager implements Module {
     }
 
     /**
+     * Kicks a player
+     *
+     * @param staff UUID of staff
+     * @param player UUID of player
+     * @param reason Reason for punishment
+     */
+    public void kick(@NonNull UUID staff, @NonNull UUID player, @NonNull String reason) {
+        if(!getPlayers().containsKey(player) || !getPlayers().get(player).isOnline()) {
+            return;
+        }
+        int punishmentId = generatePunishmentId();
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.KICK, staff, player, LocalDateTime.now(), LocalDateTime.now(), reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
+        punishments.put(punishmentId, punishment);
+        updatePunishmentCache();
+        TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
+        if(tbPlayer != null && tbPlayer.getProxy() != null) {
+            NetworkManager.getInstance().send(new C2PProxyBanDisconnectPacket(tbPlayer.getProxy(), punishment));
+        }
+    }
+
+    /**
      * Gets a list of punishments for a player
      *
      * @param uuid UUID of player

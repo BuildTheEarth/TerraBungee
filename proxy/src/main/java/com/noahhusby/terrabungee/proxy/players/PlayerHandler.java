@@ -68,4 +68,11 @@ public class PlayerHandler {
         kickMessage.addExtra(ChatUtil.combine(ChatColor.GRAY, "Punishment ID: ", ChatColor.WHITE, "#", punishment.getId()));
         return kickMessage;
     }
+
+    public BaseComponent getKickDisconnectMessage(Punishment punishment) {
+        TextComponent kickMessage = ChatUtil.combine(ChatColor.RED, "You were kicked from BuildTheEarth!\n\n");;
+        kickMessage.addExtra(ChatUtil.combine(ChatColor.GRAY, "Reason: ", ChatColor.WHITE, punishment.getReason(), "\n"));
+        kickMessage.addExtra(ChatUtil.combine(ChatColor.GRAY, "Punishment ID: ", ChatColor.WHITE, "#", punishment.getId()));
+        return kickMessage;
+    }
 }

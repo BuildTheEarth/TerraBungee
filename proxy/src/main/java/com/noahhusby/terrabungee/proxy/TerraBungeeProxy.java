@@ -11,6 +11,7 @@ import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
 import com.noahhusby.terrabungee.proxy.network.C2PProxyBanDisconnectPacket;
+import com.noahhusby.terrabungee.proxy.network.C2PProxyKickDisconnectPacket;
 import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
 import lombok.Getter;
 import net.buildtheearth.terrabungee.client.TerraBungeeAPI;
@@ -46,7 +47,7 @@ public class TerraBungeeProxy extends Plugin implements Listener {
         terraBungee.connect();
         terraBungee.enableIntents(ServiceIntent.INSTANCE_UPDATE);
         terraBungee.getNetworkManager().register(new C2PProxyBanDisconnectPacket());
-
+        terraBungee.getNetworkManager().register(new C2PProxyKickDisconnectPacket());
         terraBungee.addListener(new TBListener());
 
         getProxy().getPluginManager().registerCommand(this, new GBanCommand());
