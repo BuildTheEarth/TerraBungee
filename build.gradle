@@ -10,6 +10,7 @@ repositories {
 }
 
 allprojects {
+
     apply plugin: "com.github.johnrengelman.shadow"
     apply plugin: "java"
     apply plugin: "maven-publish"
@@ -45,9 +46,13 @@ allprojects {
         jcenter()
     }
 
+    shadowJar{
+        archiveFileName = "TerraBungee-${baseName}-${version}.jar"
+    }
+
     dependencies {
         if (!("common".equalsIgnoreCase(project.name))) {
-            compile project(":common")
+            implementation project(path: ':common', configuration: 'shadow')
         }
 
         compileOnly "org.projectlombok:lombok:$lombokVersion"
