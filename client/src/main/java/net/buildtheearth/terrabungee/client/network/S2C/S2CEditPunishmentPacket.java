@@ -1,6 +1,8 @@
 package net.buildtheearth.terrabungee.client.network.S2C;
 
 import com.google.gson.JsonObject;
+import com.noahhusby.lib.data.JsonUtils;
+import com.noahhusby.lib.data.storage.StorageUtil;
 import lombok.RequiredArgsConstructor;
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.client.network.IS2CPacket;
@@ -27,7 +29,7 @@ public class S2CEditPunishmentPacket implements IS2CPacket {
 
     @Override
     public void getMessage(TerraBungeeClient instance, JsonObject data) {
-        for(String key : this.data.keySet()) {
+        for(String key : JsonUtils.keySet(this.data)) {
             data.add(key, this.data.get(key));
         }
         data.addProperty("staff", staff.toString());

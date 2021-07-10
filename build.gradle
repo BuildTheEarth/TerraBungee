@@ -52,7 +52,7 @@ allprojects {
 
     dependencies {
         if (!("common".equalsIgnoreCase(project.name))) {
-            implementation project(path: ':common', configuration: 'shadow')
+            compileOnly project(path: ':common', configuration: 'shadow')
         }
 
         compileOnly "org.projectlombok:lombok:$lombokVersion"
@@ -75,21 +75,10 @@ allprojects {
                 }
             }
         }
-
-        publications {
-            maven(MavenPublication) {
-                groupId = "net.buildtheearth"
-                artifactId = "terrabungee-" + project.name
-                version = project.version
-
-                from components.java
-            }
-        }
     }
 
     if (project.name.contains("api") || project.name.contains("client") || project.name.contains("common")) {
-        //publish.dependsOn(publishToMavenLocal)
-        //shadowJar.dependsOn(publish)
+        publish.dependsOn(publishToMavenLocal)
     }
 
     sourceSets {

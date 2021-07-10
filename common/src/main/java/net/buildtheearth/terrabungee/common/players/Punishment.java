@@ -44,7 +44,11 @@ public class Punishment {
     private List<PunishmentHistory> history;
 
     public boolean isActive() {
-        return end == null || LocalDateTime.now().isBefore(end);
+        try {
+            return end == null || LocalDateTime.now().isBefore(end);
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     public enum Type {
