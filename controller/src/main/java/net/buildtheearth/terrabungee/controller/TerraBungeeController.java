@@ -1,6 +1,7 @@
 package net.buildtheearth.terrabungee.controller;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.INetworkManager;
@@ -21,6 +22,7 @@ import net.buildtheearth.terrabungee.controller.network.WSServer;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
+import net.buildtheearth.terrabungee.controller.util.LoggerContextUtil;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -31,7 +33,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
 
 public class TerraBungeeController extends TerraBungee {
     public static TerraBungeeConsole logger;
@@ -63,13 +64,13 @@ public class TerraBungeeController extends TerraBungee {
         instance = this;
         logger = new TerraBungeeConsole();
 
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("io.javalin.Javalin")).setLevel(Level.WARN);
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.eclipse")).setLevel(Level.WARN);
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(Level.WARN);
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.HikariConfig")).setLevel(Level.INFO);
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.pool.HikariPool")).setLevel(Level.INFO);
-        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("com.zaxxer.hikari.util.DriverDataSource")).setLevel(Level.INFO);
-
+        // Configure Loggers
+        LoggerContextUtil.setLevel("io.javalin.Javalin", Level.WARN);
+        LoggerContextUtil.setLevel("org.eclipse", Level.WARN);
+        LoggerContextUtil.setLevel("net.dv8tion.jda", Level.WARN);
+        LoggerContextUtil.setLevel("com.zaxxer.hikari.HikariConfig", Level.INFO);
+        LoggerContextUtil.setLevel("com.zaxxer.hikari.pool.HikariPool", Level.INFO);
+        LoggerContextUtil.setLevel("com.zaxxer.hikari.util.DriverDataSource", Level.INFO);
 
         folder = new File(System.getProperty("user.dir"));
         folder.mkdir();
@@ -105,7 +106,7 @@ public class TerraBungeeController extends TerraBungee {
         ModuleHandler.getInstance().disableAll();
         try {
             server.stop();
-        } catch (IOException | InterruptedException ignored) {
+        } catch (InterruptedException ignored) {
         }
         generalThreads.shutdownNow();
         Executors.newSingleThreadScheduledExecutor().schedule(() -> System.exit(0), 1, TimeUnit.SECONDS);

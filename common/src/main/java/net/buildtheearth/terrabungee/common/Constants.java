@@ -11,10 +11,8 @@ public class Constants {
     static {
         Properties versionProperties = new Properties();
         String ver = "[Development Build]";
-        try {
-            versionProperties.load(Constants.class.getResourceAsStream("/version.properties"));
-            ver = versionProperties.getProperty("version");
-        } catch (Exception ignored) {
+        if(Constants.class.getPackage() != null) {
+            ver = Constants.class.getPackage().getImplementationVersion();
         }
         VERSION = ver;
     }

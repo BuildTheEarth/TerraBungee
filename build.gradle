@@ -1,25 +1,27 @@
 plugins {
-    id 'java'
     id 'com.github.johnrengelman.shadow' version '4.0.4'
 }
 
-def versionDir = "${buildDir}/generated-version"
-
-repositories {
-    mavenCentral()
-}
-
 allprojects {
-
-    apply plugin: "com.github.johnrengelman.shadow"
     apply plugin: "java"
     apply plugin: "maven-publish"
+    apply plugin: "com.github.johnrengelman.shadow"
 
     ext {
         tbVersion = "1.1.0." + ('git rev-list --count HEAD'.execute().text.trim())
 
-        husbyVersion = "12d71f0dd4"
+        javalinVersion = "3.10.1"
+        snakeYamlVersion = "1.28"
+        websocketVersion = "1.5.2"
+        husbyVersion = "58a173bce2"
         lombokVersion = "1.18.18"
+        guavaVersion = "29.0-jre"
+        gsonVersion = "2.8.6"
+        commonsVersion = "2.8.0"
+        jlineVersion = "3.16.0"
+        logbackVersion = "1.3.0-alpha5"
+        jdaVersion = "4.2.0_207"
+        hikariVersion = "4.0.3"
     }
 
     group "net.buildtheearth"
@@ -44,10 +46,6 @@ allprojects {
             url = 'https://repo.codemc.io/repository/maven-snapshots'
         }
         jcenter()
-    }
-
-    shadowJar{
-        archiveFileName = "TerraBungee-${baseName}-${version}.jar"
     }
 
     dependencies {
@@ -81,30 +79,16 @@ allprojects {
         publish.dependsOn(publishToMavenLocal)
     }
 
-    sourceSets {
-        main {
-            output.dir(versionDir, builtBy: 'generateVersionProperties')
+    shadowJar{
+        archiveFileName = "TerraBungee-${baseName}-${version}.jar"
+        manifest {
+            attributes( 'Implementation-Version': "${version}" )
         }
     }
 
-    task generateVersionProperties {
-        doLast {
-            def propertiesFile = file "$versionDir/version.properties"
-            propertiesFile.parentFile.mkdirs()
-            def properties = new Properties()
-            properties.setProperty("version", tbVersion.toString())
-            propertiesFile.withWriter { properties.store(it, null) }
-        }
+    jar {
+        archiveName = "TerraBungee-${baseName}-${version}.jar"
+        enabled = false
     }
+    jar.finalizedBy shadowJar
 }
-
-dependencies {
-    for (Project prj : project.allprojects) {
-        if (!"terrabungee".equalsIgnoreCase(prj.name) && prj.parent.name.equalsIgnoreCase("terrabungee")) {
-            compile project(":" + prj.name)
-        }
-    }
-}
-
-build.dependsOn shadowJar
-processResources.dependsOn generateVersionProperties

@@ -4,7 +4,6 @@ import lombok.Getter;
 import net.buildtheearth.api.network.INetworkManager;
 import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.api.plugin.PluginManager;
-import net.buildtheearth.terrabungee.common.players.TBPlayer;
 
 import java.io.File;
 import java.util.UUID;

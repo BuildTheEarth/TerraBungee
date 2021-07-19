@@ -69,6 +69,7 @@ public class TerraBungeeProxy extends Plugin implements Listener {
 
     @Override
     public void onDisable() {
+        ProxyServer.getInstance().getScheduler().cancel(this);
         instance = null;
         terraBungee.discard();
     }
