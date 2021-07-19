@@ -10,7 +10,6 @@ allprojects {
     ext {
         tbVersion = "1.1.0." + ('git rev-list --count HEAD'.execute().text.trim())
 
-        javalinVersion = "3.10.1"
         snakeYamlVersion = "1.29"
         websocketVersion = "1.5.2"
         husbyVersion = "58a173bce2"
