@@ -80,8 +80,11 @@ public class PunishmentCommand extends Command {
                     sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, playerName, ChatColor.GRAY, " has no punishments on record."));
                     return;
                 }
+                System.out.println("1");
                 Type punishmentListType = new TypeToken<ArrayList<Punishment>>(){}.getType();
+                System.out.println("2");
                 List<Punishment> punishments = TerraBungeeUtil.GSON.fromJson(response.getData().get("punishments"), punishmentListType);
+                System.out.println("3");
                 sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, "Punishments for ", ChatColor.YELLOW, tbPlayer.getName(), ChatColor.GRAY, ":"));
                 for(Punishment punishment : punishments) {
                     BaseComponent punishmentMessage = ChatUtil.combine(ChatColor.RED, "#", punishment.getId(), ChatColor.GRAY, " - ", ChatColor.BLUE, punishment.getType().name(), " ");

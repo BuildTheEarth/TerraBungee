@@ -158,6 +158,25 @@ public class PlayerManager implements Module {
     }
 
     /**
+     * Mutes a player
+     *
+     * @param staff UUID of staff
+     * @param player UUID of player
+     * @param end End date of punishment
+     * @param reason Reason for punishment
+     */
+    public void mute(@NonNull UUID staff, @NonNull UUID player, LocalDateTime end, @NonNull String reason) {
+        int punishmentId = generatePunishmentId();
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.MUTE, staff, player, LocalDateTime.now(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
+        punishments.put(punishmentId, punishment);
+        updatePunishmentCache();
+        TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
+        if(tbPlayer != null && tbPlayer.getProxy() != null) {
+            NetworkManager.getInstance().send(new C2PProxyBanDisconnectPacket(tbPlayer.getProxy(), punishment));
+        }
+    }
+
+    /**
      * Kicks a player
      *
      * @param staff UUID of staff

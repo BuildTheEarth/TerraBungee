@@ -52,7 +52,7 @@ allprojects {
 
     dependencies {
         if (!("common".equalsIgnoreCase(project.name))) {
-            compileOnly project(path: ':common', configuration: 'shadow')
+            compile project(":common")
         }
 
         compileOnly "org.projectlombok:lombok:$lombokVersion"
