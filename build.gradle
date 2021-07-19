@@ -14,7 +14,7 @@ allprojects {
         snakeYamlVersion = "1.28"
         websocketVersion = "1.5.2"
         husbyVersion = "58a173bce2"
-        lombokVersion = "1.18.18"
+        lombokVersion = "1.18.20"
         guavaVersion = "29.0-jre"
         gsonVersion = "2.8.6"
         commonsVersion = "2.8.0"
