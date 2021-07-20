@@ -1,10 +1,22 @@
 package net.buildtheearth.terrabungee.controller.discord;
 
+import com.google.common.collect.Maps;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.noahhusby.lib.data.JsonUtils;
 import com.noahhusby.lib.data.storage.StorageList;
 import lombok.Getter;
+import net.buildtheearth.api.TerraBungee;
+import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
+import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordButtonCommand;
+import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
+import net.buildtheearth.terrabungee.controller.discord.commands.punishments.PunishmentsDiscordCommand;
+import net.buildtheearth.terrabungee.controller.discord.commands.setup.SetupDiscordCommand;
+import net.buildtheearth.terrabungee.controller.discord.commands.util.PingDiscordCommand;
+import net.buildtheearth.terrabungee.controller.discord.commands.util.StatusDiscordCommand;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -13,10 +25,19 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.ButtonStyle;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 import javax.security.auth.login.LoginException;
+import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -33,6 +54,17 @@ public class DiscordManager implements Module {
     private final ExecutorService botThread = TerraBungeeUtil.newSingleThreadExecutor("terrabungee-bot");
     @Getter
     private final StorageList<DiscordConfig> discordConfigs = new StorageList<>(DiscordConfig.class);
+
+    private final Map<String, IDiscordCommand> discordCommands = Maps.newHashMap();
+
+    private DiscordManager() {
+        registerCommands(
+                new PunishmentsDiscordCommand(),
+                new SetupDiscordCommand(),
+                new PingDiscordCommand(),
+                new StatusDiscordCommand()
+        );
+    }
 
     public void loadBot() {
         botThread.submit(() -> {
@@ -58,6 +90,7 @@ public class DiscordManager implements Module {
                 if (!adminRole) {
                     g.createRole().setMentionable(true).setName("TBAdmin").submit();
                 }
+                updateSlashCommands();
             }, 2, TimeUnit.SECONDS);
         });
     }
@@ -101,6 +134,51 @@ public class DiscordManager implements Module {
             }
         }
         return null;
+    }
+
+    public void registerCommand(IDiscordCommand command) {
+        discordCommands.put(command.getName(), command);
+    }
+
+    public void registerCommands(IDiscordCommand... commands) {
+        for(IDiscordCommand command : commands) {
+            registerCommand(command);
+        }
+    }
+
+    public void updateSlashCommands() {
+        try {
+            CommandListUpdateAction slashCommands = getBot().getGuildById(ConfigHandler.guildID).updateCommands();
+            for(IDiscordCommand command : discordCommands.values()) {
+                CommandData commandData = new CommandData(command.getName(), command.getDescription());
+                command.configureData(commandData);
+                slashCommands.addCommands(commandData);
+            }
+            slashCommands.queue();
+        } catch (NullPointerException ignored) {
+            TerraBungee.getInstance().getLogger().warning("Failed to update slash commands for discord!");
+        }
+    }
+
+    public void executeSlashCommand(String name, UserPermission permission, User user, OffsetDateTime executionTime, SlashCommandEvent event) {
+        IDiscordCommand command = discordCommands.get(name);
+        if(command != null) {
+            command.execute(user, permission, executionTime, event);
+        }
+    }
+
+    public void executeButtonCommand(ButtonClickEvent event) {
+        JsonObject data = TerraBungeeUtil.parse(event.getComponentId());
+        IDiscordCommand command = discordCommands.get(data.get("name").getAsString());
+        if(command instanceof IDiscordButtonCommand) {
+            ((IDiscordButtonCommand) command).onButtonEvent(data, event);
+        }
+    }
+
+    public Button generateButtonInteraction(IDiscordCommand command, ButtonStyle style, JsonObject data, String label) {
+        data.addProperty("name", command.getName());
+        String dataString = TerraBungeeUtil.GSON.toJson(data);
+        return Button.of(style, dataString, label);
     }
 
     @Override

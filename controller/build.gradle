@@ -14,6 +14,14 @@ dependencies {
     compile "org.java-websocket:Java-WebSocket:$websocketVersion"
 }
 
+repositories {
+    mavenCentral() // for transitive dependencies
+    maven {
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
+    }
+}
+
 jar {
     manifest {
         attributes(

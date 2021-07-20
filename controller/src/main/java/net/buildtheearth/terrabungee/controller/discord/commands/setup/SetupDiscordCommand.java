@@ -6,6 +6,8 @@ import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.awt.*;
 import java.time.OffsetDateTime;
@@ -20,23 +22,19 @@ public class SetupDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void execute(User user, UserPermission permission, TextChannel channel, OffsetDateTime executionTime, String[] args) {
-        if (permission == UserPermission.ADMIN) {
-            for (DiscordConfig config : DiscordManager.getInstance().getDiscordConfigs()) {
-                if (config.getGuildId() == channel.getGuild().getIdLong()) {
-                    channel.sendMessage(DiscordManager.getInstance().buildEmbed(builder -> {
-                        builder.setColor(Color.RED);
-                        builder.setTitle("This guild is already configured!");
-                    })).submit();
-                    return;
-                }
-            }
+    public String getDescription() {
+        return "f";
+    }
 
-            DiscordManager.getInstance().getDiscordConfigs().add(new DiscordConfig(channel.getGuild().getIdLong()));
-            channel.sendMessage(DiscordManager.getInstance().buildEmbed(builder -> {
-                builder.setColor(Color.GREEN);
-                builder.setTitle("Added guild to TerraBungee!");
-            })).submit();
+    @Override
+    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandEvent event) {
+        if (permission == UserPermission.ADMIN) {
+
         }
+    }
+
+    @Override
+    public void configureData(CommandData data) {
+
     }
 }

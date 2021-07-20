@@ -1,11 +1,10 @@
 package net.buildtheearth.terrabungee.controller.discord;
 
 import net.buildtheearth.api.discord.UserPermission;
-import net.buildtheearth.terrabungee.controller.ControllerConstants;
-import net.buildtheearth.terrabungee.controller.discord.commands.DiscordCommandManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
@@ -13,49 +12,44 @@ import java.util.List;
 
 public class DiscordListener extends ListenerAdapter {
     @Override
-    public void onMessageReceived(MessageReceivedEvent e) {
-        if (e.getAuthor().isBot()) {
+    public void onSlashCommand(SlashCommandEvent e) {
+        if (e.getGuild() == null) {
             return;
         }
-        if (e.getMessage().getContentRaw().startsWith(ControllerConstants.discordPrefix)) {
-            String[] message = e.getMessage().getContentRaw().replace(ControllerConstants.discordPrefix, "").split(" ");
-            if (message.length == 0) {
-                return;
+        UserPermission permission = UserPermission.NONE;
+        DiscordConfig config = DiscordManager.getInstance().getConfigByGuild(e.getGuild());
+        Member m = e.getMember();
+
+        if (m != null) {
+            for (Role r : m.getRoles()) {
+                if (r.getName().equalsIgnoreCase("TBAdmin")) {
+                    permission = UserPermission.ADMIN;
+                    break;
+                }
             }
-            String[] args = message.length == 1 ? new String[]{} : selectArray(message, 1);
 
-            UserPermission permission = UserPermission.NONE;
-            DiscordConfig config = DiscordManager.getInstance().getConfigByGuild(e.getMessage().getGuild());
-            Member m = e.getMessage().getMember();
-
-            if (m != null) {
+            if (config != null && permission != UserPermission.ADMIN) {
                 for (Role r : m.getRoles()) {
-                    if (r.getName().equalsIgnoreCase("TBAdmin")) {
-                        permission = UserPermission.ADMIN;
-                        break;
+                    if (config.getAdminRoles().contains(r.getIdLong())) {
+                        comparePermission(permission, UserPermission.ADMIN);
                     }
-                }
 
-                if (config != null && permission != UserPermission.ADMIN) {
-                    for (Role r : m.getRoles()) {
-                        if (config.getAdminRoles().contains(r.getIdLong())) {
-                            comparePermission(permission, UserPermission.ADMIN);
-                        }
+                    if (config.getModeratorRoles().contains(r.getIdLong())) {
+                        comparePermission(permission, UserPermission.MODERATOR);
+                    }
 
-                        if (config.getModeratorRoles().contains(r.getIdLong())) {
-                            comparePermission(permission, UserPermission.MODERATOR);
-                        }
-
-                        if (config.getStandardRoles().contains(r.getIdLong())) {
-                            comparePermission(permission, UserPermission.STANDARD);
-                        }
+                    if (config.getStandardRoles().contains(r.getIdLong())) {
+                        comparePermission(permission, UserPermission.STANDARD);
                     }
                 }
             }
-
-
-            DiscordCommandManager.getInstance().execute(message[0], permission, e.getAuthor(), e.getMessage().getTextChannel(), e.getMessage().getTimeCreated(), args);
         }
+        DiscordManager.getInstance().executeSlashCommand(e.getName(), permission, e.getUser(), e.getTimeCreated(), e);
+    }
+
+    @Override
+    public void onButtonClick(ButtonClickEvent event) {
+        DiscordManager.getInstance().executeButtonCommand(event);
     }
 
     /**
