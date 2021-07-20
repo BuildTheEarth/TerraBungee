@@ -9,7 +9,6 @@ public class Constants {
     public static final String VERSION;
 
     static {
-        Properties versionProperties = new Properties();
         String ver = "[Development Build]";
         if (Constants.class.getPackage() != null) {
             ver = Constants.class.getPackage().getImplementationVersion();

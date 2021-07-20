@@ -33,9 +33,4 @@ public class DiscordConfig {
     @SerializedName("ModeratorRoles")
     @Getter
     private final List<Long> moderatorRoles = new ArrayList<>();
-    @Expose
-    @SerializedName("StandardRoles")
-    @Getter
-    private final List<Long> standardRoles = new ArrayList<>();
-    //TODO: Standard roles make no fucking sense
 }

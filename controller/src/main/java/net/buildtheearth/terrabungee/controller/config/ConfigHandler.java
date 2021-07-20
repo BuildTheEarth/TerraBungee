@@ -197,7 +197,6 @@ public class ConfigHandler {
                             .add("NotificationChannel", Type.TEXT)
                             .add("AdminRoles", Type.TEXT)
                             .add("ModeratorRoles", Type.TEXT)
-                            .add("StandardRoles", Type.TEXT)
                             .repair(true)
                             .build()
             );
