@@ -18,11 +18,14 @@ import net.buildtheearth.terrabungee.common.players.PunishmentEditAction;
 import net.buildtheearth.terrabungee.common.players.PunishmentHistory;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
+import net.buildtheearth.terrabungee.common.services.ServiceType;
+import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerJoinEventPacket;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerQuitEventPacket;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
+import net.buildtheearth.terrabungee.controller.network.proxy.C2PMuteCachePacket;
 import net.buildtheearth.terrabungee.controller.network.proxy.C2PProxyBanDisconnectPacket;
 import net.buildtheearth.terrabungee.controller.network.proxy.C2PProxyKickDisconnectPacket;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
@@ -170,10 +173,7 @@ public class PlayerManager implements Module {
         Punishment punishment = new Punishment(punishmentId, Punishment.Type.MUTE, staff, player, LocalDateTime.now(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
-        TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
-        if(tbPlayer != null && tbPlayer.getProxy() != null) {
-            NetworkManager.getInstance().send(new C2PProxyBanDisconnectPacket(tbPlayer.getProxy(), punishment));
-        }
+        pushMuteCache();
     }
 
     /**
@@ -231,6 +231,7 @@ public class PlayerManager implements Module {
         punishments.put(id, punishment);
         updatePunishmentCache();
         punishments.saveAsync();
+        pushMuteCache();
     }
 
     /**
@@ -265,6 +266,16 @@ public class PlayerManager implements Module {
             }
         }
         punishmentsByUuid = ImmutableMap.copyOf(tempCache);
+    }
+
+    public void pushMuteCache() {
+        for(TerraBungeeService proxy : ServiceManager.getInstance().getServices(ServiceType.PROXY)) {
+            pushMuteCache(proxy);
+        }
+    }
+
+    public void pushMuteCache(TerraBungeeService service) {
+        TerraBungee.getInstance().getNetworkManager().send(new C2PMuteCachePacket(service));
     }
 
     @Override

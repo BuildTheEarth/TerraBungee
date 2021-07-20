@@ -17,6 +17,7 @@ import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SInstanceUpdatePacket;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SOnlinePlayerCacheHitPacket;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
+import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import org.java_websocket.WebSocket;
 
 import java.util.ArrayList;
@@ -105,6 +106,10 @@ public class ServiceManager implements Module {
             getService(ID).setIntents(intents);
             getService(ID).setClient(client);
             getService(ID).setStatus(ServiceStatus.ONLINE);
+            //TODO: Remove this manual caching method
+            if(getService(ID) instanceof Proxy) {
+                PlayerManager.getInstance().pushMuteCache(getService(ID));
+            }
             return;
         }
 
@@ -120,6 +125,11 @@ public class ServiceManager implements Module {
         service.setIntents(intents);
 
         TerraBungeeController.logger.info("Initialized new service (" + type.name() + "): " + ID);
+
+        //TODO: Remove this manual caching method
+        if(service instanceof Proxy) {
+            PlayerManager.getInstance().pushMuteCache(service);
+        }
     }
 
     /**

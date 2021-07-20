@@ -12,6 +12,7 @@ import com.noahhusby.terrabungee.proxy.commands.PunishmentCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
+import com.noahhusby.terrabungee.proxy.network.C2PMuteCachePacket;
 import com.noahhusby.terrabungee.proxy.network.C2PProxyBanDisconnectPacket;
 import com.noahhusby.terrabungee.proxy.network.C2PProxyKickDisconnectPacket;
 import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
@@ -50,6 +51,7 @@ public class TerraBungeeProxy extends Plugin implements Listener {
         terraBungee.enableIntents(ServiceIntent.INSTANCE_UPDATE);
         terraBungee.getNetworkManager().register(new C2PProxyBanDisconnectPacket());
         terraBungee.getNetworkManager().register(new C2PProxyKickDisconnectPacket());
+        terraBungee.getNetworkManager().register(new C2PMuteCachePacket());
         terraBungee.addListener(new TBListener());
 
         getProxy().getPluginManager().registerCommand(this, new GBanCommand());

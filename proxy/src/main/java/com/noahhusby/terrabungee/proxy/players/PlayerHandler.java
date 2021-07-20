@@ -5,11 +5,15 @@
 
 package com.noahhusby.terrabungee.proxy.players;
 
+import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.network.P2CUpdatePlayersPacket;
 import com.noahhusby.terrabungee.proxy.util.ChatUtil;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.buildtheearth.terrabungee.common.players.Punishment;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -20,6 +24,8 @@ import net.md_5.bungee.api.scheduler.TaskScheduler;
 
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerHandler {
@@ -50,6 +56,9 @@ public class PlayerHandler {
             TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new P2CUpdatePlayersPacket(array));
         }), 0, 2, TimeUnit.SECONDS);
     }
+
+    @Getter @Setter
+    private Map<UUID, Punishment> muteCache = Maps.newHashMap();
 
     public BaseComponent getBanDisconnectMessage(Punishment punishment) {
         TextComponent kickMessage;
