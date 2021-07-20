@@ -10,6 +10,8 @@ import net.buildtheearth.terrabungee.controller.command.instance.AddStaticComman
 import net.buildtheearth.terrabungee.controller.command.instance.DefaultServerCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.ListStaticCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.RemoveStaticCommand;
+import net.buildtheearth.terrabungee.controller.command.storage.LoadAllCommand;
+import net.buildtheearth.terrabungee.controller.command.storage.SaveAllCommand;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 
 import java.util.ArrayList;
@@ -63,6 +65,8 @@ public class CommandManager implements Module {
         register(new ListStaticCommand());
         register(new DefaultServerCommand());
         register(new TestCommand());
+        register(new SaveAllCommand());
+        register(new LoadAllCommand());
     }
 
     @Override

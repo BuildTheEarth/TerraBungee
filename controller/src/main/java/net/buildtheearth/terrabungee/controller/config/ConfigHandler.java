@@ -11,6 +11,7 @@ import com.noahhusby.lib.data.storage.StorageList;
 import com.noahhusby.lib.data.storage.StorageTreeMap;
 import com.noahhusby.lib.data.storage.handlers.LocalStorageHandler;
 import com.noahhusby.lib.data.storage.handlers.SQLStorageHandler;
+import lombok.Getter;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
@@ -61,6 +62,9 @@ public class ConfigHandler {
     public static String botToken = "";
     public static String guildID;
     public static String channelID;
+
+    @Getter
+    private Map<String, Storage> storageMap = Maps.newHashMap();
 
     private void init() {
         File configFile = new File(System.getProperty("user.dir"), "terrabungee.cfg");
@@ -200,6 +204,11 @@ public class ConfigHandler {
             sqlStorageHandler.setPriority(100);
             discordConfigData.registerHandler(sqlStorageHandler);
         }
+
+        storageMap.put("players", playerData);
+        storageMap.put("punishment", punishmentData);
+        storageMap.put("instance", staticInstanceData);
+        storageMap.put("discord_config", discordConfigData);
 
         TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
             playerData.load();
