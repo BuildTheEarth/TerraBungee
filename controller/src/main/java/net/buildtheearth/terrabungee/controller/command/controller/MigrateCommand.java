@@ -1,8 +1,8 @@
 package net.buildtheearth.terrabungee.controller.command.controller;
 
 import net.buildtheearth.api.plugin.Command;
-import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.api.util.ConsoleColor;
+import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 
 /**

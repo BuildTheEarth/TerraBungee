@@ -107,7 +107,7 @@ public class ServiceManager implements Module {
             getService(ID).setClient(client);
             getService(ID).setStatus(ServiceStatus.ONLINE);
             //TODO: Remove this manual caching method
-            if(getService(ID) instanceof Proxy) {
+            if (getService(ID) instanceof Proxy) {
                 PlayerManager.getInstance().pushMuteCache(getService(ID));
             }
             return;
@@ -127,7 +127,7 @@ public class ServiceManager implements Module {
         TerraBungeeController.logger.info("Initialized new service (" + type.name() + "): " + ID);
 
         //TODO: Remove this manual caching method
-        if(service instanceof Proxy) {
+        if (service instanceof Proxy) {
             PlayerManager.getInstance().pushMuteCache(service);
         }
     }

@@ -1,7 +1,6 @@
 package net.buildtheearth.terrabungee.controller;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.INetworkManager;
@@ -9,7 +8,6 @@ import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.api.plugin.PluginManager;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
-import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.controller.command.CommandManager;
 import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
@@ -23,10 +21,8 @@ import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.buildtheearth.terrabungee.controller.util.LoggerContextUtil;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.Executors;

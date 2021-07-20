@@ -1,6 +1,5 @@
 package com.noahhusby.terrabungee.proxy.network;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
@@ -8,7 +7,6 @@ import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.client.network.IC2SPacket;
-import net.buildtheearth.terrabungee.client.network.IS2CPacket;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.Punishment;
 
@@ -27,9 +25,9 @@ public class C2PMuteCachePacket implements IC2SPacket {
 
     @Override
     public void onMessage(TerraBungeeClient instance, JsonObject data) {
-        List<Punishment> mutes = TerraBungeeUtil.GSON.fromJson(data.get("mutes"), new TypeToken<List<Punishment>>(){}.getType());
+        List<Punishment> mutes = TerraBungeeUtil.GSON.fromJson(data.get("mutes"), new TypeToken<List<Punishment>>() {}.getType());
         Map<UUID, Punishment> activeMutes = Maps.newHashMap();
-        for(Punishment mute : mutes) {
+        for (Punishment mute : mutes) {
             activeMutes.put(mute.getPlayer(), mute);
         }
         PlayerHandler.getInstance().setMuteCache(ImmutableMap.copyOf(activeMutes));

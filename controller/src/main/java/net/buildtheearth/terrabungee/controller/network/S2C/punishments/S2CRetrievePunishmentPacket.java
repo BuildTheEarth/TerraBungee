@@ -1,7 +1,6 @@
 package net.buildtheearth.terrabungee.controller.network.S2C.punishments;
 
 import com.google.gson.JsonObject;
-import net.buildtheearth.api.network.IC2SPacket;
 import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
@@ -25,7 +24,7 @@ public class S2CRetrievePunishmentPacket implements IS2CPacket {
         String idString = data.get("id").getAsString();
         int id = Integer.parseInt(idString);
         Punishment punishment = PlayerManager.getInstance().getPunishments().get(id);
-        if(punishment == null) {
+        if (punishment == null) {
             response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.ERROR);
         } else {
             response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.SUCCESS);

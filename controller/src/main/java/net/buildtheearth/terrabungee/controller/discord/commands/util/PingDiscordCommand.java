@@ -2,7 +2,6 @@ package net.buildtheearth.terrabungee.controller.discord.commands.util;
 
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;

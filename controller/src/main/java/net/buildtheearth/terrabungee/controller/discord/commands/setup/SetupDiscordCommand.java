@@ -1,15 +1,11 @@
 package net.buildtheearth.terrabungee.controller.discord.commands.setup;
 
 import net.buildtheearth.api.discord.UserPermission;
-import net.buildtheearth.terrabungee.controller.discord.DiscordConfig;
-import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
-import java.awt.*;
 import java.time.OffsetDateTime;
 
 /**

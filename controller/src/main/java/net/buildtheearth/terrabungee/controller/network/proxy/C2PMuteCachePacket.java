@@ -28,8 +28,8 @@ public class C2PMuteCachePacket implements IC2SPacket {
     @Override
     public void getMessage(JsonObject data) {
         List<Punishment> activeMutes = Lists.newArrayList();
-        for(Punishment punishment : PlayerManager.getInstance().getPunishments().values()) {
-            if(punishment.getType() == Punishment.Type.MUTE && punishment.isActive()) {
+        for (Punishment punishment : PlayerManager.getInstance().getPunishments().values()) {
+            if (punishment.getType() == Punishment.Type.MUTE && punishment.isActive()) {
                 activeMutes.add(punishment);
             }
         }

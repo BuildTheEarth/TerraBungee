@@ -16,6 +16,7 @@ public interface Module {
 
     /**
      * Gets name of module
+     *
      * @return Name of module
      */
     String getModuleName();

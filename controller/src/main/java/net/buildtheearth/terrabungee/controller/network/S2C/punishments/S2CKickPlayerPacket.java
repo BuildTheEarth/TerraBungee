@@ -5,12 +5,9 @@ import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
-import net.buildtheearth.terrabungee.common.players.Punishment;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -28,7 +25,7 @@ public class S2CKickPlayerPacket implements IS2CPacket {
         UUID staffId = UUID.fromString(data.get("staffId").getAsString());
         String reason = data.get("reason").getAsString();
         TBPlayer player = PlayerManager.getInstance().getOnlinePlayerRegistry().get(playerId);
-        if(player == null || !player.isOnline()) {
+        if (player == null || !player.isOnline()) {
             response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.ERROR);
             return;
         }

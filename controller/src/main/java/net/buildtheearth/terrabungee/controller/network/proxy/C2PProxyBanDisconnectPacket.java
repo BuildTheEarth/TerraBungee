@@ -7,7 +7,6 @@ import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.Punishment;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
 /**

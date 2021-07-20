@@ -3,7 +3,6 @@ package com.noahhusby.terrabungee.proxy;
 import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
 import com.noahhusby.terrabungee.proxy.util.ChatUtil;
 import com.noahhusby.terrabungee.proxy.util.DateUtil;
-import net.buildtheearth.terrabungee.client.PlayerManager;
 import net.buildtheearth.terrabungee.client.network.S2C.S2CRetrieveActiveBanPacket;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.network.Response;
@@ -44,13 +43,13 @@ public class ProxyListener implements Listener {
 
         ProxiedPlayer player = (ProxiedPlayer) e.getSender();
         Punishment mute = PlayerHandler.getInstance().getMuteCache().get(player.getUniqueId());
-        if(mute != null) {
+        if (mute != null) {
             e.setMessage("");
             e.setCancelled(true);
 
             player.sendMessage();
             player.sendMessage();
-            if(mute.getEnd() == null) {
+            if (mute.getEnd() == null) {
                 player.sendMessage(ChatUtil.combine(ChatColor.RED, "You have been muted permanently", ChatColor.GRAY, " for ", ChatColor.YELLOW, mute.getReason()));
             } else {
                 player.sendMessage(ChatUtil.combine(ChatColor.RED, "You have been muted for ", ChatColor.RESET, DateUtil.getExpandedTimeMessage(mute.getEnd().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - new Date().getTime()), ChatColor.GRAY, " for ", ChatColor.YELLOW, mute.getReason()));

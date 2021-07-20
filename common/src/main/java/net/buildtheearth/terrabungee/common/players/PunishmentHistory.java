@@ -2,12 +2,10 @@ package net.buildtheearth.terrabungee.common.players;
 
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 /**

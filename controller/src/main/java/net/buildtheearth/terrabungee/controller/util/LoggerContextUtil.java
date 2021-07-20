@@ -12,7 +12,7 @@ public class LoggerContextUtil {
     private static final LoggerContext global = new LoggerContext();
 
     public static Logger getLogger(String name) {
-        if(LoggerFactory.getLogger(name) instanceof Logger) {
+        if (LoggerFactory.getLogger(name) instanceof Logger) {
             return (Logger) LoggerFactory.getLogger(name);
         }
         return global.getLogger(name);

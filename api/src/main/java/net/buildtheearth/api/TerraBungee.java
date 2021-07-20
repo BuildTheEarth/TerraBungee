@@ -57,16 +57,16 @@ public abstract class TerraBungee {
 
     /**
      * Gets {@link ControllerPlayer} from the controller
-     * @param uuid UUID of player
      *
+     * @param uuid UUID of player
      * @return {@link ControllerPlayer}
      */
     public abstract ControllerPlayer getPlayer(UUID uuid);
 
     /**
      * Gets {@link ControllerPlayer} from the controller
-     * @param username Username of player
      *
+     * @param username Username of player
      * @return {@link ControllerPlayer}
      */
     public abstract ControllerPlayer getPlayer(String username);

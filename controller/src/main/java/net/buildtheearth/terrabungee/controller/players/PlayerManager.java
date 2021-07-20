@@ -31,14 +31,7 @@ import net.buildtheearth.terrabungee.controller.network.proxy.C2PProxyKickDiscon
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.buildtheearth.terrabungee.controller.util.LocalDateTimeSerializer;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -83,9 +76,9 @@ public class PlayerManager implements Module {
     public void proxyPlayerDrop(String id, List<ControllerPlayer> playerDrop) {
         manipulate(() -> {
             Map<UUID, ControllerPlayer> playerJoinQuitMap = Maps.newHashMap();
-            for(Map.Entry<UUID, ControllerPlayer> e : ImmutableMap.copyOf(players).entrySet()) {
+            for (Map.Entry<UUID, ControllerPlayer> e : ImmutableMap.copyOf(players).entrySet()) {
                 ControllerPlayer player = e.getValue();
-                if(player.getProxy() != null && player.getProxy().equals(id)) {
+                if (player.getProxy() != null && player.getProxy().equals(id)) {
                     player.setOnline(false);
                     playerJoinQuitMap.put(e.getKey(), e.getValue());
                 }
@@ -93,7 +86,7 @@ public class PlayerManager implements Module {
 
             for (ControllerPlayer p : playerDrop) {
                 ControllerPlayer player = players.putIfAbsent(p.getUniqueID(), p);
-                if(player == null) {
+                if (player == null) {
                     players.put(p.getUniqueID(), p);
                     return;
                 }
@@ -119,7 +112,7 @@ public class PlayerManager implements Module {
     public void updateAttribute(UUID uuid, Map<String, Object> attributes) {
         manipulate(() -> {
             ControllerPlayer player = players.get(uuid);
-            if(player != null) {
+            if (player != null) {
                 player.setAttributes(attributes);
                 //players.saveAsync();
             }
@@ -131,8 +124,8 @@ public class PlayerManager implements Module {
         manipulationThread.submit(() -> {
             Map<UUID, ControllerPlayer> online = Maps.newHashMap();
 
-            for(ControllerPlayer p : ImmutableList.copyOf(players.values())) {
-                if(p.isOnline()) {
+            for (ControllerPlayer p : ImmutableList.copyOf(players.values())) {
+                if (p.isOnline()) {
                     online.put(p.getUniqueID(), p);
                 }
             }
@@ -144,9 +137,9 @@ public class PlayerManager implements Module {
     /**
      * Bans a player
      *
-     * @param staff UUID of staff
+     * @param staff  UUID of staff
      * @param player UUID of player
-     * @param end End date of punishment
+     * @param end    End date of punishment
      * @param reason Reason for punishment
      */
     public void ban(@NonNull UUID staff, @NonNull UUID player, LocalDateTime end, @NonNull String reason) {
@@ -155,7 +148,7 @@ public class PlayerManager implements Module {
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
         TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
-        if(tbPlayer != null && tbPlayer.getProxy() != null) {
+        if (tbPlayer != null && tbPlayer.getProxy() != null) {
             NetworkManager.getInstance().send(new C2PProxyBanDisconnectPacket(tbPlayer.getProxy(), punishment));
         }
     }
@@ -163,9 +156,9 @@ public class PlayerManager implements Module {
     /**
      * Mutes a player
      *
-     * @param staff UUID of staff
+     * @param staff  UUID of staff
      * @param player UUID of player
-     * @param end End date of punishment
+     * @param end    End date of punishment
      * @param reason Reason for punishment
      */
     public void mute(@NonNull UUID staff, @NonNull UUID player, LocalDateTime end, @NonNull String reason) {
@@ -179,12 +172,12 @@ public class PlayerManager implements Module {
     /**
      * Kicks a player
      *
-     * @param staff UUID of staff
+     * @param staff  UUID of staff
      * @param player UUID of player
      * @param reason Reason for punishment
      */
     public void kick(@NonNull UUID staff, @NonNull UUID player, @NonNull String reason) {
-        if(!getPlayers().containsKey(player) || !getPlayers().get(player).isOnline()) {
+        if (!getPlayers().containsKey(player) || !getPlayers().get(player).isOnline()) {
             return;
         }
         int punishmentId = generatePunishmentId();
@@ -192,7 +185,7 @@ public class PlayerManager implements Module {
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
         TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
-        if(tbPlayer != null && tbPlayer.getProxy() != null) {
+        if (tbPlayer != null && tbPlayer.getProxy() != null) {
             NetworkManager.getInstance().send(new C2PProxyKickDisconnectPacket(tbPlayer.getProxy(), punishment));
         }
     }
@@ -200,17 +193,17 @@ public class PlayerManager implements Module {
     public void editPunishment(int id, PunishmentEditAction action, JsonObject data) {
         Punishment punishment = getPunishments().get(id);
         UUID staff = UUID.fromString(data.get("staff").getAsString());
-        if(punishment == null) {
+        if (punishment == null) {
             return;
         }
-        if(action == PunishmentEditAction.REASON) {
+        if (action == PunishmentEditAction.REASON) {
             String reason = data.get("reason").getAsString();
             JsonObject historyData = new JsonObject();
             historyData.addProperty("old", punishment.getReason());
             historyData.addProperty("new", reason);
             punishment.setReason(reason);
             punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.EDIT_REASON, LocalDateTime.now(), historyData));
-        } else if(action == PunishmentEditAction.END) {
+        } else if (action == PunishmentEditAction.END) {
             long length = data.get("length").getAsLong();
             JsonObject historyData = new JsonObject();
             historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
@@ -218,8 +211,8 @@ public class PlayerManager implements Module {
             historyData.addProperty("new", end.toString());
             punishment.setEnd(end);
             punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.EDIT_TIME, LocalDateTime.now(), historyData));
-        } else if(action == PunishmentEditAction.DEACTIVATE) {
-            if(punishment.isActive()) {
+        } else if (action == PunishmentEditAction.DEACTIVATE) {
+            if (punishment.isActive()) {
                 JsonObject historyData = new JsonObject();
                 historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
                 LocalDateTime end = LocalDateTime.now();
@@ -250,7 +243,7 @@ public class PlayerManager implements Module {
 
     private int generatePunishmentId() {
         int id = punishments.size();
-        while(punishments.containsKey(id)) {
+        while (punishments.containsKey(id)) {
             id++;
         }
         return id;
@@ -258,8 +251,8 @@ public class PlayerManager implements Module {
 
     private void updatePunishmentCache() {
         Map<UUID, List<Punishment>> tempCache = Maps.newHashMap();
-        for(Punishment punishment : punishments.values()) {
-            if(!tempCache.containsKey(punishment.getPlayer())) {
+        for (Punishment punishment : punishments.values()) {
+            if (!tempCache.containsKey(punishment.getPlayer())) {
                 tempCache.put(punishment.getPlayer(), Lists.newArrayList(punishment));
             } else {
                 tempCache.get(punishment.getPlayer()).add(punishment);
@@ -269,7 +262,7 @@ public class PlayerManager implements Module {
     }
 
     public void pushMuteCache() {
-        for(TerraBungeeService proxy : ServiceManager.getInstance().getServices(ServiceType.PROXY)) {
+        for (TerraBungeeService proxy : ServiceManager.getInstance().getServices(ServiceType.PROXY)) {
             pushMuteCache(proxy);
         }
     }

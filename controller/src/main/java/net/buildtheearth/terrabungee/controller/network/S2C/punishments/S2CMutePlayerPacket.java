@@ -30,9 +30,9 @@ public class S2CMutePlayerPacket implements IS2CPacket {
 
         List<Punishment> punishments = PlayerManager.getInstance().getPunishmentsByPlayer(playerId);
         response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.SUCCESS);
-        if(punishments != null) {
-            for(Punishment punishment : punishments) {
-                if(punishment.getType() == Punishment.Type.MUTE && punishment.isActive()) {
+        if (punishments != null) {
+            for (Punishment punishment : punishments) {
+                if (punishment.getType() == Punishment.Type.MUTE && punishment.isActive()) {
                     response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.ERROR);
                     return;
                 }

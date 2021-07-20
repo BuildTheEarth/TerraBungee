@@ -5,7 +5,6 @@ import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;

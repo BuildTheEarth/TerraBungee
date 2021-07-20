@@ -11,7 +11,7 @@ public class Constants {
     static {
         Properties versionProperties = new Properties();
         String ver = "[Development Build]";
-        if(Constants.class.getPackage() != null) {
+        if (Constants.class.getPackage() != null) {
             ver = Constants.class.getPackage().getImplementationVersion();
         }
         VERSION = ver;

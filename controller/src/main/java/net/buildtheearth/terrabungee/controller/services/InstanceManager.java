@@ -2,15 +2,12 @@ package net.buildtheearth.terrabungee.controller.services;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.noahhusby.lib.data.storage.StorageHashMap;
-import com.noahhusby.lib.data.storage.StorageList;
 import com.noahhusby.lib.data.storage.StorageTreeMap;
 import lombok.Getter;
 import net.buildtheearth.terrabungee.common.services.Instance;
 import net.buildtheearth.terrabungee.common.services.ServiceStatus;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
 import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
-import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceAddedEmbed;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceRemovedEmbed;
@@ -18,9 +15,7 @@ import net.buildtheearth.terrabungee.controller.modules.Module;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class InstanceManager implements Module {
     @Getter
@@ -38,7 +33,7 @@ public class InstanceManager implements Module {
      * @return True if successfully added, false if not
      */
     public boolean addStaticInstance(TerraBungeeService service, String id, String address) {
-        if(staticInstances.containsKey(id)) {
+        if (staticInstances.containsKey(id)) {
             return false;
         }
         staticInstances.put(id, new StorableStaticInstance(id, address));
@@ -56,10 +51,10 @@ public class InstanceManager implements Module {
      */
     public boolean removeStaticInstance(TerraBungeeService service, String id) {
         boolean removed = (staticInstances.remove(id) != null);
-         if (removed) {
+        if (removed) {
             DiscordManager.getInstance().send(new StaticInstanceRemovedEmbed(service, id));
             updateInstances();
-         }
+        }
         return removed;
     }
 
@@ -96,12 +91,12 @@ public class InstanceManager implements Module {
         Map<String, StorableStaticInstance> temp = Maps.newHashMap(staticInstances);
         List<TerraBungeeService> currentInstances = ServiceManager.getInstance().getServices(ServiceType.INSTANCE);
         List<Instance> removalInstances = Lists.newArrayList();
-        for(TerraBungeeService s : currentInstances) {
+        for (TerraBungeeService s : currentInstances) {
             Instance i = (Instance) s;
-            if(!temp.containsKey(s.getId())) {
+            if (!temp.containsKey(s.getId())) {
                 removalInstances.add(i);
             } else {
-                if(!i.getAddress().equalsIgnoreCase(temp.get(i.getId()).address)) {
+                if (!i.getAddress().equalsIgnoreCase(temp.get(i.getId()).address)) {
                     removalInstances.add(i);
                 } else {
                     temp.remove(i.getId());

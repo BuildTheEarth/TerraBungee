@@ -27,11 +27,11 @@ public class S2CRetrieveActiveBanPacket implements IS2CPacket {
         List<Punishment> punishments = PlayerManager.getInstance().getPunishmentsByPlayer(player);
         response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.ERROR);
         response.setData(new JsonObject());
-        if(punishments == null || punishments.isEmpty()) {
+        if (punishments == null || punishments.isEmpty()) {
             return;
         }
-        for(Punishment punishment : punishments) {
-            if(punishment.getType() == Punishment.Type.BAN && punishment.isActive()) {
+        for (Punishment punishment : punishments) {
+            if (punishment.getType() == Punishment.Type.BAN && punishment.isActive()) {
                 response.setData(TerraBungeeUtil.GSON.toJsonTree(punishment).getAsJsonObject());
                 response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.SUCCESS);
                 return;

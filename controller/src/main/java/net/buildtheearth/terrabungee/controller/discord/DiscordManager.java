@@ -1,9 +1,7 @@
 package net.buildtheearth.terrabungee.controller.discord;
 
 import com.google.common.collect.Maps;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.noahhusby.lib.data.JsonUtils;
 import com.noahhusby.lib.data.storage.StorageList;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
@@ -141,7 +139,7 @@ public class DiscordManager implements Module {
     }
 
     public void registerCommands(IDiscordCommand... commands) {
-        for(IDiscordCommand command : commands) {
+        for (IDiscordCommand command : commands) {
             registerCommand(command);
         }
     }
@@ -149,7 +147,7 @@ public class DiscordManager implements Module {
     public void updateSlashCommands() {
         try {
             CommandListUpdateAction slashCommands = getBot().getGuildById(ConfigHandler.guildID).updateCommands();
-            for(IDiscordCommand command : discordCommands.values()) {
+            for (IDiscordCommand command : discordCommands.values()) {
                 CommandData commandData = new CommandData(command.getName(), command.getDescription());
                 command.configureData(commandData);
                 slashCommands.addCommands(commandData);
@@ -162,43 +160,43 @@ public class DiscordManager implements Module {
 
     public void executeSlashCommand(String name, UserPermission permission, User user, OffsetDateTime executionTime, SlashCommandEvent event) {
         //TODO: Replace this bullshit
-        if(event.getMember() == null) {
+        if (event.getMember() == null) {
             return;
         }
         boolean tempPerms = false;
-        for(Role r : event.getMember().getRoles()) {
-            if(r.getName().equalsIgnoreCase("moderator") || r.getName().equalsIgnoreCase("administrator") || r.getName().equalsIgnoreCase("owner")) {
+        for (Role r : event.getMember().getRoles()) {
+            if (r.getName().equalsIgnoreCase("moderator") || r.getName().equalsIgnoreCase("administrator") || r.getName().equalsIgnoreCase("owner")) {
                 tempPerms = true;
             }
         }
-        if(!tempPerms) {
+        if (!tempPerms) {
             event.reply("You don't have permission to run this command!").setEphemeral(true).submit();
             return;
         }
         IDiscordCommand command = discordCommands.get(name);
-        if(command != null) {
+        if (command != null) {
             command.execute(user, permission, executionTime, event);
         }
     }
 
     public void executeButtonCommand(ButtonClickEvent event) {
         //TODO: Replace this bullshit
-        if(event.getMember() == null) {
+        if (event.getMember() == null) {
             return;
         }
         boolean tempPerms = false;
-        for(Role r : event.getMember().getRoles()) {
-            if(r.getName().equalsIgnoreCase("moderator") || r.getName().equalsIgnoreCase("administrator") || r.getName().equalsIgnoreCase("owner")) {
+        for (Role r : event.getMember().getRoles()) {
+            if (r.getName().equalsIgnoreCase("moderator") || r.getName().equalsIgnoreCase("administrator") || r.getName().equalsIgnoreCase("owner")) {
                 tempPerms = true;
             }
         }
-        if(!tempPerms) {
+        if (!tempPerms) {
             event.reply("You don't have permission to run this command!").setEphemeral(true).submit();
             return;
         }
         JsonObject data = TerraBungeeUtil.parse(event.getComponentId());
         IDiscordCommand command = discordCommands.get(data.get("name").getAsString());
-        if(command instanceof IDiscordButtonCommand) {
+        if (command instanceof IDiscordButtonCommand) {
             ((IDiscordButtonCommand) command).onButtonEvent(data, event);
         }
     }
@@ -219,7 +217,7 @@ public class DiscordManager implements Module {
 
     @Override
     public void onDisable() {
-        if(bot != null) {
+        if (bot != null) {
             bot.shutdown();
         }
     }

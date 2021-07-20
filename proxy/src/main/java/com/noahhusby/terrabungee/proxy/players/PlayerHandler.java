@@ -11,7 +11,6 @@ import com.google.gson.JsonObject;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.network.P2CUpdatePlayersPacket;
 import com.noahhusby.terrabungee.proxy.util.ChatUtil;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.buildtheearth.terrabungee.common.players.Punishment;
@@ -57,7 +56,8 @@ public class PlayerHandler {
         }), 0, 2, TimeUnit.SECONDS);
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Map<UUID, Punishment> muteCache = Maps.newHashMap();
 
     public BaseComponent getBanDisconnectMessage(Punishment punishment) {

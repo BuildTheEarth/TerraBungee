@@ -5,14 +5,10 @@ import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
-import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.Punishment;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,9 +30,9 @@ public class S2CBanPlayerPacket implements IS2CPacket {
 
         List<Punishment> punishments = PlayerManager.getInstance().getPunishmentsByPlayer(playerId);
         response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.SUCCESS);
-        if(punishments != null) {
-            for(Punishment punishment : punishments) {
-                if(punishment.getType() == Punishment.Type.BAN && punishment.isActive()) {
+        if (punishments != null) {
+            for (Punishment punishment : punishments) {
+                if (punishment.getType() == Punishment.Type.BAN && punishment.isActive()) {
                     response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.ERROR);
                     return;
                 }

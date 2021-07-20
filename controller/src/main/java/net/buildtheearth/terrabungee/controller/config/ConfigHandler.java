@@ -130,7 +130,7 @@ public class ConfigHandler {
         discordConfigData.clearHandlers();
         ((StorageList) discordConfigData).clear();
 
-        if(localEnabled) {
+        if (localEnabled) {
             playerData.registerHandler(new LocalStorageHandler(playerDataFile));
             playerData.registerHandler(new LocalStorageHandler(punishmentFile));
             staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
