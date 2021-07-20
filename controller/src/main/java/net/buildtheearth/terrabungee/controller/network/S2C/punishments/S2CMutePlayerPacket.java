@@ -5,24 +5,20 @@ import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
-import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.Punishment;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * @author Noah Husby
  */
-public class S2CBanPlayerPacket implements IS2CPacket {
+public class S2CMutePlayerPacket implements IS2CPacket {
     @Override
     public String getID() {
-        return Constants.banPlayerID;
+        return Constants.mutePlayerID;
     }
 
     @Override
@@ -36,12 +32,12 @@ public class S2CBanPlayerPacket implements IS2CPacket {
         response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.SUCCESS);
         if(punishments != null) {
             for(Punishment punishment : punishments) {
-                if(punishment.getType() == Punishment.Type.BAN && punishment.isActive()) {
+                if(punishment.getType() == Punishment.Type.MUTE && punishment.isActive()) {
                     response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.ERROR);
                     return;
                 }
             }
         }
-        PlayerManager.getInstance().ban(staffId, playerId, length == 0 ? null : LocalDateTime.now().plusSeconds(length / 1000), reason);
+        PlayerManager.getInstance().mute(staffId, playerId, length == 0 ? null : LocalDateTime.now().plusSeconds(length / 1000), reason);
     }
 }

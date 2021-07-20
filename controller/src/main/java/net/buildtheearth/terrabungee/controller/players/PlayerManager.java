@@ -211,16 +211,10 @@ public class PlayerManager implements Module {
             punishment.setReason(reason);
             punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.EDIT_REASON, LocalDateTime.now(), historyData));
         } else if(action == PunishmentEditAction.END) {
-            String daysString = data.get("days").getAsString();
-            int days;
-            try {
-                days = Integer.parseInt(daysString);
-            } catch (NumberFormatException ignored) {
-                return;
-            }
+            long length = data.get("length").getAsLong();
             JsonObject historyData = new JsonObject();
             historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
-            LocalDateTime end = punishment.getStart().plusDays(days);
+            LocalDateTime end = punishment.getStart().plusSeconds(length == 0 ? 0 : length / 1000);
             historyData.addProperty("new", end.toString());
             punishment.setEnd(end);
             punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.EDIT_TIME, LocalDateTime.now(), historyData));

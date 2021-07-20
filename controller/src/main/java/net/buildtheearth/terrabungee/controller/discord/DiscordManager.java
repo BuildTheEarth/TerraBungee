@@ -161,6 +161,20 @@ public class DiscordManager implements Module {
     }
 
     public void executeSlashCommand(String name, UserPermission permission, User user, OffsetDateTime executionTime, SlashCommandEvent event) {
+        //TODO: Replace this bullshit
+        if(event.getMember() == null) {
+            return;
+        }
+        boolean tempPerms = false;
+        for(Role r : event.getMember().getRoles()) {
+            if(r.getName().equalsIgnoreCase("moderator") || r.getName().equalsIgnoreCase("administrator") || r.getName().equalsIgnoreCase("owner")) {
+                tempPerms = true;
+            }
+        }
+        if(!tempPerms) {
+            event.reply("You don't have permission to run this command!").setEphemeral(true).submit();
+            return;
+        }
         IDiscordCommand command = discordCommands.get(name);
         if(command != null) {
             command.execute(user, permission, executionTime, event);
@@ -168,6 +182,20 @@ public class DiscordManager implements Module {
     }
 
     public void executeButtonCommand(ButtonClickEvent event) {
+        //TODO: Replace this bullshit
+        if(event.getMember() == null) {
+            return;
+        }
+        boolean tempPerms = false;
+        for(Role r : event.getMember().getRoles()) {
+            if(r.getName().equalsIgnoreCase("moderator") || r.getName().equalsIgnoreCase("administrator") || r.getName().equalsIgnoreCase("owner")) {
+                tempPerms = true;
+            }
+        }
+        if(!tempPerms) {
+            event.reply("You don't have permission to run this command!").setEphemeral(true).submit();
+            return;
+        }
         JsonObject data = TerraBungeeUtil.parse(event.getComponentId());
         IDiscordCommand command = discordCommands.get(data.get("name").getAsString());
         if(command instanceof IDiscordButtonCommand) {

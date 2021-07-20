@@ -2,6 +2,8 @@ package net.buildtheearth.terrabungee.controller.discord.commands.punishments;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.common.Constants;
@@ -80,37 +82,45 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
             })).submit();
         } else if(subcommand.equals("inspect")) {
             int id = new Long(event.getOption("id").getAsLong()).intValue();
-            ReplyAction action = event.replyEmbeds(createGeneralInspectionEmbed(id));
-            JsonObject historyData = new JsonObject();
-            historyData.addProperty("type", "history");
-            historyData.addProperty("id", String.valueOf(id));
-            action.addActionRow(DiscordManager.getInstance().generateButtonInteraction(this, ButtonStyle.SECONDARY, historyData, "History"));
+            InspectionPromptData inspectionPromptData = createGeneralInspection(id);
+            ReplyAction action = event.replyEmbeds(inspectionPromptData.getEmbed());
+            if(inspectionPromptData.isGenerateButtons()) {
+                JsonObject historyData = new JsonObject();
+                historyData.addProperty("type", "history");
+                historyData.addProperty("id", String.valueOf(id));
+                action.addActionRow(DiscordManager.getInstance().generateButtonInteraction(this, ButtonStyle.SECONDARY, historyData, "History"));
+            }
             action.submit();
-        } else if(subcommand.equals("edit")) {
-
+        } else if(subcommand.equals("edit") || (event.getSubcommandGroup() != null) && event.getSubcommandGroup().equalsIgnoreCase("edit")) {
+            event.replyEmbeds(DiscordManager.getInstance().buildEmbed(builder -> {
+                builder.setColor(Color.red);
+                builder.setTitle("Punishment editing is currently disabled on discord! Please edit punishments in-game.");
+            })).submit();
         }
     }
 
-    private MessageEmbed createGeneralInspectionEmbed(int id) {
+    private InspectionPromptData createGeneralInspection(int id) {
         Punishment punishment = PlayerManager.getInstance().getPunishments().get(id);
         if(punishment == null) {
-            return DiscordManager.getInstance().buildEmbed(builder -> {
+            MessageEmbed embed =  DiscordManager.getInstance().buildEmbed(builder -> {
                 builder.setColor(Color.red);
                 builder.setTitle("That punishment doesn't exist!");
             });
+            return new InspectionPromptData(embed, false);
         }
 
         TBPlayer player = PlayerManager.getInstance().getPlayers().get(punishment.getPlayer());
         TBPlayer staff = PlayerManager.getInstance().getPlayers().get(punishment.getStaff());
 
         if(player == null) {
-            return DiscordManager.getInstance().buildEmbed(builder -> {
+            MessageEmbed embed =  DiscordManager.getInstance().buildEmbed(builder -> {
                 builder.setColor(Color.red);
                 builder.setTitle("Failed to get player data from punishment report. This indicates that the database isn't reporting correctly or the data has been tampered with.");
             });
+            return new InspectionPromptData(embed, false);
         }
 
-        return DiscordManager.getInstance().buildEmbed(builder -> {
+        MessageEmbed embed =  DiscordManager.getInstance().buildEmbed(builder -> {
             builder.setColor(Color.red);
             builder.setTitle("Punishment Report");
             builder.setThumbnail("https://crafatar.com/avatars/" + punishment.getPlayer().toString() +"?size=100");
@@ -122,27 +132,30 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
             builder.addField("Start", TimeUtil.toReadableTime(punishment.getStart()), true);
             builder.addField("End", punishment.getEnd() == null ? "None" : TimeUtil.toReadableTime(punishment.getEnd()), true);
         });
+        return new InspectionPromptData(embed, true);
     }
 
-    private MessageEmbed createHistoryInspectionEmbed(int id) {
+    private InspectionPromptData createHistoryInspection(int id) {
         Punishment punishment = PlayerManager.getInstance().getPunishments().get(id);
         if(punishment == null) {
-            return DiscordManager.getInstance().buildEmbed(builder -> {
+            MessageEmbed embed =  DiscordManager.getInstance().buildEmbed(builder -> {
                 builder.setColor(Color.red);
                 builder.setTitle("That punishment doesn't exist!");
             });
+            return new InspectionPromptData(embed, false);
         }
 
         TBPlayer player = PlayerManager.getInstance().getPlayers().get(punishment.getPlayer());
 
         if(player == null) {
-            return DiscordManager.getInstance().buildEmbed(builder -> {
+            MessageEmbed embed =  DiscordManager.getInstance().buildEmbed(builder -> {
                 builder.setColor(Color.red);
                 builder.setTitle("Failed to get player data from punishment report. This indicates that the database isn't reporting correctly or the data has been tampered with.");
             });
+            return new InspectionPromptData(embed, false);
         }
 
-        return DiscordManager.getInstance().buildEmbed(builder -> {
+        MessageEmbed embed =  DiscordManager.getInstance().buildEmbed(builder -> {
             builder.setColor(Color.red);
             builder.setTitle("History Report");
             builder.setThumbnail("https://crafatar.com/avatars/" + punishment.getPlayer().toString() +"?size=100");
@@ -152,6 +165,7 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
                 builder.addField(TimeUtil.toReadableTime(history.getDate()), history.getType().name(), false);
             }
         });
+        return new InspectionPromptData(embed, true);
     }
 
     @Override
@@ -195,17 +209,30 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
         String type = data.get("type").getAsString();
         int id = Integer.parseInt(data.get("id").getAsString());
         if(type.equalsIgnoreCase("history")) {
-            event.editMessageEmbeds(createHistoryInspectionEmbed(id)).submit();
-            JsonObject buttonData = new JsonObject();
-            buttonData.addProperty("id", String.valueOf(id));
-            buttonData.addProperty("type", "general");
-            event.editButton(DiscordManager.getInstance().generateButtonInteraction(this, ButtonStyle.PRIMARY, buttonData, "General")).submit();
+            InspectionPromptData inspectionPromptData = createHistoryInspection(id);
+            event.editMessageEmbeds(inspectionPromptData.getEmbed()).submit();
+            if(inspectionPromptData.isGenerateButtons()) {
+                JsonObject buttonData = new JsonObject();
+                buttonData.addProperty("id", String.valueOf(id));
+                buttonData.addProperty("type", "general");
+                event.editButton(DiscordManager.getInstance().generateButtonInteraction(this, ButtonStyle.PRIMARY, buttonData, "General")).submit();
+            }
         } else if(type.equalsIgnoreCase("general")) {
-            event.editMessageEmbeds(createGeneralInspectionEmbed(id)).submit();
-            JsonObject buttonData = new JsonObject();
-            buttonData.addProperty("id", String.valueOf(id));
-            buttonData.addProperty("type", "history");
-            event.editButton(DiscordManager.getInstance().generateButtonInteraction(this, ButtonStyle.SECONDARY, buttonData, "History")).submit();
+            InspectionPromptData inspectionPromptData = createGeneralInspection(id);
+            event.editMessageEmbeds(inspectionPromptData.getEmbed()).submit();
+            if(inspectionPromptData.isGenerateButtons()) {
+                JsonObject buttonData = new JsonObject();
+                buttonData.addProperty("id", String.valueOf(id));
+                buttonData.addProperty("type", "history");
+                event.editButton(DiscordManager.getInstance().generateButtonInteraction(this, ButtonStyle.SECONDARY, buttonData, "History")).submit();
+            }
         }
+    }
+
+    @AllArgsConstructor
+    @Getter
+    private static class InspectionPromptData {
+        private final MessageEmbed embed;
+        private final boolean generateButtons;
     }
 }

@@ -20,7 +20,6 @@ import net.md_5.bungee.api.scheduler.TaskScheduler;
 
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class PlayerHandler {
@@ -54,7 +53,7 @@ public class PlayerHandler {
 
     public BaseComponent getBanDisconnectMessage(Punishment punishment) {
         TextComponent kickMessage;
-        if(punishment.getEnd() == null) {
+        if (punishment.getEnd() == null) {
             kickMessage = ChatUtil.combine(ChatColor.RED, "You are permanently banned from BuildTheEarth!\n\n");
         } else {
             long difference = punishment.getEnd().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - new Date().getTime();
@@ -70,7 +69,8 @@ public class PlayerHandler {
     }
 
     public BaseComponent getKickDisconnectMessage(Punishment punishment) {
-        TextComponent kickMessage = ChatUtil.combine(ChatColor.RED, "You were kicked from BuildTheEarth!\n\n");;
+        TextComponent kickMessage = ChatUtil.combine(ChatColor.RED, "You were kicked from BuildTheEarth!\n\n");
+        ;
         kickMessage.addExtra(ChatUtil.combine(ChatColor.GRAY, "Reason: ", ChatColor.WHITE, punishment.getReason(), "\n"));
         kickMessage.addExtra(ChatUtil.combine(ChatColor.GRAY, "Punishment ID: ", ChatColor.WHITE, "#", punishment.getId()));
         return kickMessage;

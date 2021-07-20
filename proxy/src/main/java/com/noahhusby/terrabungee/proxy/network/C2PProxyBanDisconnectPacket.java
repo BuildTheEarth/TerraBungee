@@ -23,7 +23,7 @@ public class C2PProxyBanDisconnectPacket implements IC2SPacket {
     public void onMessage(TerraBungeeClient instance, JsonObject data) {
         Punishment punishment = TerraBungeeUtil.GSON.fromJson(data.get("punishment"), Punishment.class);
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(punishment.getPlayer());
-        if(player == null) {
+        if (player == null) {
             return;
         }
         player.disconnect(PlayerHandler.getInstance().getBanDisconnectMessage(punishment));

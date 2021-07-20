@@ -12,7 +12,7 @@ import java.util.UUID;
  * @author Noah Husby
  */
 @RequiredArgsConstructor
-public class S2CBanPlayerPacket implements IS2CPacket {
+public class S2CMutePlayerPacket implements IS2CPacket {
     private final UUID staff;
     private final UUID player;
     private final long length;
@@ -20,7 +20,7 @@ public class S2CBanPlayerPacket implements IS2CPacket {
 
     @Override
     public String getType() {
-        return Constants.banPlayerID;
+        return Constants.mutePlayerID;
     }
 
     @Override

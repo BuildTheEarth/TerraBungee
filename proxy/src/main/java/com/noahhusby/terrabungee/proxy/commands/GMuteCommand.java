@@ -3,7 +3,7 @@ package com.noahhusby.terrabungee.proxy.commands;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.util.ChatUtil;
 import com.noahhusby.terrabungee.proxy.util.DateUtil;
-import net.buildtheearth.terrabungee.client.network.S2C.S2CBanPlayerPacket;
+import net.buildtheearth.terrabungee.client.network.S2C.S2CMutePlayerPacket;
 import net.buildtheearth.terrabungee.common.network.Response;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.md_5.bungee.api.ChatColor;
@@ -17,9 +17,9 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author Noah Husby
  */
-public class GBanCommand extends Command {
-    public GBanCommand() {
-        super("gban", "");
+public class GMuteCommand extends Command {
+    public GMuteCommand() {
+        super("gmute", "");
     }
 
     @Override
@@ -29,7 +29,7 @@ public class GBanCommand extends Command {
             return;
         }
         if (args.length < 3) {
-            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Usage: /gban <player> <length> <reason>"));
+            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Usage: /gmute <player> <length> <reason>"));
             return;
         }
         String player = args[0];
@@ -42,7 +42,7 @@ public class GBanCommand extends Command {
                 length = DateUtil.parseDateDiff(lengthString, true, true);
             }
         } catch (Exception ignored) {
-            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.BLUE, lengthString, ChatColor.GRAY, " is not a valid length! Enter the amount of time for the ban (Ex: 1d12h), or enter ", ChatColor.YELLOW, "0 ", ChatColor.GRAY, "for a permanent ban."));
+            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.BLUE, lengthString, ChatColor.GRAY, " is not a valid length! Enter the amount of time for the mute (Ex: 1d12h), or enter ", ChatColor.YELLOW, "0 ", ChatColor.GRAY, "for a permanent mute."));
             return;
         }
         CompletableFuture<TBPlayer> playerFuture = TerraBungeeProxy.getInstance().getTerraBungee().getPlayer(player);
@@ -56,13 +56,13 @@ public class GBanCommand extends Command {
                 reason.append(r).append(" ");
             }
             reason = new StringBuilder(reason.toString().trim());
-            CompletableFuture<Response> banFuture = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CBanPlayerPacket((sender instanceof ProxiedPlayer) ? ((ProxiedPlayer) sender).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), tbPlayer.getUniqueID(), length, reason.toString()));
+            CompletableFuture<Response> banFuture = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CMutePlayerPacket((sender instanceof ProxiedPlayer) ? ((ProxiedPlayer) sender).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), tbPlayer.getUniqueID(), length, reason.toString()));
             String finalReason = reason.toString();
             banFuture.thenAccept(response -> {
                 if (response.getCode() == Response.ResponseCode.ERROR) {
-                    sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, tbPlayer.getName(), ChatColor.GRAY, " was already banned!"));
+                    sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, tbPlayer.getName(), ChatColor.GRAY, " was already muted!"));
                 } else if (response.getCode() == Response.ResponseCode.SUCCESS) {
-                    sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, "Successfully banned ", ChatColor.YELLOW, tbPlayer.getName(), lengthString.equals("0") ? " permanently" : " for " + DateUtil.getExpandedTimeMessage(length), ChatColor.GRAY, " for ", ChatColor.BLUE, finalReason));
+                    sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, "Successfully muted ", ChatColor.YELLOW, tbPlayer.getName(), lengthString.equals("0") ? " permanently" : " for " + DateUtil.getExpandedTimeMessage(length), ChatColor.GRAY, " for ", ChatColor.BLUE, finalReason));
                 } else {
                     sender.sendMessage(ChatUtil.getNoContact());
                 }
