@@ -2,12 +2,12 @@ package net.buildtheearth.terrabungee.controller.discord;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
+import com.noahhusby.lib.data.storage.StorageHashMap;
 import com.noahhusby.lib.data.storage.StorageList;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
-import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordButtonCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
@@ -17,8 +17,6 @@ import net.buildtheearth.terrabungee.controller.discord.commands.util.PingDiscor
 import net.buildtheearth.terrabungee.controller.discord.commands.util.StatusDiscordCommand;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
@@ -29,15 +27,12 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.components.Button;
 import net.dv8tion.jda.api.interactions.components.ButtonStyle;
-import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
-import javax.security.auth.login.LoginException;
 import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class DiscordManager implements Module {
@@ -47,13 +42,15 @@ public class DiscordManager implements Module {
         return instance == null ? instance = new DiscordManager() : instance;
     }
 
-    private JDA bot;
-    private TextChannel channel;
     private final ExecutorService botThread = TerraBungeeUtil.newSingleThreadExecutor("terrabungee-bot");
-    @Getter
-    private final StorageList<DiscordConfig> discordConfigs = new StorageList<>(DiscordConfig.class);
 
     private final Map<String, IDiscordCommand> discordCommands = Maps.newHashMap();
+
+    @Getter
+    private final StorageHashMap<Long, GuildConfig> guildConfigs = new StorageHashMap<>(Long.class, GuildConfig.class);
+
+    @Getter
+    private final StorageHashMap<Integer, BotConfig> botConfigs = new StorageHashMap<>(Integer.class, BotConfig.class);
 
     private DiscordManager() {
         registerCommands(
@@ -62,39 +59,22 @@ public class DiscordManager implements Module {
                 new PingDiscordCommand(),
                 new StatusDiscordCommand()
         );
+        botConfigs.onLoadEvent(() -> botThread.submit(() -> {
+            startBots();
+            updateSlashCommands();
+        }));
     }
 
-    public void loadBot() {
-        botThread.submit(() -> {
-            try {
-                bot = JDABuilder.createDefault(ConfigHandler.botToken)
-                        .enableIntents(GatewayIntent.DIRECT_MESSAGES)
-                        .enableIntents(GatewayIntent.GUILD_MESSAGES)
-                        .addEventListeners(new DiscordListener()).build();
-            } catch (LoginException e) {
-                TerraBungeeController.logger.warning("Failed to initialize discord bot! Please check the token and try again.");
-            }
-            TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
-                Guild g = bot.getGuildById(ConfigHandler.guildID);
-                if (g == null) {
-                    return;
-                }
-                boolean adminRole = false;
-                for (Role r : g.getRoles()) {
-                    if (r.getName().equalsIgnoreCase("TBAdmin")) {
-                        adminRole = true;
-                    }
-                }
-                if (!adminRole) {
-                    g.createRole().setMentionable(true).setName("TBAdmin").submit();
-                }
-                updateSlashCommands();
-            }, 2, TimeUnit.SECONDS);
-        });
+    public void startBots() {
+        for(BotConfig config : botConfigs.values()) {
+            config.initBot();
+        }
     }
 
-    public JDA getBot() {
-        return bot;
+    public void stopBots() {
+        for(BotConfig config : botConfigs.values()) {
+            config.shutdown();
+        }
     }
 
     public MessageEmbed buildEmbed(Consumer<EmbedBuilder> builder) {
@@ -106,32 +86,17 @@ public class DiscordManager implements Module {
     }
 
     public void send(IMessageEmbed emb) {
-        if (ConfigHandler.botToken.equalsIgnoreCase("")) {
-            return;
-        }
         botThread.submit(() -> {
-            if (channel == null) {
-                Guild g = bot.getGuildById(ConfigHandler.guildID);
-                if (g == null) {
-                    return;
-                }
-                channel = g.getTextChannelById(ConfigHandler.channelID);
-                if (channel == null) {
-                    return;
+            for(GuildConfig guildConfig : guildConfigs.values()) {
+                if(guildConfig.getNotificationChannel() != null) {
+                    guildConfig.getNotificationChannel().sendMessage(buildEmbed(emb::build)).submit();
                 }
             }
-
-            channel.sendMessage(buildEmbed(emb::build)).submit();
         });
     }
 
-    public DiscordConfig getConfigByGuild(Guild guild) {
-        for (DiscordConfig config : getDiscordConfigs()) {
-            if (guild.getIdLong() == config.getGuildId()) {
-                return config;
-            }
-        }
-        return null;
+    public GuildConfig getConfigByGuild(Guild guild) {
+        return guildConfigs.get(guild.getIdLong());
     }
 
     public void registerCommand(IDiscordCommand command) {
@@ -145,16 +110,18 @@ public class DiscordManager implements Module {
     }
 
     public void updateSlashCommands() {
-        try {
-            CommandListUpdateAction slashCommands = getBot().getGuildById(ConfigHandler.guildID).updateCommands();
-            for (IDiscordCommand command : discordCommands.values()) {
-                CommandData commandData = new CommandData(command.getName(), command.getDescription());
-                command.configureData(commandData);
-                slashCommands.addCommands(commandData);
+        for(GuildConfig guildConfig : guildConfigs.values()) {
+            try {
+                CommandListUpdateAction slashCommands = guildConfig.getGuild().updateCommands();
+                for (IDiscordCommand command : discordCommands.values()) {
+                    CommandData commandData = new CommandData(command.getName(), command.getDescription());
+                    command.configureData(commandData);
+                    slashCommands.addCommands(commandData);
+                }
+                slashCommands.queue();
+            } catch (NullPointerException ignored) {
+                TerraBungee.getInstance().getLogger().warning("Failed to update slash commands for discord!");
             }
-            slashCommands.queue();
-        } catch (NullPointerException ignored) {
-            TerraBungee.getInstance().getLogger().warning("Failed to update slash commands for discord!");
         }
     }
 
@@ -209,17 +176,12 @@ public class DiscordManager implements Module {
 
     @Override
     public void onEnable() {
-        if (ConfigHandler.botToken.equalsIgnoreCase("")) {
-            return;
-        }
-        loadBot();
+
     }
 
     @Override
     public void onDisable() {
-        if (bot != null) {
-            bot.shutdown();
-        }
+        stopBots();
     }
 
     @Override

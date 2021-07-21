@@ -41,7 +41,8 @@ public class ConfigHandler {
     private File staticInstanceFile;
     private File playerDataFile;
     private File punishmentFile;
-    private File discordConfigFile;
+    private File discordGuildFile;
+    private File discordBotFile;
 
     private Configuration config;
 
@@ -79,8 +80,9 @@ public class ConfigHandler {
 
         staticInstanceFile = new File(localDb, "instances.json");
         playerDataFile = new File(localDb, "players.json");
-        discordConfigFile = new File(localDb, "discord.json");
+        discordGuildFile = new File(localDb, "discord_guilds.json");
         punishmentFile = new File(localDb, "punishments.json");
+        discordBotFile = new File(localDb, "discord_bots.json");
 
         config = new Configuration(configFile);
         loadData();
@@ -130,15 +132,20 @@ public class ConfigHandler {
         staticInstanceData.destroy();
         ((StorageTreeMap) staticInstanceData).clear();
 
-        Storage discordConfigData = DiscordManager.getInstance().getDiscordConfigs();
-        discordConfigData.clearHandlers();
-        ((StorageList) discordConfigData).clear();
+        Storage discordGuildConfigData = DiscordManager.getInstance().getGuildConfigs();
+        discordGuildConfigData.clearHandlers();
+        ((StorageHashMap) discordGuildConfigData).clear();
+
+        Storage discordBotConfigData = DiscordManager.getInstance().getBotConfigs();
+        discordBotConfigData.clearHandlers();
+        ((StorageHashMap) discordBotConfigData).clear();
 
         if (localEnabled) {
             playerData.registerHandler(new LocalStorageHandler(playerDataFile));
             playerData.registerHandler(new LocalStorageHandler(punishmentFile));
             staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
-            discordConfigData.registerHandler(new LocalStorageHandler(discordConfigFile));
+            discordGuildConfigData.registerHandler(new LocalStorageHandler(discordGuildFile));
+            discordBotConfigData.registerHandler(new LocalStorageHandler(discordBotFile));
         }
 
         {
@@ -194,20 +201,35 @@ public class ConfigHandler {
                     new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "DiscordConfig",
                     Structure.builder()
                             .add("GuildID", Type.TEXT)
+                            .add("BotID", Type.INT)
                             .add("NotificationChannel", Type.TEXT)
-                            .add("AdminRoles", Type.TEXT)
-                            .add("ModeratorRoles", Type.TEXT)
+                            .add("StaffRoles", Type.TEXT)
                             .repair(true)
                             .build()
             );
             sqlStorageHandler.setPriority(100);
-            discordConfigData.registerHandler(sqlStorageHandler);
+            discordGuildConfigData.registerHandler(sqlStorageHandler);
+        }
+
+        {
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
+                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "DiscordBots",
+                    Structure.builder()
+                            .add("Id", Type.INT)
+                            .add("Name", Type.TEXT)
+                            .add("Token", Type.TEXT)
+                            .repair(true)
+                            .build()
+            );
+            sqlStorageHandler.setPriority(100);
+            discordBotConfigData.registerHandler(sqlStorageHandler);
         }
 
         storageMap.put("players", playerData);
         storageMap.put("punishment", punishmentData);
         storageMap.put("instance", staticInstanceData);
-        storageMap.put("discord_config", discordConfigData);
+        storageMap.put("discord_config", discordGuildConfigData);
+        storageMap.put("discord_bots", discordBotConfigData);
 
         TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
             playerData.load();
@@ -216,8 +238,8 @@ public class ConfigHandler {
             punishmentData.setAutoSave(10, TimeUnit.SECONDS);
             staticInstanceData.setAutoLoad(10, TimeUnit.SECONDS);
             staticInstanceData.setAutoSave(10, TimeUnit.SECONDS);
-            discordConfigData.setAutoLoad(10, TimeUnit.SECONDS);
-            discordConfigData.setAutoSave(10, TimeUnit.SECONDS);
+            discordGuildConfigData.load();
+            discordBotConfigData.load();
         }, 2, TimeUnit.SECONDS);
     }
 
@@ -235,7 +257,7 @@ public class ConfigHandler {
     public void migrate() {
         PlayerManager.getInstance().getPlayers().migrate(0);
         InstanceManager.getInstance().getStaticInstances().migrate(0);
-        DiscordManager.getInstance().getDiscordConfigs().migrate(0);
+        DiscordManager.getInstance().getGuildConfigs().migrate(0);
     }
 
     private String prop(String n) {

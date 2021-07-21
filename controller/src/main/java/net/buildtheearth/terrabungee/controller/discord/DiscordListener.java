@@ -17,7 +17,7 @@ public class DiscordListener extends ListenerAdapter {
             return;
         }
         UserPermission permission = UserPermission.NONE;
-        DiscordConfig config = DiscordManager.getInstance().getConfigByGuild(e.getGuild());
+        GuildConfig config = DiscordManager.getInstance().getConfigByGuild(e.getGuild());
         Member m = e.getMember();
 
         if (m != null) {
@@ -36,10 +36,6 @@ public class DiscordListener extends ListenerAdapter {
 
                     if (config.getModeratorRoles().contains(r.getIdLong())) {
                         comparePermission(permission, UserPermission.MODERATOR);
-                    }
-
-                    if (config.getStandardRoles().contains(r.getIdLong())) {
-                        comparePermission(permission, UserPermission.STANDARD);
                     }
                 }
             }
