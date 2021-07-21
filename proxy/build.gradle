@@ -7,6 +7,6 @@ repositories {
 
 dependencies {
     compile project(":client")
-    compileOnly 'net.md-5:bungeecord-api:1.12-SNAPSHOT'
+    compileOnly 'net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 }
