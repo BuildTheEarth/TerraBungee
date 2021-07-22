@@ -7,8 +7,14 @@ import net.buildtheearth.terrabungee.controller.command.controller.MigrateComman
 import net.buildtheearth.terrabungee.controller.command.controller.ReloadCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.StopCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordConfigureBotCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordConfigureGuildCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordCreateBotCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordCreateGuildCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordEnableBotCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordListBotsCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordListGuildsCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordRemoveBotCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordRemoveGuildCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.AddStaticCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.DefaultServerCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.ListStaticCommand;
@@ -74,6 +80,12 @@ public class CommandManager implements Module {
         register(new DiscordCreateBotCommand());
         register(new DiscordListBotsCommand());
         register(new DiscordConfigureBotCommand());
+        register(new DiscordEnableBotCommand());
+        register(new DiscordRemoveBotCommand());
+        register(new DiscordCreateGuildCommand());
+        register(new DiscordConfigureGuildCommand());
+        register(new DiscordRemoveGuildCommand());
+        register(new DiscordListGuildsCommand());
     }
 
     @Override

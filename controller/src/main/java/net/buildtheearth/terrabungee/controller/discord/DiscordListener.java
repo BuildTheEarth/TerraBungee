@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,48 +17,57 @@ public class DiscordListener extends ListenerAdapter {
         if (e.getGuild() == null) {
             return;
         }
+        if(!DiscordManager.getInstance().getGuildConfigs().containsKey(e.getGuild().getIdLong())) {
+            return;
+        }
+
         UserPermission permission = UserPermission.NONE;
         GuildConfig config = DiscordManager.getInstance().getConfigByGuild(e.getGuild());
         Member m = e.getMember();
 
-        if (m != null) {
-            for (Role r : m.getRoles()) {
-                if (r.getName().equalsIgnoreCase("TBAdmin")) {
-                    permission = UserPermission.ADMIN;
-                    break;
-                }
+        boolean hasPerms = false;
+        if (m == null) {
+            return;
+        }
+        for(Role r : m.getRoles()) {
+            if(config.getStaffRoles().contains(r.getIdLong())) {
+                hasPerms = true;
+                break;
             }
-
-            if (config != null && permission != UserPermission.ADMIN) {
-                for (Role r : m.getRoles()) {
-                    if (config.getStaffRoles().contains(r.getIdLong())) {
-                        comparePermission(permission, UserPermission.ADMIN);
-                    }
-                }
-            }
+        }
+        if(!hasPerms) {
+            e.reply("You don't have permission to run this command!").setEphemeral(true).submit();
+            return;
         }
         DiscordManager.getInstance().executeSlashCommand(e.getName(), permission, e.getUser(), e.getTimeCreated(), e);
     }
 
     @Override
-    public void onButtonClick(ButtonClickEvent event) {
-        DiscordManager.getInstance().executeButtonCommand(event);
-    }
-
-    /**
-     * Gets all objects in a string array above a given index
-     *
-     * @param args  Initial array
-     * @param index Starting index
-     * @return Selected array
-     */
-    private String[] selectArray(String[] args, int index) {
-        List<String> array = new ArrayList<>();
-        for (int i = index; i < args.length; i++) {
-            array.add(args[i]);
+    public void onButtonClick(@NotNull ButtonClickEvent event) {
+        if (event.getGuild() == null) {
+            return;
+        }
+        if(!DiscordManager.getInstance().getGuildConfigs().containsKey(event.getGuild().getIdLong())) {
+            return;
         }
 
-        return array.toArray(array.toArray(new String[array.size()]));
+        GuildConfig config = DiscordManager.getInstance().getConfigByGuild(event.getGuild());
+        Member m = event.getMember();
+        boolean hasPerms = false;
+        if (m == null) {
+            return;
+        }
+        for(Role r : m.getRoles()) {
+            if(config.getStaffRoles().contains(r.getIdLong())) {
+                hasPerms = true;
+                break;
+            }
+        }
+        if(!hasPerms) {
+            event.reply("You don't have permission to run this command!").setEphemeral(true).submit();
+            return;
+        }
+        DiscordManager.getInstance().executeButtonCommand(event);
     }
 
     private void comparePermission(UserPermission current, UserPermission updated) {

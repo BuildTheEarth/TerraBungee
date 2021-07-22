@@ -98,7 +98,6 @@ public class TerraBungeeController extends TerraBungee {
     public void end() {
         running = false;
         getLogger().info("Shutting down the controller!");
-        DiscordManager.getInstance().send(new ControllerStoppedEmbed());
         ModuleHandler.getInstance().disableAll();
         try {
             server.stop();

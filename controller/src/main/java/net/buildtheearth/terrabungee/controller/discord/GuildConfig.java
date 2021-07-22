@@ -51,11 +51,15 @@ public class GuildConfig {
         return bot.getGuildById(guildId);
     }
 
-    public TextChannel getNotificationChannel() {
+    public TextChannel getNotificationTextChannel() {
         Guild guild = getGuild();
         if(guild == null) {
             return null;
         }
         return guild.getTextChannelById(notificationChannel);
+    }
+
+    public boolean isConfigured() {
+        return botId != 0 && notificationChannel != 0;
     }
 }

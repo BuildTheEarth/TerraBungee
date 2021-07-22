@@ -55,8 +55,12 @@ public class BotConfig {
 
     public void shutdown() {
         if(bot != null) {
-            bot.shutdownNow();
-            bot = null;
+            try {
+                bot.shutdown();
+                bot = null;
+            } catch (IllegalStateException exception) {
+                TerraBungee.getInstance().getLogger().warning("Failed to shutdown: " + getName());
+            }
         }
     }
 
@@ -64,7 +68,7 @@ public class BotConfig {
         return name != null && token != null;
     }
 
-    public boolean isInitialized() {
+    public boolean isEnabled() {
         return bot != null;
     }
 }

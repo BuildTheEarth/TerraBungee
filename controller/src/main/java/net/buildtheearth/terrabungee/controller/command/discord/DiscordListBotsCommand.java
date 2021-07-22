@@ -30,6 +30,7 @@ public class DiscordListBotsCommand extends Command {
             TerraBungeeConsole.sendMessage("\n< >");
             TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW + "ID: " + id);
             TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW + "Status: " + (!config.isConfigured() ? ConsoleColor.RED + "Unconfigured" : ConsoleColor.GREEN + "Configured"));
+            TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW + "Enabled: " + (!config.isEnabled() ? ConsoleColor.RED + "False" : ConsoleColor.GREEN + "True"));
             TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW + "Name: " + name);
             TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW + "Token: " + token);
             TerraBungeeConsole.sendMessage("< >\n");

@@ -1,5 +1,6 @@
 package net.buildtheearth.terrabungee.controller.discord;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.storage.StorageHashMap;
@@ -15,6 +16,7 @@ import net.buildtheearth.terrabungee.controller.discord.commands.punishments.Pun
 import net.buildtheearth.terrabungee.controller.discord.commands.setup.SetupDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.util.PingDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.util.StatusDiscordCommand;
+import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStoppedEmbed;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -31,6 +33,7 @@ import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
@@ -67,7 +70,11 @@ public class DiscordManager implements Module {
 
     public void startBots() {
         for(BotConfig config : botConfigs.values()) {
-            config.initBot();
+            try {
+                config.initBot();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -86,13 +93,15 @@ public class DiscordManager implements Module {
     }
 
     public void send(IMessageEmbed emb) {
-        botThread.submit(() -> {
+        try {
             for(GuildConfig guildConfig : guildConfigs.values()) {
-                if(guildConfig.getNotificationChannel() != null) {
-                    guildConfig.getNotificationChannel().sendMessage(buildEmbed(emb::build)).submit();
+                if(guildConfig.isConfigured() && guildConfig.getNotificationTextChannel() != null) {
+                    guildConfig.getNotificationTextChannel().sendMessage(buildEmbed(emb::build)).submit();
                 }
             }
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public GuildConfig getConfigByGuild(Guild guild) {
@@ -109,35 +118,45 @@ public class DiscordManager implements Module {
         }
     }
 
+    public void updateSlashCommands(BotConfig config) {
+        for(GuildConfig guildConfig : getGuildsFromBot(config)) {
+            updateSlashCommands(guildConfig);
+        }
+    }
+
+    public void updateSlashCommands(GuildConfig config) {
+        try {
+            CommandListUpdateAction slashCommands = config.getGuild().updateCommands();
+            for (IDiscordCommand command : discordCommands.values()) {
+                CommandData commandData = new CommandData(command.getName(), command.getDescription());
+                command.configureData(commandData);
+                slashCommands.addCommands(commandData);
+            }
+            slashCommands.queue();
+        } catch (NullPointerException ignored) {
+            TerraBungee.getInstance().getLogger().warning("Failed to update slash commands for discord!");
+        }
+    }
+
     public void updateSlashCommands() {
         for(GuildConfig guildConfig : guildConfigs.values()) {
-            try {
-                CommandListUpdateAction slashCommands = guildConfig.getGuild().updateCommands();
-                for (IDiscordCommand command : discordCommands.values()) {
-                    CommandData commandData = new CommandData(command.getName(), command.getDescription());
-                    command.configureData(commandData);
-                    slashCommands.addCommands(commandData);
-                }
-                slashCommands.queue();
-            } catch (NullPointerException ignored) {
-                TerraBungee.getInstance().getLogger().warning("Failed to update slash commands for discord!");
+            updateSlashCommands(guildConfig);
+        }
+    }
+
+    public List<GuildConfig> getGuildsFromBot(BotConfig config) {
+        List<GuildConfig> tempGuilds = Lists.newArrayList();
+        for(GuildConfig guildConfig : guildConfigs.values()) {
+            if(guildConfig.getBotId() == config.getId()) {
+                tempGuilds.add(guildConfig);
             }
         }
+        return tempGuilds;
     }
 
     public void executeSlashCommand(String name, UserPermission permission, User user, OffsetDateTime executionTime, SlashCommandEvent event) {
         //TODO: Replace this bullshit
         if (event.getMember() == null) {
-            return;
-        }
-        boolean tempPerms = false;
-        for (Role r : event.getMember().getRoles()) {
-            if (r.getName().equalsIgnoreCase("moderator") || r.getName().equalsIgnoreCase("administrator") || r.getName().equalsIgnoreCase("owner")) {
-                tempPerms = true;
-            }
-        }
-        if (!tempPerms) {
-            event.reply("You don't have permission to run this command!").setEphemeral(true).submit();
             return;
         }
         IDiscordCommand command = discordCommands.get(name);
@@ -149,16 +168,6 @@ public class DiscordManager implements Module {
     public void executeButtonCommand(ButtonClickEvent event) {
         //TODO: Replace this bullshit
         if (event.getMember() == null) {
-            return;
-        }
-        boolean tempPerms = false;
-        for (Role r : event.getMember().getRoles()) {
-            if (r.getName().equalsIgnoreCase("moderator") || r.getName().equalsIgnoreCase("administrator") || r.getName().equalsIgnoreCase("owner")) {
-                tempPerms = true;
-            }
-        }
-        if (!tempPerms) {
-            event.reply("You don't have permission to run this command!").setEphemeral(true).submit();
             return;
         }
         JsonObject data = TerraBungeeUtil.parse(event.getComponentId());
@@ -183,8 +192,6 @@ public class DiscordManager implements Module {
         config.setName(name);
         botConfigs.put(id, config);
         botConfigs.saveAsync();
-        stopBots();
-        startBots();
         return config;
     }
 
@@ -195,6 +202,7 @@ public class DiscordManager implements Module {
 
     @Override
     public void onDisable() {
+        send(new ControllerStoppedEmbed());
         stopBots();
     }
 
