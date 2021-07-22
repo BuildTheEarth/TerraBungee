@@ -19,12 +19,12 @@ public class RemoveStaticCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if (args.length < 2) {
+        if (args.length < 1) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Usage: removestatic <id>");
             return;
         }
 
-        String id = args[1];
+        String id = args[0];
 
         StorableStaticInstance remove = null;
         for (StorableStaticInstance s : InstanceManager.getInstance().getStaticInstances().values()) {

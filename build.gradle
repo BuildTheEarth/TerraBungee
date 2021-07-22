@@ -12,7 +12,7 @@ allprojects {
 
         snakeYamlVersion = "1.29"
         websocketVersion = "1.5.2"
-        husbyVersion = "58a173bce2"
+        husbyVersion = "9298199ab9"
         lombokVersion = "1.18.20"
         guavaVersion = "30.1.1-jre"
         gsonVersion = "2.8.7"
@@ -20,7 +20,7 @@ allprojects {
         jlineVersion = "3.20.0"
         logbackVersion = "1.3.0-alpha5"
         jdaVersion = "4.3.0_298"
-        hikariVersion = "5.0.0"
+        hikariVersion = "4.0.3"
     }
 
     group "net.buildtheearth"

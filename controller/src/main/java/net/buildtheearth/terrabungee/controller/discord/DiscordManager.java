@@ -174,6 +174,20 @@ public class DiscordManager implements Module {
         return Button.of(style, dataString, label);
     }
 
+    public BotConfig createBot(String name) {
+        int id = botConfigs.size();
+        while(botConfigs.containsKey(id)) {
+            id++;
+        }
+        BotConfig config = new BotConfig(id);
+        config.setName(name);
+        botConfigs.put(id, config);
+        botConfigs.saveAsync();
+        stopBots();
+        startBots();
+        return config;
+    }
+
     @Override
     public void onEnable() {
 

@@ -36,14 +36,26 @@ public class GuildConfig {
     private final List<Long> staffRoles = new ArrayList<>();
 
     public JDA getBot() {
-        return DiscordManager.getInstance().getBotConfigs().get(botId).getBot();
+        BotConfig config = DiscordManager.getInstance().getBotConfigs().get(botId);
+        if(config == null) {
+            return null;
+        }
+        return config.getBot();
     }
 
     public Guild getGuild() {
-        return getBot().getGuildById(guildId);
+        JDA bot = getBot();
+        if(bot == null) {
+            return null;
+        }
+        return bot.getGuildById(guildId);
     }
 
     public TextChannel getNotificationChannel() {
-        return getGuild().getTextChannelById(notificationChannel);
+        Guild guild = getGuild();
+        if(guild == null) {
+            return null;
+        }
+        return guild.getTextChannelById(notificationChannel);
     }
 }

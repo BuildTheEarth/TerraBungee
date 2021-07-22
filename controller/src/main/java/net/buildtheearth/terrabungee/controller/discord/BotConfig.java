@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * @author Noah Husby
  */
-@Key("GuildID")
+@Key("Id")
 @RequiredArgsConstructor
 @Getter
 public class BotConfig {
@@ -40,18 +40,31 @@ public class BotConfig {
     private JDA bot;
 
     public void initBot() {
-        try {
-            bot = JDABuilder.createDefault(token)
-                    .enableIntents(GatewayIntent.DIRECT_MESSAGES)
-                    .enableIntents(GatewayIntent.GUILD_MESSAGES)
-                    .addEventListeners(new DiscordListener()).build();
-            bot.setAutoReconnect(true);
-        } catch (LoginException e) {
-            TerraBungee.getInstance().getLogger().warning(String.format("Failed to initialize %s! Please check the token and try again.", name));
+        if(isConfigured()) {
+            try {
+                bot = JDABuilder.createDefault(token)
+                        .enableIntents(GatewayIntent.DIRECT_MESSAGES)
+                        .enableIntents(GatewayIntent.GUILD_MESSAGES)
+                        .addEventListeners(new DiscordListener()).build();
+                bot.setAutoReconnect(true);
+            } catch (LoginException e) {
+                TerraBungee.getInstance().getLogger().warning(String.format("Failed to initialize %s! Please check the token and try again.", name));
+            }
         }
     }
 
     public void shutdown() {
-        bot.shutdown();
+        if(bot != null) {
+            bot.shutdownNow();
+            bot = null;
+        }
+    }
+
+    public boolean isConfigured() {
+        return name != null && token != null;
+    }
+
+    public boolean isInitialized() {
+        return bot != null;
     }
 }

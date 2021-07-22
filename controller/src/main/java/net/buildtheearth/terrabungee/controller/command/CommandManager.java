@@ -6,6 +6,9 @@ import net.buildtheearth.terrabungee.controller.command.controller.HelpCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.MigrateCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.ReloadCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.StopCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordConfigureBotCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordCreateBotCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordListBotsCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.AddStaticCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.DefaultServerCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.ListStaticCommand;
@@ -15,6 +18,7 @@ import net.buildtheearth.terrabungee.controller.command.storage.SaveAllCommand;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandManager implements Module {
@@ -46,7 +50,7 @@ public class CommandManager implements Module {
 
         for (Command c : controllerCommands) {
             if (c.getName().equalsIgnoreCase(args[0])) {
-                c.execute(args);
+                c.execute(Arrays.copyOfRange(args, 1, args.length));
                 return true;
             }
         }
@@ -67,6 +71,9 @@ public class CommandManager implements Module {
         register(new TestCommand());
         register(new SaveAllCommand());
         register(new LoadAllCommand());
+        register(new DiscordCreateBotCommand());
+        register(new DiscordListBotsCommand());
+        register(new DiscordConfigureBotCommand());
     }
 
     @Override

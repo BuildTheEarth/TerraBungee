@@ -20,13 +20,13 @@ public class AddStaticCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if (args.length < 3) {
+        if (args.length < 2) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Usage: addstatic <id> <address>");
             return;
         }
 
-        String id = args[1];
-        String address = args[2];
+        String id = args[0];
+        String address = args[1];
 
         for (StorableStaticInstance s : InstanceManager.getInstance().getStaticInstances().values()) {
             if (s.id.equalsIgnoreCase(id)) {

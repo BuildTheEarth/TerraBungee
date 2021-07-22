@@ -25,13 +25,13 @@ public class SaveAllCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if (args.length == 1) {
+        if (args.length < 1) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Type ", ConsoleColor.YELLOW, "save-all confirm",
                     ConsoleColor.BLUE, " to save all data!");
             return;
         }
 
-        if (!args[1].equalsIgnoreCase("confirm")) {
+        if (!args[0].equalsIgnoreCase("confirm")) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Type ", ConsoleColor.YELLOW, "save-all confirm",
                     ConsoleColor.BLUE, " to save all data!");
             return;

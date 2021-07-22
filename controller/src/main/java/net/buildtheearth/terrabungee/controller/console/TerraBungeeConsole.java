@@ -66,6 +66,7 @@ public class TerraBungeeConsole extends Logger {
                     }
                 } catch (Exception e) {
                     TerraBungee.getInstance().getLogger().log(Level.SEVERE, "There was an error executing the command!", e);
+                    e.printStackTrace();
                     System.out.println();
                 }
             }

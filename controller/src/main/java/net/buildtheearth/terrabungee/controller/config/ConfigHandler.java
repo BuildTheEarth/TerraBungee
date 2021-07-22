@@ -198,7 +198,7 @@ public class ConfigHandler {
 
         {
             SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
-                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "DiscordConfig",
+                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "DiscordGuilds",
                     Structure.builder()
                             .add("GuildID", Type.TEXT)
                             .add("BotID", Type.INT)
@@ -239,7 +239,9 @@ public class ConfigHandler {
             staticInstanceData.setAutoLoad(10, TimeUnit.SECONDS);
             staticInstanceData.setAutoSave(10, TimeUnit.SECONDS);
             discordGuildConfigData.load();
+            discordGuildConfigData.save();
             discordBotConfigData.load();
+            discordBotConfigData.save();
         }, 2, TimeUnit.SECONDS);
     }
 

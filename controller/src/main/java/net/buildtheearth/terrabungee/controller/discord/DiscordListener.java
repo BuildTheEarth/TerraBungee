@@ -30,12 +30,8 @@ public class DiscordListener extends ListenerAdapter {
 
             if (config != null && permission != UserPermission.ADMIN) {
                 for (Role r : m.getRoles()) {
-                    if (config.getAdminRoles().contains(r.getIdLong())) {
+                    if (config.getStaffRoles().contains(r.getIdLong())) {
                         comparePermission(permission, UserPermission.ADMIN);
-                    }
-
-                    if (config.getModeratorRoles().contains(r.getIdLong())) {
-                        comparePermission(permission, UserPermission.MODERATOR);
                     }
                 }
             }
