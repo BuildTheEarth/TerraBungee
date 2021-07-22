@@ -9,6 +9,7 @@ import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
+import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordButtonCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
@@ -36,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class DiscordManager implements Module {
@@ -62,9 +64,9 @@ public class DiscordManager implements Module {
                 new PingDiscordCommand(),
                 new StatusDiscordCommand()
         );
-        botConfigs.onLoadEvent(() -> botThread.submit(() -> {
+        botConfigs.onLoadEvent(() -> TerraBungeeController.getInstance().getGeneralThreads().submit(() -> {
             startBots();
-            updateSlashCommands();
+            TerraBungeeController.getInstance().getGeneralThreads().schedule((Runnable) this::updateSlashCommands, 10, TimeUnit.SECONDS);
         }));
     }
 
@@ -133,7 +135,8 @@ public class DiscordManager implements Module {
                 slashCommands.addCommands(commandData);
             }
             slashCommands.queue();
-        } catch (NullPointerException ignored) {
+        } catch (NullPointerException exception) {
+            exception.printStackTrace();
             TerraBungee.getInstance().getLogger().warning("Failed to update slash commands for discord!");
         }
     }

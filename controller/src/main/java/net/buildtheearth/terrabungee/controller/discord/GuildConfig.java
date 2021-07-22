@@ -60,6 +60,6 @@ public class GuildConfig {
     }
 
     public boolean isConfigured() {
-        return botId != 0 && notificationChannel != 0;
+        return notificationChannel != 0;
     }
 }

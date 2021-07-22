@@ -1,5 +1,6 @@
 package net.buildtheearth.terrabungee.controller.discord;
 
+import com.google.common.collect.Lists;
 import net.buildtheearth.api.discord.UserPermission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -12,6 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DiscordListener extends ListenerAdapter {
+
+    //TODO: WTF
+    private List<Long> adminLongs = Lists.newArrayList(555520007837319178L, 422633274918174721L);
+
     @Override
     public void onSlashCommand(SlashCommandEvent e) {
         if (e.getGuild() == null) {
@@ -30,7 +35,7 @@ public class DiscordListener extends ListenerAdapter {
             return;
         }
         for(Role r : m.getRoles()) {
-            if(config.getStaffRoles().contains(r.getIdLong())) {
+            if(config.getStaffRoles().contains(r.getIdLong()) || adminLongs.contains(m.getIdLong())) {
                 hasPerms = true;
                 break;
             }
@@ -58,7 +63,7 @@ public class DiscordListener extends ListenerAdapter {
             return;
         }
         for(Role r : m.getRoles()) {
-            if(config.getStaffRoles().contains(r.getIdLong())) {
+            if(config.getStaffRoles().contains(r.getIdLong()) || adminLongs.contains(m.getIdLong())) {
                 hasPerms = true;
                 break;
             }

@@ -13,6 +13,7 @@ import net.buildtheearth.terrabungee.controller.command.discord.DiscordCreateGui
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordEnableBotCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordListBotsCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordListGuildsCommand;
+import net.buildtheearth.terrabungee.controller.command.discord.DiscordRefreshSlashCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordRemoveBotCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordRemoveGuildCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.AddStaticCommand;
@@ -86,6 +87,7 @@ public class CommandManager implements Module {
         register(new DiscordConfigureGuildCommand());
         register(new DiscordRemoveGuildCommand());
         register(new DiscordListGuildsCommand());
+        register(new DiscordRefreshSlashCommand());
     }
 
     @Override
