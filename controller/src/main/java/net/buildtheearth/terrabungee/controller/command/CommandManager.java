@@ -20,6 +20,7 @@ import net.buildtheearth.terrabungee.controller.command.instance.AddStaticComman
 import net.buildtheearth.terrabungee.controller.command.instance.DefaultServerCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.ListStaticCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.RemoveStaticCommand;
+import net.buildtheearth.terrabungee.controller.command.security.ReloadWhitelistCommand;
 import net.buildtheearth.terrabungee.controller.command.storage.LoadAllCommand;
 import net.buildtheearth.terrabungee.controller.command.storage.SaveAllCommand;
 import net.buildtheearth.terrabungee.controller.modules.Module;
@@ -88,6 +89,7 @@ public class CommandManager implements Module {
         register(new DiscordRemoveGuildCommand());
         register(new DiscordListGuildsCommand());
         register(new DiscordRefreshSlashCommand());
+        register(new ReloadWhitelistCommand());
     }
 
     @Override

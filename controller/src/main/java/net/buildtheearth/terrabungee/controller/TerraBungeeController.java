@@ -18,6 +18,7 @@ import net.buildtheearth.terrabungee.controller.modules.ModuleHandler;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.network.WSServer;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
+import net.buildtheearth.terrabungee.controller.security.SecurityManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.buildtheearth.terrabungee.controller.util.LoggerContextUtil;
@@ -82,7 +83,7 @@ public class TerraBungeeController extends TerraBungee {
         pluginManager.loadPlugins();
         pluginManager.enablePlugins();
 
-        ModuleHandler.getInstance().registerModules(InstanceManager.getInstance(), ServiceManager.getInstance(), PlayerManager.getInstance(), NetworkManager.getInstance(), DiscordManager.getInstance(), CommandManager.getInstance());
+        ModuleHandler.getInstance().registerModules(SecurityManager.getInstance(), InstanceManager.getInstance(), ServiceManager.getInstance(), PlayerManager.getInstance(), NetworkManager.getInstance(), DiscordManager.getInstance(), CommandManager.getInstance());
         ModuleHandler.getInstance().enableAll();
 
         server = new WSServer(new InetSocketAddress(ConfigHandler.host, ConfigHandler.port));

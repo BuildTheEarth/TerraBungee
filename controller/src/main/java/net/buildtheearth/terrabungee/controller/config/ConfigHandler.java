@@ -59,11 +59,6 @@ public class ConfigHandler {
     public static String sqlDb;
     public static boolean localEnabled;
 
-    //TODO: God no
-    public static String botToken = "";
-    public static String guildID;
-    public static String channelID;
-
     @Getter
     private Map<String, Storage> storageMap = Maps.newHashMap();
 
@@ -107,13 +102,6 @@ public class ConfigHandler {
         sqlPassword = config.getString(prop("Password"), category, "", "The password for the database.");
         sqlDb = config.getString(prop("Database"), category, "", "The name of the database.");
         localEnabled = config.getBoolean(prop("Local Storage"), category, false, "Should data be stored locally as well");
-
-        order();
-
-        cat("Discord", "Settings for the discord bot");
-        botToken = config.getString(prop("Bot Token"), category, "", "The token of the discord bot.");
-        guildID = config.getString(prop("Guild ID"), category, "", "The ID of the Discord Guild/Server that the bot should listen on.");
-        channelID = config.getString(prop("Updates Channel ID"), category, "", "The ID of the Discord channel where TerraBungee updates should be sent.");
 
         order();
         if (config.hasChanged()) {

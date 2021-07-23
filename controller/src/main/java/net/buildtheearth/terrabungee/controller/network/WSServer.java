@@ -1,5 +1,6 @@
 package net.buildtheearth.terrabungee.controller.network;
 
+import net.buildtheearth.terrabungee.controller.security.SecurityManager;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -17,7 +18,9 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-
+        if(!SecurityManager.getInstance().verifyConnection(conn.getRemoteSocketAddress())) {
+            conn.close();
+        }
     }
 
     @Override
@@ -27,6 +30,10 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
+        if(!SecurityManager.getInstance().verifyConnection(conn.getRemoteSocketAddress())) {
+            conn.close();
+            return;
+        }
         NetworkManager.getInstance().onIncomingPayload(conn, message);
     }
 
