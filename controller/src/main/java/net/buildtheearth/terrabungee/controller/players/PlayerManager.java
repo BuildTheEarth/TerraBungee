@@ -275,9 +275,6 @@ public class PlayerManager implements Module {
     public void onEnable() {
         Gson punishmentGson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer()).create();
         punishments.setGson(punishmentGson);
-        TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
-            //ban(UUID.randomUUID(), UUID.fromString("4cfa7dc1-3021-42b0-969b-224a9656cc6d"), null, "Ahhddddhaha");
-        }, 5, TimeUnit.SECONDS);
         punishments.onLoadEvent(this::updatePunishmentCache);
         punishments.onSaveEvent(this::updatePunishmentCache);
     }
