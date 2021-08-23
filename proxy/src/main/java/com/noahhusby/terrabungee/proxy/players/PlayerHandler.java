@@ -5,6 +5,7 @@
 
 package com.noahhusby.terrabungee.proxy.players;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -23,6 +24,7 @@ import net.md_5.bungee.api.scheduler.TaskScheduler;
 
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -59,6 +61,10 @@ public class PlayerHandler {
     @Getter
     @Setter
     private Map<UUID, Punishment> muteCache = Maps.newHashMap();
+
+    @Getter
+    @Setter
+    private List<String> onlinePlayerNames = Lists.newArrayList();
 
     public BaseComponent getBanDisconnectMessage(Punishment punishment) {
         TextComponent kickMessage;

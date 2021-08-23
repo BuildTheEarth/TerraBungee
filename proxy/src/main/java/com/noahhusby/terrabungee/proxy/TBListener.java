@@ -5,10 +5,14 @@
 
 package com.noahhusby.terrabungee.proxy;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
 import com.noahhusby.terrabungee.proxy.util.ProxyUtil;
 import net.buildtheearth.terrabungee.client.events.EventListener;
+import net.buildtheearth.terrabungee.client.events.player.OnlineCacheHitEvent;
 import net.buildtheearth.terrabungee.client.events.service.InstanceUpdateEvent;
+import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.Instance;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -51,6 +55,15 @@ public class TBListener extends EventListener {
             }
             ProxyUtil.removeServer(s.getKey());
         }
+    }
+
+    @Override
+    public void onOnlineCacheHit(OnlineCacheHitEvent event) {
+        List<String> playerNames = Lists.newArrayList();
+        for(TBPlayer player : event.getPlayers()) {
+            playerNames.add(player.getName());
+        }
+        PlayerHandler.getInstance().setOnlinePlayerNames(playerNames);
     }
 }
 

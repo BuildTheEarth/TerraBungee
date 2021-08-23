@@ -5,10 +5,12 @@
 
 package com.noahhusby.terrabungee.proxy;
 
+import com.noahhusby.terrabungee.proxy.commands.FindCommand;
 import com.noahhusby.terrabungee.proxy.commands.GBanCommand;
 import com.noahhusby.terrabungee.proxy.commands.GKickCommand;
 import com.noahhusby.terrabungee.proxy.commands.GMuteCommand;
 import com.noahhusby.terrabungee.proxy.commands.PunishmentCommand;
+import com.noahhusby.terrabungee.proxy.commands.ServerCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
 import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
 import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
@@ -30,6 +32,7 @@ import net.md_5.bungee.event.EventHandler;
 import java.util.logging.Logger;
 
 public class TerraBungeeProxy extends Plugin implements Listener {
+    @Getter
     private static TerraBungeeProxy instance = null;
     @Getter
     private TerraBungeeClient terraBungee;
@@ -54,9 +57,11 @@ public class TerraBungeeProxy extends Plugin implements Listener {
         terraBungee.getNetworkManager().register(new C2PMuteCachePacket());
         terraBungee.addListener(new TBListener());
 
+        getProxy().getPluginManager().registerCommand(this, new FindCommand());
         getProxy().getPluginManager().registerCommand(this, new GBanCommand());
         getProxy().getPluginManager().registerCommand(this, new GKickCommand());
         getProxy().getPluginManager().registerCommand(this, new GMuteCommand());
+        getProxy().getPluginManager().registerCommand(this, new ServerCommand());
         getProxy().getPluginManager().registerCommand(this, new PunishmentCommand());
         getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
         getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
@@ -76,9 +81,5 @@ public class TerraBungeeProxy extends Plugin implements Listener {
         ProxyServer.getInstance().getScheduler().cancel(this);
         instance = null;
         terraBungee.discard();
-    }
-
-    public static TerraBungeeProxy getInstance() {
-        return instance;
     }
 }
