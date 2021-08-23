@@ -41,7 +41,7 @@ public class FindCommand extends Command implements TabExecutor {
                sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, tbPlayer.getName(), " is not online!"));
                return;
            }
-           sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, tbPlayer.getName(), ChatColor.GRAY, " is currently on proxy ", ChatColor.BLUE, tbPlayer.getProxy(), ChatColor.GRAY, " on server ", tbPlayer.getServer()));
+           sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, tbPlayer.getName(), ChatColor.GRAY, " is currently on proxy ", ChatColor.BLUE, tbPlayer.getProxy(), ChatColor.GRAY, " on server ", ChatColor.RED, tbPlayer.getServer()));
            return;
         });
     }
