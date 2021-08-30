@@ -110,7 +110,7 @@ public class TerraBungeeController extends TerraBungee {
 
     @Override
     public String getVersion() {
-        return Constants.VERSION;
+        return Constants.VERSION.toString();
     }
 
     @Override

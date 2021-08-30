@@ -10,6 +10,7 @@ import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.client.network.IS2CPacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
+import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
 
 public class S2CKeepAlivePacket implements IS2CPacket {
     @Override
@@ -20,6 +21,7 @@ public class S2CKeepAlivePacket implements IS2CPacket {
     @Override
     public void getMessage(TerraBungeeClient instance, JsonObject data) {
         data.addProperty("type", instance.getServiceType().name());
+        data.add("version", TerraBungeeUtil.GSON.toJsonTree(Constants.VERSION));
         data.add("intents", TerraBungeeUtil.intentsToArray(instance.getIntents()));
     }
 }

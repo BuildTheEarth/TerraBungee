@@ -3,6 +3,7 @@ package net.buildtheearth.terrabungee.controller.services;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
+import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
 import net.buildtheearth.terrabungee.common.services.Custom;
 import net.buildtheearth.terrabungee.common.services.Proxy;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
@@ -101,9 +102,10 @@ public class ServiceManager implements Module {
      * @param client  The websocket client
      * @param intents The intents
      */
-    public void initService(ServiceType type, String ID, WebSocket client, List<ServiceIntent> intents) {
+    public void initService(ServiceType type, String ID, TerraBungeeVersion version, WebSocket client, List<ServiceIntent> intents) {
         if (getService(ID) != null) {
             getService(ID).setIntents(intents);
+            getService(ID).setVersion(version);
             getService(ID).setClient(client);
             getService(ID).setStatus(ServiceStatus.ONLINE);
             //TODO: Remove this manual caching method
@@ -120,6 +122,7 @@ public class ServiceManager implements Module {
             return;
         }
 
+        service.setVersion(version);
         service.setStatus(ServiceStatus.ONLINE);
         service.setClient(client);
         service.setIntents(intents);

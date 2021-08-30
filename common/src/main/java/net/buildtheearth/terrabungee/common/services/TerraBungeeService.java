@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import net.buildtheearth.terrabungee.common.Constants;
+import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,10 @@ public abstract class TerraBungeeService {
     @Getter
     @Setter
     private List<ServiceIntent> intents = new ArrayList<>();
+
+    @Getter
+    @Setter
+    private TerraBungeeVersion version;
 
     public TerraBungeeService(@NonNull String Id) {
         this.Id = Id;
