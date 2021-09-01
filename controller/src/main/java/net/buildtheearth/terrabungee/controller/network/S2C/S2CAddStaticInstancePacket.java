@@ -27,9 +27,9 @@ public class S2CAddStaticInstancePacket implements IS2CPacket {
         }
 
         response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.SUCCESS);
-        TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, servicePacket.getID() + " created new static instance ",
+        TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, servicePacket.getId() + " created new static instance ",
                 ConsoleColor.BLUE, data.get("id").getAsString(), ConsoleColor.GREEN, " with address ",
                 ConsoleColor.BLUE, data.get("address").getAsString());
-        InstanceManager.getInstance().addStaticInstance(ServiceManager.getInstance().getService(servicePacket.getID()), data.get("id").getAsString(), data.get("address").getAsString());
+        InstanceManager.getInstance().addStaticInstance(ServiceManager.getInstance().getService(servicePacket.getId()), data.get("id").getAsString(), data.get("address").getAsString());
     }
 }

@@ -86,7 +86,7 @@ public class NetworkManager implements INetworkManager, Module {
 
         JsonObject payload = new JsonObject();
         payload.addProperty("type", packet.getID());
-        payload.addProperty("id", servicePacket.getID());
+        payload.addProperty("id", servicePacket.getId());
 
         JsonObject packetData = new JsonObject();
         packet.getMessage(packetData);

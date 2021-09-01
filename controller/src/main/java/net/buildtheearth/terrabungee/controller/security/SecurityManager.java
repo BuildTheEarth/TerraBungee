@@ -26,10 +26,9 @@ public class SecurityManager implements Module {
 
     public void loadWhitelist() {
         List<String> tempWhitelist = Lists.newArrayList();
-        BufferedReader br = null;
         try {
             String strLine;
-            br = new BufferedReader(new FileReader(whitelistFile));
+            BufferedReader br = new BufferedReader(new FileReader(whitelistFile));
           while((strLine = br.readLine()) != null) {
               tempWhitelist.add(strLine);
           }
