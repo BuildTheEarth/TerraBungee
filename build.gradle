@@ -23,7 +23,7 @@ allprojects {
         hikariVersion = "4.0.3"
     }
 
-    group "net.buildtheearth"
+    group "net.buildtheearth.terrabungee"
     version "$tbVersion"
 
     tasks.withType(JavaCompile) {
@@ -59,23 +59,23 @@ allprojects {
     }
 
     publishing {
-        repositories {
-            if (project.hasProperty("noahhusbyMavenUsername") && project.hasProperty("noahhusbyMavenPassword")) {
-                maven {
-                    credentials {
-                        username = "$noahhusbyMavenUsername"
-                        password = "$noahhusbyMavenPassword"
-                    }
-
-                    name = "buildtheearth"
-                    url = "https://maven.noahhusby.com/repository/buildtheearth/"
-                }
+        publications {
+            maven(MavenPublication) {
+                from components.java
+                artifact shadowJar
             }
         }
-    }
 
-    if (project.name.contains("api") || project.name.contains("client") || project.name.contains("common")) {
-        publish.dependsOn(publishToMavenLocal)
+        repositories {
+            maven {
+                url "https://maven.pkg.jetbrains.space/buildtheearth/p/terrabungee/maven"
+                credentials {
+                    username = "$System.env.JB_SPACE_CLIENT_ID"
+                    password = "$System.env.JB_SPACE_CLIENT_SECRET"
+                }
+            }
+
+        }
     }
 
     shadowJar{
