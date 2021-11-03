@@ -85,7 +85,6 @@ allprojects {
 
     jar {
         archiveName = "TerraBungee-${baseName}-${version}.jar"
-        enabled = false
     }
     jar.finalizedBy shadowJar
 }
