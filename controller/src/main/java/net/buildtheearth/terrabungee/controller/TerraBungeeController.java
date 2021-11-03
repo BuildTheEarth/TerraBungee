@@ -67,6 +67,7 @@ public class TerraBungeeController extends TerraBungee {
         LoggerContextUtil.setLevel("org.eclipse", Level.WARN);
         LoggerContextUtil.setLevel("net.dv8tion.jda", Level.WARN);
         LoggerContextUtil.setLevel("com.zaxxer.hikari.HikariConfig", Level.INFO);
+        LoggerContextUtil.setLevel("com.zaxxer.hikari.pool.PoolBase", Level.INFO);
         LoggerContextUtil.setLevel("com.zaxxer.hikari.pool.HikariPool", Level.INFO);
         LoggerContextUtil.setLevel("com.zaxxer.hikari.util.DriverDataSource", Level.INFO);
 
