@@ -21,6 +21,6 @@ public class S2CServiceMessagePacket implements IS2CPacket {
         if (ServiceManager.getInstance().getService(to) == null) {
             return;
         }
-        NetworkManager.getInstance().send(new C2SServiceMessagePacket(servicePacket.getID(), to, data.get("message").getAsString()));
+        NetworkManager.getInstance().send(new C2SServiceMessagePacket(servicePacket.getId(), to, data.get("message").getAsString()));
     }
 }

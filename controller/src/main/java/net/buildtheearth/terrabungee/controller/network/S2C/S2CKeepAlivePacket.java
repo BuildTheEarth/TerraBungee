@@ -6,6 +6,7 @@ import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
+import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SKeepAlivePacket;
@@ -24,10 +25,11 @@ public class S2CKeepAlivePacket implements IS2CPacket {
     public void onMessage(ServicePacket servicePacket, JsonObject data, Response response) {
         ServiceType type = ServiceType.valueOf(data.get("type").getAsString());
         List<ServiceIntent> intents = TerraBungeeUtil.arrayToIntents(data.get("intents").getAsJsonArray());
-        ServiceManager.getInstance().initService(type, servicePacket.getID(), servicePacket.getClient(), intents);
-        ServiceManager.getInstance().getService(servicePacket.getID()).keepAlive();
+        TerraBungeeVersion version = TerraBungeeUtil.GSON.fromJson(data.get("version"), TerraBungeeVersion.class);
+        ServiceManager.getInstance().initService(type, servicePacket.getId(), version, servicePacket.getClient(), intents);
+        ServiceManager.getInstance().getService(servicePacket.getId()).keepAlive();
 
         response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.SUCCESS);
-        NetworkManager.getInstance().send(new C2SKeepAlivePacket(ServiceManager.getInstance().getService(servicePacket.getID())));
+        NetworkManager.getInstance().send(new C2SKeepAlivePacket(ServiceManager.getInstance().getService(servicePacket.getId())));
     }
 }

@@ -28,11 +28,11 @@ public class P2CUpdatePlayersPacket implements IS2CPacket {
             ControllerPlayer player = new ControllerPlayer(UUID.fromString(pl.get("uuid").getAsString()));
             player.setServer(pl.get("server").getAsString());
             player.setName(pl.get("name").getAsString());
-            player.setProxy(servicePacket.getID());
+            player.setProxy(servicePacket.getId());
             player.setOnline(true);
             players.add(player);
         }
 
-        PlayerManager.getInstance().proxyPlayerDrop(servicePacket.getID(), players);
+        PlayerManager.getInstance().proxyPlayerDrop(servicePacket.getId(), players);
     }
 }

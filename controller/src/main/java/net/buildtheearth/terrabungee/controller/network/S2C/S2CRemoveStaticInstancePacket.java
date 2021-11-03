@@ -21,8 +21,8 @@ public class S2CRemoveStaticInstancePacket implements IS2CPacket {
     public void onMessage(ServicePacket servicePacket, JsonObject data, Response response) {
         for (Instance i : InstanceManager.getInstance().getInstances()) {
             if (i.getId().equalsIgnoreCase(data.get("id").getAsString())) {
-                InstanceManager.getInstance().removeStaticInstance(ServiceManager.getInstance().getService(servicePacket.getID()), data.get("id").getAsString());
-                TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, servicePacket.getID() + " removed static instance ",
+                InstanceManager.getInstance().removeStaticInstance(ServiceManager.getInstance().getService(servicePacket.getId()), data.get("id").getAsString());
+                TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, servicePacket.getId() + " removed static instance ",
                         ConsoleColor.BLUE, data.get("id").getAsString());
                 response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.SUCCESS);
                 return;

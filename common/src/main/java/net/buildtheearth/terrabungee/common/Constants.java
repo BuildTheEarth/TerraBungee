@@ -1,17 +1,21 @@
 package net.buildtheearth.terrabungee.common;
 
+import net.buildtheearth.terrabungee.common.exceptions.VersionParseException;
+
 import java.util.Properties;
 
 /**
  * @author Noah Husby
  */
 public class Constants {
-    public static final String VERSION;
+    public static final TerraBungeeVersion VERSION;
 
     static {
-        String ver = "[Development Build]";
-        if (Constants.class.getPackage() != null) {
-            ver = Constants.class.getPackage().getImplementationVersion();
+        TerraBungeeVersion ver;
+        try {
+            ver = new TerraBungeeVersion(Constants.class.getPackage().getImplementationVersion());
+        } catch (VersionParseException exception) {
+            ver = new TerraBungeeVersion(0, 0, 0, true);
         }
         VERSION = ver;
     }

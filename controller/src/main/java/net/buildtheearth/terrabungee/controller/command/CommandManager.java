@@ -6,6 +6,7 @@ import net.buildtheearth.terrabungee.controller.command.controller.HelpCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.MigrateCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.ReloadCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.StopCommand;
+import net.buildtheearth.terrabungee.controller.command.controller.VersionCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordConfigureBotCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordConfigureGuildCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordCreateBotCommand;
@@ -90,6 +91,7 @@ public class CommandManager implements Module {
         register(new DiscordListGuildsCommand());
         register(new DiscordRefreshSlashCommand());
         register(new ReloadWhitelistCommand());
+        register(new VersionCommand());
     }
 
     @Override
