@@ -15,6 +15,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -52,7 +53,7 @@ public class ProxyListener implements Listener {
             if (mute.getEnd() == null) {
                 player.sendMessage(ChatUtil.combine(ChatColor.RED, "You have been muted permanently", ChatColor.GRAY, " for ", ChatColor.YELLOW, mute.getReason()));
             } else {
-                player.sendMessage(ChatUtil.combine(ChatColor.RED, "You have been muted for ", ChatColor.RESET, DateUtil.getExpandedTimeMessage(mute.getEnd().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - new Date().getTime()), ChatColor.GRAY, " for ", ChatColor.YELLOW, mute.getReason()));
+                player.sendMessage(ChatUtil.combine(ChatColor.RED, "You have been muted for ", ChatColor.RESET, DateUtil.getExpandedTimeMessage(LocalDateTime.parse(mute.getEnd()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - new Date().getTime()), ChatColor.GRAY, " for ", ChatColor.YELLOW, mute.getReason()));
             }
             player.sendMessage(ChatUtil.combine(ChatColor.GRAY, "Punishment ID: ", mute.getId()));
             player.sendMessage();

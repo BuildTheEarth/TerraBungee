@@ -27,6 +27,10 @@ public class C2PMuteCachePacket implements IC2SPacket {
     public void onMessage(TerraBungeeClient instance, JsonObject data) {
         List<Punishment> mutes = TerraBungeeUtil.GSON.fromJson(data.get("mutes"), new TypeToken<List<Punishment>>() {}.getType());
         Map<UUID, Punishment> activeMutes = Maps.newHashMap();
+
+        if(mutes == null)
+            return;
+
         for (Punishment mute : mutes) {
             activeMutes.put(mute.getPlayer(), mute);
         }

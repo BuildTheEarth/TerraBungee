@@ -31,10 +31,10 @@ public class Punishment {
     private UUID player;
     @Expose
     @SerializedName("Start")
-    private LocalDateTime start;
+    private String start;
     @Expose
     @SerializedName("End")
-    private LocalDateTime end;
+    private String end;
     @Expose
     @SerializedName("Reason")
     private String reason;
@@ -44,7 +44,7 @@ public class Punishment {
 
     public boolean isActive() {
         try {
-            return end == null || LocalDateTime.now().isBefore(end);
+            return end == null || LocalDateTime.now().isBefore(LocalDateTime.parse(end));
         } catch (Exception ignored) {
             return false;
         }

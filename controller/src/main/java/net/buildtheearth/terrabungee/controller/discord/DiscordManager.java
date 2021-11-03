@@ -15,7 +15,10 @@ import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordButtonC
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.punishments.PunishmentsDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.setup.SetupDiscordCommand;
+import net.buildtheearth.terrabungee.controller.discord.commands.util.ListDiscordCommand;
+import net.buildtheearth.terrabungee.controller.discord.commands.util.MsgDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.util.PingDiscordCommand;
+import net.buildtheearth.terrabungee.controller.discord.commands.util.ReviewDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.util.StatusDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStoppedEmbed;
 import net.buildtheearth.terrabungee.controller.modules.Module;
@@ -62,7 +65,10 @@ public class DiscordManager implements Module {
                 new PunishmentsDiscordCommand(),
                 new SetupDiscordCommand(),
                 new PingDiscordCommand(),
-                new StatusDiscordCommand()
+                new StatusDiscordCommand(),
+                new ReviewDiscordCommand(),
+                new ListDiscordCommand(),
+                new MsgDiscordCommand()
         );
         botConfigs.onLoadEvent(() -> TerraBungeeController.getInstance().getGeneralThreads().submit(() -> {
             startBots();

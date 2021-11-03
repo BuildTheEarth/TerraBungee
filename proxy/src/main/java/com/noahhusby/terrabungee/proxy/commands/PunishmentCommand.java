@@ -25,6 +25,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,8 +89,8 @@ public class PunishmentCommand extends Command {
                     TerraBungeeProxy.getInstance().getTerraBungee().getPlayer(punishment.getStaff()).thenAccept(staffPlayer -> {
                         BaseComponent[] hoverMessage = new ComponentBuilder("")
                                 .append(ChatUtil.combine(ChatColor.GRAY, "Reason: ", ChatColor.WHITE, punishment.getReason(), "\n"))
-                                .append(ChatUtil.combine(ChatColor.GRAY, "Start: ", ChatColor.WHITE, ProxyUtil.toReadableTime(punishment.getStart()), "\n"))
-                                .append(ChatUtil.combine(ChatColor.GRAY, "End: ", ChatColor.WHITE, punishment.getEnd() == null ? "None" : ProxyUtil.toReadableTime(punishment.getEnd()), "\n"))
+                                .append(ChatUtil.combine(ChatColor.GRAY, "Start: ", ChatColor.WHITE, ProxyUtil.toReadableTime(LocalDateTime.parse(punishment.getStart())), "\n"))
+                                .append(ChatUtil.combine(ChatColor.GRAY, "End: ", ChatColor.WHITE, punishment.getEnd() == null ? "None" : ProxyUtil.toReadableTime(LocalDateTime.parse(punishment.getEnd())), "\n"))
                                 .append(ChatUtil.combine(ChatColor.GRAY, "Staff: ", ChatColor.WHITE, staffPlayer == null ? "Unknown" : staffPlayer.getName()))
                                 .create();
                         punishmentMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverMessage));
@@ -166,8 +167,8 @@ public class PunishmentCommand extends Command {
                 data.addProperty("length", length);
                 edit(staff, args[1], PunishmentEditAction.END, data).thenAccept(a -> {
                     if (a) {
-                        sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, "Successfully changed the end date from ", ChatColor.YELLOW, punishment.getEnd() == null ? "None" : ProxyUtil.toReadableTime(punishment.getEnd()), ChatColor.GRAY, " to ",
-                                ChatColor.YELLOW, ProxyUtil.toReadableTime(punishment.getStart().plusSeconds(length == 0 ? 0 : length / 1000))));
+                        sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, "Successfully changed the end date from ", ChatColor.YELLOW, punishment.getEnd() == null ? "None" : ProxyUtil.toReadableTime(LocalDateTime.parse(punishment.getEnd())), ChatColor.GRAY, " to ",
+                                ChatColor.YELLOW, ProxyUtil.toReadableTime(LocalDateTime.parse(punishment.getStart()).plusSeconds(length == 0 ? 0 : length / 1000))));
                     } else {
                         sender.sendMessage(ChatUtil.getNoContact());
                     }
@@ -224,8 +225,8 @@ public class PunishmentCommand extends Command {
             inspectMessage.addExtra(ChatUtil.combine(ChatColor.YELLOW, "Reason: ", ChatColor.WHITE, punishment.getReason(), "\n\n"));
 
             inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "Staff: ", ChatColor.WHITE, response.getData().get("staffName").getAsString(), "\n"));
-            inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "Start: ", ChatColor.WHITE, ProxyUtil.toReadableTime(punishment.getStart()), "\n"));
-            inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "End: ", ChatColor.WHITE, punishment.getEnd() == null ? "None" : ProxyUtil.toReadableTime(punishment.getEnd()), "\n\n"));
+            inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "Start: ", ChatColor.WHITE, ProxyUtil.toReadableTime(LocalDateTime.parse(punishment.getStart())), "\n"));
+            inspectMessage.addExtra(ChatUtil.combine(ChatColor.BLUE, "End: ", ChatColor.WHITE, punishment.getEnd() == null ? "None" : ProxyUtil.toReadableTime(LocalDateTime.parse(punishment.getEnd())), "\n\n"));
 
             inspectMessage.addExtra(ChatUtil.combine(ChatColor.RED, "History:\n"));
             for (PunishmentHistory history : punishment.getHistory()) {

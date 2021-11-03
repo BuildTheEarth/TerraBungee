@@ -26,24 +26,31 @@ public class DiscordListener extends ListenerAdapter {
             return;
         }
 
+
         UserPermission permission = UserPermission.NONE;
         GuildConfig config = DiscordManager.getInstance().getConfigByGuild(e.getGuild());
         Member m = e.getMember();
 
-        boolean hasPerms = false;
+
         if (m == null) {
             return;
         }
-        for(Role r : m.getRoles()) {
-            if(config.getStaffRoles().contains(r.getIdLong()) || adminLongs.contains(m.getIdLong())) {
-                hasPerms = true;
-                break;
+
+        if(!e.getName().equalsIgnoreCase("list")
+        && !e.getName().equalsIgnoreCase("review")){
+            boolean hasPerms = false;
+            for(Role r : m.getRoles()) {
+                if(config.getStaffRoles().contains(r.getIdLong()) || adminLongs.contains(m.getIdLong())) {
+                    hasPerms = true;
+                    break;
+                }
+            }
+            if(!hasPerms) {
+                e.reply("You don't have permission to run this command!").setEphemeral(true).submit();
+                return;
             }
         }
-        if(!hasPerms) {
-            e.reply("You don't have permission to run this command!").setEphemeral(true).submit();
-            return;
-        }
+
         DiscordManager.getInstance().executeSlashCommand(e.getName(), permission, e.getUser(), e.getTimeCreated(), e);
     }
 

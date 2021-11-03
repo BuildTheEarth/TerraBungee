@@ -144,7 +144,7 @@ public class PlayerManager implements Module {
      */
     public void ban(@NonNull UUID staff, @NonNull UUID player, LocalDateTime end, @NonNull String reason) {
         int punishmentId = generatePunishmentId();
-        Punishment punishment = new Punishment(punishmentId, Punishment.Type.BAN, staff, player, LocalDateTime.now(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.BAN, staff, player, LocalDateTime.now().toString(), end.toString(), reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
         TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
@@ -163,7 +163,7 @@ public class PlayerManager implements Module {
      */
     public void mute(@NonNull UUID staff, @NonNull UUID player, LocalDateTime end, @NonNull String reason) {
         int punishmentId = generatePunishmentId();
-        Punishment punishment = new Punishment(punishmentId, Punishment.Type.MUTE, staff, player, LocalDateTime.now(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.MUTE, staff, player, LocalDateTime.now().toString(), end.toString(), reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
         pushMuteCache();
@@ -181,7 +181,7 @@ public class PlayerManager implements Module {
             return;
         }
         int punishmentId = generatePunishmentId();
-        Punishment punishment = new Punishment(punishmentId, Punishment.Type.KICK, staff, player, LocalDateTime.now(), LocalDateTime.now(), reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.KICK, staff, player, LocalDateTime.now().toString(), LocalDateTime.now().toString(), reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
         TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
@@ -207,9 +207,9 @@ public class PlayerManager implements Module {
             long length = data.get("length").getAsLong();
             JsonObject historyData = new JsonObject();
             historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
-            LocalDateTime end = punishment.getStart().plusSeconds(length == 0 ? 0 : length / 1000);
+            LocalDateTime end = LocalDateTime.parse(punishment.getStart()).plusSeconds(length == 0 ? 0 : length / 1000);
             historyData.addProperty("new", end.toString());
-            punishment.setEnd(end);
+            punishment.setEnd(end.toString());
             punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.EDIT_TIME, LocalDateTime.now(), historyData));
         } else if (action == PunishmentEditAction.DEACTIVATE) {
             if (punishment.isActive()) {
@@ -217,7 +217,7 @@ public class PlayerManager implements Module {
                 historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
                 LocalDateTime end = LocalDateTime.now();
                 historyData.addProperty("new", end.toString());
-                punishment.setEnd(end);
+                punishment.setEnd(end.toString());
                 punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.DEACTIVATE, LocalDateTime.now(), historyData));
             }
         }
