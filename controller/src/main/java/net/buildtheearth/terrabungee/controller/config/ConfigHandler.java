@@ -11,7 +11,9 @@ import com.noahhusby.lib.data.storage.StorageList;
 import com.noahhusby.lib.data.storage.StorageTreeMap;
 import com.noahhusby.lib.data.storage.handlers.LocalStorageHandler;
 import com.noahhusby.lib.data.storage.handlers.SQLStorageHandler;
+import lombok.Cleanup;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
@@ -86,6 +88,7 @@ public class ConfigHandler {
     /**
      * Reloads all data/data fields. Called upon startup or reload
      */
+    @SneakyThrows
     public void loadData() {
         config.load();
 
@@ -109,15 +112,15 @@ public class ConfigHandler {
         }
 
         Storage playerData = PlayerManager.getInstance().getPlayers();
-        playerData.destroy();
+        playerData.close();
         ((StorageHashMap) playerData).clear();
 
         Storage punishmentData = PlayerManager.getInstance().getPunishments();
-        punishmentData.destroy();
+        punishmentData.close();
         ((StorageHashMap) playerData).clear();
 
         Storage staticInstanceData = InstanceManager.getInstance().getStaticInstances();
-        staticInstanceData.destroy();
+        staticInstanceData.close();
         ((StorageTreeMap) staticInstanceData).clear();
 
         Storage discordGuildConfigData = DiscordManager.getInstance().getGuildConfigs();

@@ -76,7 +76,7 @@ allprojects {
         }
     }
 
-    shadowJar{
+    shadowJar {
         archiveFileName = "TerraBungee-${baseName}-${version}.jar"
         manifest {
             attributes( 'Implementation-Version': "${version}" )

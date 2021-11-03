@@ -1,4 +1,5 @@
 dependencies {
+    implementation "com.noahhusby.lib:data:$husbyVersion"
     compileOnly "com.google.code.gson:gson:$gsonVersion"
     compileOnly "com.google.guava:guava:$guavaVersion"
     compileOnly "org.yaml:snakeyaml:$snakeYamlVersion"

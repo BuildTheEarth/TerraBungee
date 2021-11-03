@@ -1,6 +1,6 @@
 dependencies {
     implementation project(":api")
-    implementation "com.noahhusby.lib:all:$husbyVersion"
+    implementation "com.noahhusby.lib:data:$husbyVersion"
     implementation "org.yaml:snakeyaml:$snakeYamlVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.google.guava:guava:$guavaVersion"
@@ -15,11 +15,7 @@ dependencies {
 }
 
 repositories {
-    mavenCentral() // for transitive dependencies
-    maven {
-        name 'm2-dv8tion'
-        url 'https://m2.dv8tion.net/releases'
-    }
+    maven { url 'https://m2.dv8tion.net/releases'}
 }
 
 jar {
