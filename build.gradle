@@ -82,9 +82,4 @@ allprojects {
             attributes( 'Implementation-Version': "${version}" )
         }
     }
-
-    jar {
-        archiveName = "TerraBungee-${baseName}-${version}.jar"
-    }
-    jar.finalizedBy shadowJar
 }
