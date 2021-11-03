@@ -49,6 +49,33 @@ allprojects {
         testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
     }
 
+    if(project.name.equalsIgnoreCase("api") || project.name.equalsIgnoreCase("common") || project.name.equalsIgnoreCase("client")) {
+        publishing {
+            repositories {
+                if (System.getenv("MAVEN_USERNAME") != null && System.getenv("MAVEN_PASSWORD")) {
+                    maven {
+                        credentials {
+                            username = System.getenv("MAVEN_USERNAME")
+                            password = System.getenv("MAVEN_PASSWORD")
+                        }
+                        name = "BuildTheEarth"
+                        url = "https://maven.dev.buildtheearth.net/releases"
+                    }
+                }
+            }
+
+            publications {
+                maven(MavenPublication) {
+                    groupId = "net.buildtheearth.terrabungee"
+                    artifactId = project.name
+                    version = project.version
+
+                    from components.java
+                }
+            }
+        }
+    }
+
     shadowJar{
         archiveFileName = "TerraBungee-${baseName}-${version}.jar"
         manifest {
