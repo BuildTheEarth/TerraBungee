@@ -1,7 +1,5 @@
 dependencies {
-    implementation "com.noahhusby.lib:data:$husbyVersion"
-    compileOnly "com.google.code.gson:gson:$gsonVersion"
-    compileOnly "com.google.guava:guava:$guavaVersion"
-    compileOnly "org.yaml:snakeyaml:$snakeYamlVersion"
-    compileOnly "org.java-websocket:Java-WebSocket:$websocketVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "org.yaml:snakeyaml:$snakeYamlVersion"
+    implementation "org.java-websocket:Java-WebSocket:$websocketVersion"
 }

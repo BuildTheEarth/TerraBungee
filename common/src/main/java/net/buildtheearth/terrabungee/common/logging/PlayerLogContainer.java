@@ -1,11 +1,11 @@
 package net.buildtheearth.terrabungee.common.logging;
 
-import com.google.common.collect.Lists;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,5 +17,5 @@ public class PlayerLogContainer {
     private final UUID uuid;
     @Expose
     @SerializedName("Entries")
-    private List<LogEntry> entries = Lists.newArrayList();
+    private List<LogEntry> entries = new ArrayList<>();
 }

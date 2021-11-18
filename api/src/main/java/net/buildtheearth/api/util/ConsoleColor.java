@@ -1,5 +1,8 @@
 package net.buildtheearth.api.util;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public enum ConsoleColor {
     //Color end string, color reset
     RESET("\033[0m"),
@@ -35,10 +38,6 @@ public enum ConsoleColor {
     WHITE_UNDERLINED("\033[4;37m");     // WHITE
 
     private final String code;
-
-    ConsoleColor(String code) {
-        this.code = code;
-    }
 
     @Override
     public String toString() {

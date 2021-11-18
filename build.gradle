@@ -4,6 +4,7 @@ plugins {
 
 allprojects {
     apply plugin: "java"
+    apply plugin: "java-library"
     apply plugin: "maven-publish"
     apply plugin: "com.github.johnrengelman.shadow"
 
@@ -40,7 +41,7 @@ allprojects {
 
     dependencies {
         if (!("common".equalsIgnoreCase(project.name))) {
-            implementation project(":common")
+            api project(":common")
         }
 
         compileOnly "org.projectlombok:lombok:$lombokVersion"
