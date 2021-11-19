@@ -25,13 +25,13 @@ public class TerraBungeeVersion implements Comparable<TerraBungeeVersion> {
     }
 
     public TerraBungeeVersion(String version) throws VersionParseException {
-        if(version == null) {
+        if (version == null) {
             majorVersion = minorVersion = buildVersion = 0;
             isDevBuild = true;
             return;
         }
         String[] versions = version.split("\\.");
-        if(versions.length < 3) {
+        if (versions.length < 3) {
             throw new VersionParseException(String.format("Invalid version input: %s", version));
         }
         try {
@@ -51,7 +51,7 @@ public class TerraBungeeVersion implements Comparable<TerraBungeeVersion> {
 
     @Override
     public boolean equals(Object other) {
-        if(!(other instanceof TerraBungeeVersion)) {
+        if (!(other instanceof TerraBungeeVersion)) {
             return false;
         }
         return this.compareTo((TerraBungeeVersion) other) == 0;
@@ -59,25 +59,25 @@ public class TerraBungeeVersion implements Comparable<TerraBungeeVersion> {
 
     @Override
     public int compareTo(TerraBungeeVersion other) {
-        if(other == null) {
+        if (other == null) {
             return Integer.MAX_VALUE;
         }
 
-        if(this.isDevBuild() && other.isDevBuild()) {
+        if (this.isDevBuild() && other.isDevBuild()) {
             return 0;
-        } else if(this.isDevBuild) {
+        } else if (this.isDevBuild) {
             return Integer.MAX_VALUE;
-        } else if(other.isDevBuild) {
+        } else if (other.isDevBuild) {
             return Integer.MIN_VALUE;
         }
 
         int majorCompare = this.majorVersion - other.majorVersion;
-        if(majorCompare != 0) {
+        if (majorCompare != 0) {
             return majorCompare;
         }
 
         int minorCompare = this.minorVersion - other.minorVersion;
-        if(minorCompare != 0) {
+        if (minorCompare != 0) {
             return minorCompare;
         }
 
@@ -87,7 +87,7 @@ public class TerraBungeeVersion implements Comparable<TerraBungeeVersion> {
     @Override
     public String toString() {
         String version;
-        if(isDevBuild) {
+        if (isDevBuild) {
             version = "[Development Build]";
         } else {
             version = String.format("%d.%d.%d", majorVersion, minorVersion, buildVersion);

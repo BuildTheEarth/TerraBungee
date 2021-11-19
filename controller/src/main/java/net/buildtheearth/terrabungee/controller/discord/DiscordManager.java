@@ -4,13 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.storage.StorageHashMap;
-import com.noahhusby.lib.data.storage.StorageList;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
-import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordButtonCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.punishments.PunishmentsDiscordCommand;
@@ -25,8 +23,6 @@ import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -77,7 +73,7 @@ public class DiscordManager implements Module {
     }
 
     public void startBots() {
-        for(BotConfig config : botConfigs.values()) {
+        for (BotConfig config : botConfigs.values()) {
             try {
                 config.initBot();
             } catch (Exception e) {
@@ -87,7 +83,7 @@ public class DiscordManager implements Module {
     }
 
     public void stopBots() {
-        for(BotConfig config : botConfigs.values()) {
+        for (BotConfig config : botConfigs.values()) {
             config.shutdown();
         }
     }
@@ -102,8 +98,8 @@ public class DiscordManager implements Module {
 
     public void send(IMessageEmbed emb) {
         try {
-            for(GuildConfig guildConfig : guildConfigs.values()) {
-                if(guildConfig.isConfigured() && guildConfig.getNotificationTextChannel() != null) {
+            for (GuildConfig guildConfig : guildConfigs.values()) {
+                if (guildConfig.isConfigured() && guildConfig.getNotificationTextChannel() != null) {
                     guildConfig.getNotificationTextChannel().sendMessage(buildEmbed(emb::build)).submit();
                 }
             }
@@ -127,7 +123,7 @@ public class DiscordManager implements Module {
     }
 
     public void updateSlashCommands(BotConfig config) {
-        for(GuildConfig guildConfig : getGuildsFromBot(config)) {
+        for (GuildConfig guildConfig : getGuildsFromBot(config)) {
             updateSlashCommands(guildConfig);
         }
     }
@@ -148,15 +144,15 @@ public class DiscordManager implements Module {
     }
 
     public void updateSlashCommands() {
-        for(GuildConfig guildConfig : guildConfigs.values()) {
+        for (GuildConfig guildConfig : guildConfigs.values()) {
             updateSlashCommands(guildConfig);
         }
     }
 
     public List<GuildConfig> getGuildsFromBot(BotConfig config) {
         List<GuildConfig> tempGuilds = Lists.newArrayList();
-        for(GuildConfig guildConfig : guildConfigs.values()) {
-            if(guildConfig.getBotId() == config.getId()) {
+        for (GuildConfig guildConfig : guildConfigs.values()) {
+            if (guildConfig.getBotId() == config.getId()) {
                 tempGuilds.add(guildConfig);
             }
         }
@@ -194,7 +190,7 @@ public class DiscordManager implements Module {
 
     public BotConfig createBot(String name) {
         int id = botConfigs.size();
-        while(botConfigs.containsKey(id)) {
+        while (botConfigs.containsKey(id)) {
             id++;
         }
         BotConfig config = new BotConfig(id);

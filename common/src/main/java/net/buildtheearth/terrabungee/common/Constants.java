@@ -2,8 +2,6 @@ package net.buildtheearth.terrabungee.common;
 
 import net.buildtheearth.terrabungee.common.exceptions.VersionParseException;
 
-import java.util.Properties;
-
 /**
  * @author Noah Husby
  */

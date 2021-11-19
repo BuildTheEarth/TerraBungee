@@ -6,8 +6,6 @@ import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 
-import java.util.Locale;
-
 /**
  * @author Noah Husby
  */
@@ -25,7 +23,7 @@ public class DiscordRemoveBotCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if(args.length < 1) {
+        if (args.length < 1) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Usage: /removebot <id>");
             return;
         }
@@ -36,7 +34,7 @@ public class DiscordRemoveBotCommand extends Command {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "That is not a valid ID number!");
             return;
         }
-        if(!DiscordManager.getInstance().getBotConfigs().containsKey(id)) {
+        if (!DiscordManager.getInstance().getBotConfigs().containsKey(id)) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "That bot does not exist!");
             return;
         }

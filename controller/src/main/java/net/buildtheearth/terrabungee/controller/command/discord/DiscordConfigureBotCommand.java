@@ -25,7 +25,7 @@ public class DiscordConfigureBotCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if(args.length < 2 || !(args[1].equalsIgnoreCase("token") || args[1].equalsIgnoreCase("name"))) {
+        if (args.length < 2 || !(args[1].equalsIgnoreCase("token") || args[1].equalsIgnoreCase("name"))) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "/configurebot <id> <token | name>");
             return;
         }
@@ -36,13 +36,13 @@ public class DiscordConfigureBotCommand extends Command {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "That is not a valid ID number!");
             return;
         }
-        if(!DiscordManager.getInstance().getBotConfigs().containsKey(id)) {
+        if (!DiscordManager.getInstance().getBotConfigs().containsKey(id)) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "That bot does not exist!");
             return;
         }
         String command = args[1].toLowerCase(Locale.ROOT);
         if (command.equals("token")) {
-            if(args.length < 3) {
+            if (args.length < 3) {
                 TerraBungeeConsole.sendMessage(ConsoleColor.RED + "/configurebot <id> token <token>");
                 return;
             }
@@ -54,14 +54,14 @@ public class DiscordConfigureBotCommand extends Command {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Successfully set token of " + ConsoleColor.YELLOW + config.getName());
             //TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Shutting down: " + config.getName());
             //config.shutdown();
-        } else if(command.equals("name")) {
-            if(args.length < 3) {
+        } else if (command.equals("name")) {
+            if (args.length < 3) {
                 TerraBungeeConsole.sendMessage(ConsoleColor.RED + "/configurebot <id> token <name>");
                 return;
             }
             BotConfig config = DiscordManager.getInstance().getBotConfigs().get(id);
             StringBuilder nameStringBuilder = new StringBuilder();
-            for(String arg : Arrays.copyOfRange(args, 2, args.length)) {
+            for (String arg : Arrays.copyOfRange(args, 2, args.length)) {
                 nameStringBuilder.append(arg).append(" ");
             }
             String name = nameStringBuilder.toString().trim();

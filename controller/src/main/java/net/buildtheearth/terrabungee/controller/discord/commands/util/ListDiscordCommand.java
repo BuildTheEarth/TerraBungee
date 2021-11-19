@@ -1,15 +1,9 @@
 package net.buildtheearth.terrabungee.controller.discord.commands.util;
 
-import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.api.players.ControllerPlayer;
-import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
-import net.buildtheearth.terrabungee.common.players.TBPlayer;
-import net.buildtheearth.terrabungee.controller.TerraBungeeController;
-import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
-import net.buildtheearth.terrabungee.controller.util.MySQL;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -46,17 +40,19 @@ public class ListDiscordCommand implements IDiscordCommand {
         HashMap<String, List<ControllerPlayer>> list = new HashMap<>();
 
         //Loop through all online players
-        for(UUID uuid : players.keySet()){
+        for (UUID uuid : players.keySet()) {
             ControllerPlayer player = players.get(uuid);
 
-            if(player.getServer() == null)
+            if (player.getServer() == null) {
                 continue;
+            }
 
             //Map them per Server
             List<ControllerPlayer> serverList = list.get(player.getServer());
 
-            if(serverList == null)
+            if (serverList == null) {
                 serverList = new ArrayList<>();
+            }
 
             serverList.add(player);
 
@@ -70,18 +66,20 @@ public class ListDiscordCommand implements IDiscordCommand {
         e.setTimestamp(new Date().toInstant());
         e.setFooter("IP: BuildTheEarth.net");
 
-        for(String server : list.keySet()){
+        for (String server : list.keySet()) {
             List<ControllerPlayer> serverList = list.get(server);
 
-            if(serverList == null)
+            if (serverList == null) {
                 continue;
+            }
 
             String playerString = "";
-            for(ControllerPlayer player : serverList){
+            for (ControllerPlayer player : serverList) {
                 playerString += "- " + player.getName();
 
-                if(player.getDiscordId() != null)
+                if (player.getDiscordId() != null) {
                     playerString += " (<@" + player.getDiscordId() + ">)";
+                }
 
                 playerString += "\n";
             }

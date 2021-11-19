@@ -23,7 +23,7 @@ public class DiscordListBotsCommand extends Command {
     @Override
     public void execute(String[] args) {
         TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Bots:");
-        for(BotConfig config : DiscordManager.getInstance().getBotConfigs().values()) {
+        for (BotConfig config : DiscordManager.getInstance().getBotConfigs().values()) {
             int id = config.getId();
             String name = config.getName() == null ? "None" : config.getName();
             String token = config.getToken() == null ? "None" : config.getToken();

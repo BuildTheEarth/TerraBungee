@@ -60,7 +60,7 @@ public class TBListener extends EventListener {
     @Override
     public void onOnlineCacheHit(OnlineCacheHitEvent event) {
         List<String> playerNames = Lists.newArrayList();
-        for(TBPlayer player : event.getPlayers()) {
+        for (TBPlayer player : event.getPlayers()) {
             playerNames.add(player.getName());
         }
         PlayerHandler.getInstance().setOnlinePlayerNames(playerNames);

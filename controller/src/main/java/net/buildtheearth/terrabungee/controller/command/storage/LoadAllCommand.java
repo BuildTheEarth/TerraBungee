@@ -37,7 +37,7 @@ public class LoadAllCommand extends Command {
             return;
         }
 
-        for(Map.Entry<String, Storage> storageEntry : ConfigHandler.getInstance().getStorageMap().entrySet()) {
+        for (Map.Entry<String, Storage> storageEntry : ConfigHandler.getInstance().getStorageMap().entrySet()) {
             try {
                 TerraBungee.getInstance().getLogger().info("Loading storage: " + storageEntry.getKey());
                 storageEntry.getValue().load();

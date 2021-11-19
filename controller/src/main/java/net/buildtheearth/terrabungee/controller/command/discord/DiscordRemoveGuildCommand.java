@@ -3,9 +3,7 @@ package net.buildtheearth.terrabungee.controller.command.discord;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
-import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
-import net.buildtheearth.terrabungee.controller.discord.GuildConfig;
 
 /**
  * @author Noah Husby
@@ -24,7 +22,7 @@ public class DiscordRemoveGuildCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if(args.length < 1) {
+        if (args.length < 1) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Usage: /removeguild <guild id>");
             return;
         }
@@ -35,7 +33,7 @@ public class DiscordRemoveGuildCommand extends Command {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "That is not a valid ID number!");
             return;
         }
-        if(!DiscordManager.getInstance().getGuildConfigs().containsKey(id)) {
+        if (!DiscordManager.getInstance().getGuildConfigs().containsKey(id)) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "That guild does not exist!");
             return;
         }

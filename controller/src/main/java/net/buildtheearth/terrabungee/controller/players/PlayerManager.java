@@ -20,7 +20,6 @@ import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
 import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
-import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerJoinEventPacket;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerQuitEventPacket;
@@ -37,7 +36,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Noah Husby
@@ -144,7 +142,7 @@ public class PlayerManager implements Module {
      */
     public void ban(@NonNull UUID staff, @NonNull UUID player, LocalDateTime end, @NonNull String reason) {
         int punishmentId = generatePunishmentId();
-        Punishment punishment = new Punishment(punishmentId, Punishment.Type.BAN, staff, player, LocalDateTime.now().toString(), end.toString(), reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.BAN, staff, player, LocalDateTime.now(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
         TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
@@ -163,7 +161,7 @@ public class PlayerManager implements Module {
      */
     public void mute(@NonNull UUID staff, @NonNull UUID player, LocalDateTime end, @NonNull String reason) {
         int punishmentId = generatePunishmentId();
-        Punishment punishment = new Punishment(punishmentId, Punishment.Type.MUTE, staff, player, LocalDateTime.now().toString(), end.toString(), reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.MUTE, staff, player, LocalDateTime.now(), end, reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
         pushMuteCache();
@@ -181,7 +179,7 @@ public class PlayerManager implements Module {
             return;
         }
         int punishmentId = generatePunishmentId();
-        Punishment punishment = new Punishment(punishmentId, Punishment.Type.KICK, staff, player, LocalDateTime.now().toString(), LocalDateTime.now().toString(), reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
+        Punishment punishment = new Punishment(punishmentId, Punishment.Type.KICK, staff, player, LocalDateTime.now(), LocalDateTime.now(), reason, Lists.newArrayList(new PunishmentHistory(staff, PunishmentHistory.Type.CREATION, LocalDateTime.now(), new JsonObject())));
         punishments.put(punishmentId, punishment);
         updatePunishmentCache();
         TBPlayer tbPlayer = onlinePlayerRegistry.get(player);
@@ -207,9 +205,9 @@ public class PlayerManager implements Module {
             long length = data.get("length").getAsLong();
             JsonObject historyData = new JsonObject();
             historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
-            LocalDateTime end = LocalDateTime.parse(punishment.getStart()).plusSeconds(length == 0 ? 0 : length / 1000);
+            LocalDateTime end = punishment.getStart().plusSeconds(length == 0 ? 0 : length / 1000);
             historyData.addProperty("new", end.toString());
-            punishment.setEnd(end.toString());
+            punishment.setEnd(end);
             punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.EDIT_TIME, LocalDateTime.now(), historyData));
         } else if (action == PunishmentEditAction.DEACTIVATE) {
             if (punishment.isActive()) {
@@ -217,7 +215,7 @@ public class PlayerManager implements Module {
                 historyData.addProperty("old", punishment.getEnd() == null ? null : punishment.getEnd().toString());
                 LocalDateTime end = LocalDateTime.now();
                 historyData.addProperty("new", end.toString());
-                punishment.setEnd(end.toString());
+                punishment.setEnd(end);
                 punishment.getHistory().add(new PunishmentHistory(staff, PunishmentHistory.Type.DEACTIVATE, LocalDateTime.now(), historyData));
             }
         }

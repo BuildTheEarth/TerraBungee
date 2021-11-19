@@ -22,7 +22,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -72,7 +71,7 @@ public class PlayerHandler {
         if (punishment.getEnd() == null) {
             kickMessage = ChatUtil.combine(ChatColor.RED, "You are permanently banned from BuildTheEarth!\n\n");
         } else {
-            long difference = LocalDateTime.parse(punishment.getEnd()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - new Date().getTime();
+            long difference = punishment.getEnd().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - new Date().getTime();
             long days = TimeUnit.MILLISECONDS.toDays(difference) % 365;
             long hours = TimeUnit.MILLISECONDS.toHours(difference) % 24;
             long minutes = TimeUnit.MILLISECONDS.toMinutes(difference) % 60;

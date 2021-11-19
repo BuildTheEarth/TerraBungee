@@ -8,7 +8,6 @@ import net.buildtheearth.terrabungee.controller.modules.Module;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -29,17 +28,17 @@ public class SecurityManager implements Module {
         try {
             String strLine;
             BufferedReader br = new BufferedReader(new FileReader(whitelistFile));
-          while((strLine = br.readLine()) != null) {
-              tempWhitelist.add(strLine);
-          }
-          this.whitelist = ImmutableList.copyOf(tempWhitelist);
+            while ((strLine = br.readLine()) != null) {
+                tempWhitelist.add(strLine);
+            }
+            this.whitelist = ImmutableList.copyOf(tempWhitelist);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public boolean verifyConnection(InetSocketAddress address) {
-        if(whitelist.contains(address.getHostString())) {
+        if (whitelist.contains(address.getHostString())) {
             return true;
         }
         TerraBungeeController.getInstance().getLogger().warning("An unknown host attempted to establish a connection with the controller: " + address.getHostString());
@@ -49,7 +48,7 @@ public class SecurityManager implements Module {
     @Override
     public void onEnable() {
         whitelistFile = new File(TerraBungeeController.getInstance().getFolder(), "whitelist.tb");
-        if(!whitelistFile.exists()) {
+        if (!whitelistFile.exists()) {
             try {
                 whitelistFile.createNewFile();
             } catch (IOException e) {

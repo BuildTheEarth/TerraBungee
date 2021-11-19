@@ -13,7 +13,6 @@ import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
-import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStoppedEmbed;
 import net.buildtheearth.terrabungee.controller.modules.ModuleHandler;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.network.WSServer;

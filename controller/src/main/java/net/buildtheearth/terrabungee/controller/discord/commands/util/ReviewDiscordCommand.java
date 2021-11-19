@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -32,7 +31,7 @@ public class ReviewDiscordCommand implements IDiscordCommand {
 
     @Override
     public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandEvent event) {
-        HashMap<String,String> map = MySQL.getMap("SELECT `BuildingServerID`,`ToReview` FROM `BuildingServers` WHERE `ToReview` > 0 AND `Maintenance` = 0", "BuildingServerID", "ToReview");
+        HashMap<String, String> map = MySQL.getMap("SELECT `BuildingServerID`,`ToReview` FROM `BuildingServers` WHERE `ToReview` > 0 AND `Maintenance` = 0", "BuildingServerID", "ToReview");
 
         EmbedBuilder e = new EmbedBuilder();
         e.setTitle("PROJECTS TO REVIEW:");
@@ -40,13 +39,13 @@ public class ReviewDiscordCommand implements IDiscordCommand {
         e.setFooter("IP: BuildTheEarth.net");
 
         int total = 0;
-        String reviewText = "";
-        for(String id : map.keySet()){
-            reviewText += "**" + id + ":** " + map.get(id) +" Reviews\n";
+        StringBuilder reviewText = new StringBuilder();
+        for (String id : map.keySet()) {
+            reviewText.append("**").append(id).append(":** ").append(map.get(id)).append(" Reviews\n");
             total += Integer.parseInt(map.get(id));
         }
-        e.addField(new MessageEmbed.Field("", reviewText, false));
-        e.addField(new MessageEmbed.Field("", "`Total: " + total +" Reviews`", false));
+        e.addField(new MessageEmbed.Field("", reviewText.toString(), false));
+        e.addField(new MessageEmbed.Field("", "`Total: " + total + " Reviews`", false));
 
         event.replyEmbeds(e.build()).submit();
     }

@@ -3,20 +3,15 @@ package net.buildtheearth.terrabungee.controller.discord;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.noahhusby.lib.data.storage.Key;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.buildtheearth.api.TerraBungee;
-import net.buildtheearth.terrabungee.controller.TerraBungeeController;
-import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import javax.security.auth.login.LoginException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Noah Husby
@@ -40,7 +35,7 @@ public class BotConfig {
     private JDA bot;
 
     public void initBot() {
-        if(isConfigured()) {
+        if (isConfigured()) {
             try {
                 bot = JDABuilder.createDefault(token)
                         .enableIntents(GatewayIntent.DIRECT_MESSAGES)
@@ -54,7 +49,7 @@ public class BotConfig {
     }
 
     public void shutdown() {
-        if(bot != null) {
+        if (bot != null) {
             try {
                 bot.shutdown();
                 bot = null;

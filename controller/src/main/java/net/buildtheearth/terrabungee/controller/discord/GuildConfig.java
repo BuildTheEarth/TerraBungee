@@ -37,7 +37,7 @@ public class GuildConfig {
 
     public JDA getBot() {
         BotConfig config = DiscordManager.getInstance().getBotConfigs().get(botId);
-        if(config == null) {
+        if (config == null) {
             return null;
         }
         return config.getBot();
@@ -45,7 +45,7 @@ public class GuildConfig {
 
     public Guild getGuild() {
         JDA bot = getBot();
-        if(bot == null) {
+        if (bot == null) {
             return null;
         }
         return bot.getGuildById(guildId);
@@ -53,7 +53,7 @@ public class GuildConfig {
 
     public TextChannel getNotificationTextChannel() {
         Guild guild = getGuild();
-        if(guild == null) {
+        if (guild == null) {
             return null;
         }
         return guild.getTextChannelById(notificationChannel);

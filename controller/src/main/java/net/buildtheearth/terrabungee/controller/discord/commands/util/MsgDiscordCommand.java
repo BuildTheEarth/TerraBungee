@@ -10,7 +10,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * A discord command to message an ingame player.
@@ -39,7 +40,7 @@ public class MsgDiscordCommand implements IDiscordCommand {
     public void configureData(CommandData data) {
         Map<UUID, ControllerPlayer> players = PlayerManager.getInstance().getOnlinePlayerRegistry();
 
-        for(UUID uuid : players.keySet()){
+        for (UUID uuid : players.keySet()) {
             ControllerPlayer player = players.get(uuid);
 
             data.addOption(OptionType.STRING, player.getName(), "Test");

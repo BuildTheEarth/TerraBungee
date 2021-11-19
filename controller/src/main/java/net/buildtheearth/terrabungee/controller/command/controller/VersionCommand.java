@@ -35,12 +35,12 @@ public class VersionCommand extends Command {
         List<String> newServices = Lists.newArrayList();
         List<String> currentServices = Lists.newArrayList();
 
-        for(TerraBungeeService service : ServiceManager.getInstance().getServices().values()) {
+        for (TerraBungeeService service : ServiceManager.getInstance().getServices().values()) {
             TerraBungeeVersion version = service.getVersion();
-            if(version != null) {
-                if(version.isOlder(Constants.VERSION)) {
+            if (version != null) {
+                if (version.isOlder(Constants.VERSION)) {
                     oldServices.add(ConsoleColor.CYAN + service.getId() + ConsoleColor.RED + " [" + version + "]");
-                } else if(version.isNewer(Constants.VERSION)) {
+                } else if (version.isNewer(Constants.VERSION)) {
                     newServices.add(ConsoleColor.CYAN + service.getId() + ConsoleColor.RED + " [" + version + "]");
                 } else {
                     currentServices.add(ConsoleColor.CYAN + service.getId() + ConsoleColor.RED + " [" + version + "]");
@@ -51,22 +51,22 @@ public class VersionCommand extends Command {
         boolean all = args.length > 0 && args[0].equalsIgnoreCase("-all");
 
         TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW, "There are ", ConsoleColor.GREEN, oldServices.size(), ConsoleColor.YELLOW, " outdated clients.");
-        if(all) {
-            for(String info : oldServices) {
+        if (all) {
+            for (String info : oldServices) {
                 TerraBungeeConsole.sendMessage(info);
             }
             TerraBungeeConsole.sendMessage();
         }
         TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW, "There are ", ConsoleColor.GREEN, newServices.size(), ConsoleColor.YELLOW, " newer clients.");
-        if(all) {
-            for(String info : newServices) {
+        if (all) {
+            for (String info : newServices) {
                 TerraBungeeConsole.sendMessage(info);
             }
             TerraBungeeConsole.sendMessage();
         }
         TerraBungeeConsole.sendMessage(ConsoleColor.YELLOW, "There are ", ConsoleColor.GREEN, currentServices.size(), ConsoleColor.YELLOW, " up-to-date clients.");
-        if(all) {
-            for(String info : currentServices) {
+        if (all) {
+            for (String info : currentServices) {
                 TerraBungeeConsole.sendMessage(info);
             }
             TerraBungeeConsole.sendMessage();

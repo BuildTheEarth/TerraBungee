@@ -21,7 +21,7 @@ import java.util.List;
 
 public class ServerCommand extends Command implements TabExecutor {
     public ServerCommand() {
-        super("server",  "");
+        super("server", "");
     }
 
     @Override
@@ -30,11 +30,11 @@ public class ServerCommand extends Command implements TabExecutor {
             sender.sendMessage(ChatUtil.getNoPermission());
             return;
         }
-        if(!(sender instanceof ProxiedPlayer)) {
+        if (!(sender instanceof ProxiedPlayer)) {
             sender.sendMessage(ChatUtil.getPlayerOnly());
             return;
         }
-        if(args.length < 1) {
+        if (args.length < 1) {
             TextComponent list = ChatUtil.titleAndCombine(ChatColor.RED, "Servers: ");
             boolean first = true;
             for (Instance i : TerraBungeeProxy.getInstance().getTerraBungee().getInstanceManager().getInstances()) {
@@ -55,7 +55,7 @@ public class ServerCommand extends Command implements TabExecutor {
         } else {
             String server = args[0];
             ServerInfo serverInfo = ProxyServer.getInstance().getServerInfo(server);
-            if(serverInfo == null) {
+            if (serverInfo == null) {
                 sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, server, ChatColor.RED, " does not exist!"));
                 return;
             }
@@ -68,7 +68,7 @@ public class ServerCommand extends Command implements TabExecutor {
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         List<String> completion = new ArrayList<>();
         List<String> servers = Lists.newArrayList();
-        for(Instance instance : TerraBungeeProxy.getInstance().getTerraBungee().getInstanceManager().getInstances()) {
+        for (Instance instance : TerraBungeeProxy.getInstance().getTerraBungee().getInstanceManager().getInstances()) {
             servers.add(instance.getId());
         }
         ProxyUtil.copyPartialMatches(args[0], servers, completion);

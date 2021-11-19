@@ -1,7 +1,6 @@
 package net.buildtheearth.terrabungee.controller.network.proxy;
 
 import com.google.common.collect.Lists;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import net.buildtheearth.api.network.IC2SPacket;
@@ -11,8 +10,6 @@ import net.buildtheearth.terrabungee.common.players.Punishment;
 import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
-import java.lang.reflect.Modifier;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -36,8 +33,9 @@ public class C2PMuteCachePacket implements IC2SPacket {
                 activeMutes.add(punishment);
             }
         }
-        if(activeMutes.size() == 0)
+        if (activeMutes.size() == 0) {
             return;
+        }
 
         data.add("mutes", TerraBungeeUtil.GSON.toJsonTree(activeMutes));
     }

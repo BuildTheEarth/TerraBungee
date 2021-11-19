@@ -21,7 +21,7 @@ public class DiscordRefreshSlashCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if(args.length < 1) {
+        if (args.length < 1) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Usage: /refreshslash <bot id>");
             return;
         }
@@ -32,7 +32,7 @@ public class DiscordRefreshSlashCommand extends Command {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "That is not a valid ID number!");
             return;
         }
-        if(!DiscordManager.getInstance().getBotConfigs().containsKey(id)) {
+        if (!DiscordManager.getInstance().getBotConfigs().containsKey(id)) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "That bot does not exist!");
             return;
         }

@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DiscordListener extends ListenerAdapter {
@@ -22,7 +21,7 @@ public class DiscordListener extends ListenerAdapter {
         if (e.getGuild() == null) {
             return;
         }
-        if(!DiscordManager.getInstance().getGuildConfigs().containsKey(e.getGuild().getIdLong())) {
+        if (!DiscordManager.getInstance().getGuildConfigs().containsKey(e.getGuild().getIdLong())) {
             return;
         }
 
@@ -36,16 +35,16 @@ public class DiscordListener extends ListenerAdapter {
             return;
         }
 
-        if(!e.getName().equalsIgnoreCase("list")
-        && !e.getName().equalsIgnoreCase("review")){
+        if (!e.getName().equalsIgnoreCase("list")
+            && !e.getName().equalsIgnoreCase("review")) {
             boolean hasPerms = false;
-            for(Role r : m.getRoles()) {
-                if(config.getStaffRoles().contains(r.getIdLong()) || adminLongs.contains(m.getIdLong())) {
+            for (Role r : m.getRoles()) {
+                if (config.getStaffRoles().contains(r.getIdLong()) || adminLongs.contains(m.getIdLong())) {
                     hasPerms = true;
                     break;
                 }
             }
-            if(!hasPerms) {
+            if (!hasPerms) {
                 e.reply("You don't have permission to run this command!").setEphemeral(true).submit();
                 return;
             }
@@ -59,7 +58,7 @@ public class DiscordListener extends ListenerAdapter {
         if (event.getGuild() == null) {
             return;
         }
-        if(!DiscordManager.getInstance().getGuildConfigs().containsKey(event.getGuild().getIdLong())) {
+        if (!DiscordManager.getInstance().getGuildConfigs().containsKey(event.getGuild().getIdLong())) {
             return;
         }
 
@@ -69,13 +68,13 @@ public class DiscordListener extends ListenerAdapter {
         if (m == null) {
             return;
         }
-        for(Role r : m.getRoles()) {
-            if(config.getStaffRoles().contains(r.getIdLong()) || adminLongs.contains(m.getIdLong())) {
+        for (Role r : m.getRoles()) {
+            if (config.getStaffRoles().contains(r.getIdLong()) || adminLongs.contains(m.getIdLong())) {
                 hasPerms = true;
                 break;
             }
         }
-        if(!hasPerms) {
+        if (!hasPerms) {
             event.reply("You don't have permission to run this command!").setEphemeral(true).submit();
             return;
         }

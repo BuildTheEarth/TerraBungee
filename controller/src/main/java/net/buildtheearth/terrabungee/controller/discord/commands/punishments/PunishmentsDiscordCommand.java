@@ -25,7 +25,6 @@ import net.dv8tion.jda.api.interactions.components.ButtonStyle;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction;
 
 import java.awt.*;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -70,7 +69,7 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
                 for (Punishment punishment : punishments) {
                     TBPlayer staff = TerraBungee.getInstance().getPlayer(punishment.getStaff());
                     builder.addField(punishment.getType().name() + " (#" + punishment.getId() + ")", String.format("By **%s** at **%s**\n**Reason:** %s", staff == null ? "Unknown" : staff.getName(),
-                            TimeUtil.toReadableTime(LocalDateTime.parse(punishment.getStart())), punishment.getReason()), false);
+                            TimeUtil.toReadableTime(punishment.getStart()), punishment.getReason()), false);
                 }
             })).submit();
         } else if (subcommand.equals("inspect")) {
@@ -122,8 +121,8 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
             builder.addField("Type", punishment.getType().name(), false);
             builder.addField("Reason", punishment.getReason(), false);
             builder.addField("Staff", staff == null ? "Unknown/Console" : staff.getName(), false);
-            builder.addField("Start", TimeUtil.toReadableTime(LocalDateTime.parse(punishment.getStart())), true);
-            builder.addField("End", punishment.getEnd() == null ? "None" : TimeUtil.toReadableTime(LocalDateTime.parse(punishment.getEnd())), true);
+            builder.addField("Start", TimeUtil.toReadableTime(punishment.getStart()), true);
+            builder.addField("End", punishment.getEnd() == null ? "None" : TimeUtil.toReadableTime(punishment.getEnd()), true);
         });
         return new InspectionPromptData(embed, true);
     }

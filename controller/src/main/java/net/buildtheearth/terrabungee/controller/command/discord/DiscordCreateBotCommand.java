@@ -2,7 +2,6 @@ package net.buildtheearth.terrabungee.controller.command.discord;
 
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
-import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
@@ -24,12 +23,12 @@ public class DiscordCreateBotCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        if(args.length < 1) {
+        if (args.length < 1) {
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Usage: /createbot <name>");
             return;
         }
         StringBuilder nameStringBuilder = new StringBuilder();
-        for(String arg : args) {
+        for (String arg : args) {
             nameStringBuilder.append(arg).append(" ");
         }
         String name = nameStringBuilder.toString().trim();

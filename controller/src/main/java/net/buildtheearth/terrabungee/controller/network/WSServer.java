@@ -18,7 +18,7 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        if(!SecurityManager.getInstance().verifyConnection(conn.getRemoteSocketAddress())) {
+        if (!SecurityManager.getInstance().verifyConnection(conn.getRemoteSocketAddress())) {
             conn.close();
         }
     }
@@ -30,7 +30,7 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        if(!SecurityManager.getInstance().verifyConnection(conn.getRemoteSocketAddress())) {
+        if (!SecurityManager.getInstance().verifyConnection(conn.getRemoteSocketAddress())) {
             conn.close();
             return;
         }
