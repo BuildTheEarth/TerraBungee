@@ -57,15 +57,7 @@ public class ConfigHandler {
         punishmentFile = new File(localDb, "punishments.json");
         discordBotFile = new File(localDb, "discord_bots.json");
 
-        loadData();
-    }
-
-    /**
-     * Reloads all data/data fields. Called upon startup or reload
-     */
-    @SneakyThrows
-    public void loadData() {
-
+        load();
     }
 
     @SneakyThrows

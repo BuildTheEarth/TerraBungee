@@ -1,7 +1,7 @@
 package net.buildtheearth.terrabungee.controller.util;
 
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
-import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
+import net.buildtheearth.terrabungee.controller.config.TerraBungeeConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -47,11 +47,11 @@ public class MySQL {
     }
 
     public static void connect() {
-        host = ConfigHandler.sqlHost;
-        port = "" + ConfigHandler.sqlPort;
+        host = TerraBungeeConfig.database.sqlHost;
+        port = "" + TerraBungeeConfig.database.sqlPort;
         database = DATABASE;
-        username = ConfigHandler.sqlUser;
-        passwort = ConfigHandler.sqlPassword;
+        username = TerraBungeeConfig.database.sqlUser;
+        passwort = TerraBungeeConfig.database.sqlPassword;
 
         if (host.equals("<host>")) {
             System.out.println("§cPlease configure the MySQL Server.");

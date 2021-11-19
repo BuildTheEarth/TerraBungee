@@ -10,6 +10,7 @@ import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.command.CommandManager;
 import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
+import net.buildtheearth.terrabungee.controller.config.TerraBungeeConfig;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
@@ -24,7 +25,6 @@ import net.buildtheearth.terrabungee.controller.util.LoggerContextUtil;
 import net.buildtheearth.terrabungee.controller.util.MySQL;
 
 import java.io.File;
-import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -87,7 +87,7 @@ public class TerraBungeeController extends TerraBungee {
         ModuleHandler.getInstance().registerModules(SecurityManager.getInstance(), InstanceManager.getInstance(), ServiceManager.getInstance(), PlayerManager.getInstance(), NetworkManager.getInstance(), DiscordManager.getInstance(), CommandManager.getInstance());
         ModuleHandler.getInstance().enableAll();
 
-        server = new WSServer(new InetSocketAddress(ConfigHandler.host, ConfigHandler.port));
+        server = new WSServer(TerraBungeeConfig.general.getSocketAddress());
         new Thread(server).start();
 
         generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);
@@ -147,7 +147,7 @@ public class TerraBungeeController extends TerraBungee {
                            "                                     |___/         ");
         System.out.println("---------------------------------------------");
         System.out.println("TerraBungee " + Constants.VERSION + " by Noah Husby");
-        System.out.println("Listening on: " + ConfigHandler.host + ":" + ConfigHandler.port);
+        System.out.println("Listening on: " + TerraBungeeConfig.general.host + ":" + TerraBungeeConfig.general.port);
         System.out.println("---------------------------------------------");
     }
 

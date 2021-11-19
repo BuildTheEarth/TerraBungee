@@ -6,6 +6,8 @@ import com.noahhusby.lib.application.config.Config.Name;
 import com.noahhusby.lib.application.config.Config.Type;
 import com.noahhusby.lib.data.sql.Credentials;
 
+import java.net.InetSocketAddress;
+
 /**
  * @author Noah Husby
  */
@@ -29,6 +31,10 @@ public class TerraBungeeConfig {
         })
         @Name("Port")
         public int port = 7000;
+
+        public InetSocketAddress getSocketAddress() {
+            return new InetSocketAddress(host, port);
+        }
     }
 
     @Comment({
