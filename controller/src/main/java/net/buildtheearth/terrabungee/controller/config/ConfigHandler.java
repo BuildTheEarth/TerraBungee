@@ -80,23 +80,23 @@ public class ConfigHandler {
     public void loadHandlers() {
         Storage playerData = PlayerManager.getInstance().getPlayers();
         playerData.close();
-        ((StorageHashMap) playerData).clear();
+        ((StorageHashMap<?, ?>) playerData).clear();
 
         Storage punishmentData = PlayerManager.getInstance().getPunishments();
         punishmentData.close();
-        ((StorageHashMap) playerData).clear();
+        ((StorageHashMap<?, ?>) playerData).clear();
 
         Storage staticInstanceData = InstanceManager.getInstance().getStaticInstances();
         staticInstanceData.close();
-        ((StorageTreeMap) staticInstanceData).clear();
+        ((StorageTreeMap<?, ?>) staticInstanceData).clear();
 
         Storage discordGuildConfigData = DiscordManager.getInstance().getGuildConfigs();
         discordGuildConfigData.clearHandlers();
-        ((StorageHashMap) discordGuildConfigData).clear();
+        ((StorageHashMap<?, ?>) discordGuildConfigData).clear();
 
         Storage discordBotConfigData = DiscordManager.getInstance().getBotConfigs();
         discordBotConfigData.clearHandlers();
-        ((StorageHashMap) discordBotConfigData).clear();
+        ((StorageHashMap<?, ?>) discordBotConfigData).clear();
 
         TerraBungeeConfig.DatabaseOptions databaseOptions = TerraBungeeConfig.database;
 
