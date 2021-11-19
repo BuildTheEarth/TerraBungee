@@ -144,6 +144,7 @@ gradle-app.setting
 /bungeecord/src/main/java/com/noahhusby/sledgehammer/proxy/btenet/
 /.idea/
 /terrabungee.cfg
+/terrabungee1.cfg
 /plugins/
 /local/
 /whitelist.tb

@@ -5,6 +5,7 @@ dependencies {
     implementation "commons-io:commons-io:$commonsVersion"
     implementation "org.jline:jline:$jlineVersion"
     implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation "com.noahhusby.lib:application:$husbyVersion"
     implementation("net.dv8tion:JDA:$jdaVersion") {
         exclude module: 'opus-java'
     }
