@@ -29,20 +29,20 @@ public class TerraBungeeConsole extends Logger {
             public synchronized String format(LogRecord lr) {
                 StringBuilder builder = new StringBuilder();
                 if (lr.getLevel() == Level.INFO) {
-                    builder.append(ConsoleColor.WHITE.toString());
+                    builder.append(ConsoleColor.WHITE);
                 }
                 if (lr.getLevel() == Level.WARNING) {
-                    builder.append(ConsoleColor.YELLOW.toString());
+                    builder.append(ConsoleColor.YELLOW);
                 }
                 if (lr.getLevel() == Level.SEVERE) {
-                    builder.append(ConsoleColor.RED.toString());
+                    builder.append(ConsoleColor.RED);
                 }
                 builder.append(String.format(format,
                         new Date(lr.getMillis()),
                         lr.getLevel().getLocalizedName(),
                         Thread.currentThread().getName(),
                         lr.getMessage()));
-                builder.append(ConsoleColor.RESET.toString());
+                builder.append(ConsoleColor.RESET);
                 return builder.toString();
             }
         });
@@ -61,7 +61,7 @@ public class TerraBungeeConsole extends Logger {
                 }
                 try {
                     if (!CommandManager.getInstance().execute(line)) {
-                        System.out.println(ConsoleColor.RED.toString() + "Unknown Command! Type `help` for more commands!" +
+                        System.out.println(ConsoleColor.RED + "Unknown Command! Type `help` for more commands!" +
                                            ConsoleColor.RESET);
                     }
                 } catch (Exception e) {
@@ -82,6 +82,6 @@ public class TerraBungeeConsole extends Logger {
         }
 
         builder.append(ConsoleColor.RESET);
-        System.out.println(builder.toString());
+        System.out.println(builder);
     }
 }

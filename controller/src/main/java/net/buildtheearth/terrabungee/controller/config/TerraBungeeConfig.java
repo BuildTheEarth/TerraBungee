@@ -11,6 +11,7 @@ import java.net.InetSocketAddress;
 /**
  * @author Noah Husby
  */
+@SuppressWarnings("CanBeFinal")
 @Config(name = "terrabungee", type = Type.HOCON)
 public class TerraBungeeConfig {
 

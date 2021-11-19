@@ -14,7 +14,7 @@ import java.util.List;
 public class DiscordListener extends ListenerAdapter {
 
     //TODO: WTF
-    private List<Long> adminLongs = Lists.newArrayList(555520007837319178L, 422633274918174721L);
+    private final List<Long> adminLongs = Lists.newArrayList(555520007837319178L, 422633274918174721L);
 
     @Override
     public void onSlashCommand(SlashCommandEvent e) {

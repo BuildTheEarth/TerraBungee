@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MySQL {
 
-    public static String DATABASE = "MineFactServernetzwerk";
+    public static final String DATABASE = "MineFactServernetzwerk";
 
     public static Connection con;
     public static String host;
@@ -515,16 +515,16 @@ public class MySQL {
     }
 
     public static String getStringList(String sql, String arg) {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         try {
             PreparedStatement ps = MySQL.getConnection().prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                if (s.equals("")) {
-                    s = rs.getString(arg);
+                if (s.toString().equals("")) {
+                    s = new StringBuilder(rs.getString(arg));
                 } else {
-                    s += "|" + rs.getString(arg);
+                    s.append("|").append(rs.getString(arg));
                 }
             }
 
@@ -534,11 +534,11 @@ public class MySQL {
             e.printStackTrace();
         }
 
-        return s;
+        return s.toString();
     }
 
     public static HashMap<String, String> getMap(String sql, String arg1, String arg2) {
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
 
         try {
             PreparedStatement ps = MySQL.getConnection().prepareStatement(sql);
@@ -558,7 +558,7 @@ public class MySQL {
     }
 
     public static HashMap<String, Integer> getMapStringInteger(String sql, String arg1, String arg2) {
-        LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
+        LinkedHashMap<String, Integer> map = new LinkedHashMap<>();
 
         try {
             PreparedStatement ps = MySQL.getConnection().prepareStatement(sql);

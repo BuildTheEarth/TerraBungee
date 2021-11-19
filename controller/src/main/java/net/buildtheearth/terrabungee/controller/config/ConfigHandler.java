@@ -43,7 +43,7 @@ public class ConfigHandler {
     private File discordBotFile;
 
     @Getter
-    private Map<String, Storage> storageMap = Maps.newHashMap();
+    private final Map<String, Storage> storageMap = Maps.newHashMap();
 
     private void init() {
         File localDb = new File(TerraBungee.getInstance().getFolder(), "local");

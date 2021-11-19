@@ -52,8 +52,6 @@ public class DiscordConfigureBotCommand extends Command {
             DiscordManager.getInstance().getBotConfigs().put(config.getId(), config);
             DiscordManager.getInstance().getBotConfigs().save();
             TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Successfully set token of " + ConsoleColor.YELLOW + config.getName());
-            //TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Shutting down: " + config.getName());
-            //config.shutdown();
         } else if (command.equals("name")) {
             if (args.length < 3) {
                 TerraBungeeConsole.sendMessage(ConsoleColor.RED + "/configurebot <id> token <name>");

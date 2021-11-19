@@ -35,7 +35,6 @@ import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -45,8 +44,6 @@ public class DiscordManager implements Module {
     public static DiscordManager getInstance() {
         return instance == null ? instance = new DiscordManager() : instance;
     }
-
-    private final ExecutorService botThread = TerraBungeeUtil.newSingleThreadExecutor("terrabungee-bot");
 
     private final Map<String, IDiscordCommand> discordCommands = Maps.newHashMap();
 
@@ -100,7 +97,7 @@ public class DiscordManager implements Module {
         try {
             for (GuildConfig guildConfig : guildConfigs.values()) {
                 if (guildConfig.isConfigured() && guildConfig.getNotificationTextChannel() != null) {
-                    guildConfig.getNotificationTextChannel().sendMessage(buildEmbed(emb::build)).submit();
+                    guildConfig.getNotificationTextChannel().sendMessageEmbeds(buildEmbed(emb::build)).submit();
                 }
             }
         } catch (Exception e) {

@@ -73,18 +73,18 @@ public class ListDiscordCommand implements IDiscordCommand {
                 continue;
             }
 
-            String playerString = "";
+            StringBuilder playerString = new StringBuilder();
             for (ControllerPlayer player : serverList) {
-                playerString += "- " + player.getName();
+                playerString.append("- ").append(player.getName());
 
                 if (player.getDiscordId() != null) {
-                    playerString += " (<@" + player.getDiscordId() + ">)";
+                    playerString.append(" (<@").append(player.getDiscordId()).append(">)");
                 }
 
-                playerString += "\n";
+                playerString.append("\n");
             }
 
-            e.addField(new MessageEmbed.Field(server, playerString, false));
+            e.addField(new MessageEmbed.Field(server, playerString.toString(), false));
 
         }
 
