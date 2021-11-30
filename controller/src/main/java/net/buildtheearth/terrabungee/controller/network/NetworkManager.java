@@ -46,7 +46,7 @@ import org.java_websocket.WebSocket;
 
 import java.util.Map;
 
-public class NetworkManager implements INetworkManager, Module {
+public class NetworkManager extends Module implements INetworkManager {
     private static NetworkManager instance;
 
     public static NetworkManager getInstance() {
@@ -55,6 +55,10 @@ public class NetworkManager implements INetworkManager, Module {
 
     @Getter
     private final Map<String, IS2CPacket> packets = Maps.newHashMap();
+
+    private NetworkManager() {
+        super("Network");
+    }
 
     public void onIncomingPayload(WebSocket client, String p) {
         JsonObject payload = JsonUtils.parseString(p).getAsJsonObject();
@@ -121,10 +125,5 @@ public class NetworkManager implements INetworkManager, Module {
     @Override
     public void onDisable() {
         packets.clear();
-    }
-
-    @Override
-    public String getModuleName() {
-        return "Network";
     }
 }

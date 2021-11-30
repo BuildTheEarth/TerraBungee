@@ -1,23 +1,32 @@
 package net.buildtheearth.terrabungee.controller.modules;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
  * @author Noah Husby
  */
-public interface Module {
+@RequiredArgsConstructor
+public abstract class Module {
+
+    @Getter
+    private final String moduleName;
+
     /**
      * Called on module enable
      */
-    void onEnable();
+    public abstract void onEnable();
 
     /**
      * Called on module disable
      */
-    void onDisable();
+    public abstract void onDisable();
 
-    /**
-     * Gets name of module
-     *
-     * @return Name of module
-     */
-    String getModuleName();
+    protected void fatal() {
+
+    }
+
+    protected void warning() {
+
+    }
 }

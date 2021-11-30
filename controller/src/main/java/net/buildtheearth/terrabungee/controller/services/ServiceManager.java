@@ -29,7 +29,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class ServiceManager implements Module {
+public class ServiceManager extends Module {
     private static ServiceManager instance = null;
 
     public static ServiceManager getInstance() {
@@ -48,6 +48,10 @@ public class ServiceManager implements Module {
      */
     public Map<String, TerraBungeeService> getServices() {
         return ImmutableMap.copyOf(services);
+    }
+
+    private ServiceManager() {
+        super("Services");
     }
 
     public int getTotalDisconnectedServices() {
@@ -242,11 +246,6 @@ public class ServiceManager implements Module {
     @Override
     public void onDisable() {
         intentThreads.shutdownNow();
-    }
-
-    @Override
-    public String getModuleName() {
-        return "Services";
     }
 
     /**

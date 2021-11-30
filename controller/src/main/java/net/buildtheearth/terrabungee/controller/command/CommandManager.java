@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CommandManager implements Module {
+public class CommandManager extends Module {
     private static CommandManager instance = null;
 
     public static CommandManager getInstance() {
@@ -38,6 +38,7 @@ public class CommandManager implements Module {
     }
 
     private CommandManager() {
+        super("Commands");
     }
 
     private final List<Command> controllerCommands = new ArrayList<>();
@@ -97,10 +98,5 @@ public class CommandManager implements Module {
     @Override
     public void onDisable() {
         controllerCommands.clear();
-    }
-
-    @Override
-    public String getModuleName() {
-        return "Commands";
     }
 }

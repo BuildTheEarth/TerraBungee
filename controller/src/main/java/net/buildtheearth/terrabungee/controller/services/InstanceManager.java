@@ -17,12 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class InstanceManager implements Module {
+public class InstanceManager extends Module {
     @Getter
     private static final InstanceManager instance = new InstanceManager();
 
     @Getter
     private final StorageTreeMap<String, StorableStaticInstance> staticInstances = new StorageTreeMap<>(String.class, StorableStaticInstance.class, String.CASE_INSENSITIVE_ORDER);
+
+    private InstanceManager() {
+        super("Instance");
+    }
 
     /**
      * Add a static instance
@@ -120,10 +124,5 @@ public class InstanceManager implements Module {
     @Override
     public void onDisable() {
 
-    }
-
-    @Override
-    public String getModuleName() {
-        return "Instances";
     }
 }

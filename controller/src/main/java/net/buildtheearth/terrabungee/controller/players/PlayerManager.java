@@ -40,7 +40,7 @@ import java.util.concurrent.Executors;
 /**
  * @author Noah Husby
  */
-public class PlayerManager implements Module {
+public class PlayerManager extends Module {
     private static PlayerManager instance = null;
 
     public static PlayerManager getInstance() {
@@ -61,6 +61,10 @@ public class PlayerManager implements Module {
 
     public Map<UUID, ControllerPlayer> getOnlinePlayerRegistry() {
         return onlinePlayerRegistry;
+    }
+
+    private PlayerManager() {
+        super("Players");
     }
 
     public int getTotalPlayers() {
@@ -280,10 +284,5 @@ public class PlayerManager implements Module {
     @Override
     public void onDisable() {
 
-    }
-
-    @Override
-    public String getModuleName() {
-        return "Players";
     }
 }

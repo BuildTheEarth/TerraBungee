@@ -16,12 +16,16 @@ import java.util.List;
 /**
  * @author Noah Husby
  */
-public class SecurityManager implements Module {
+public class SecurityManager extends Module {
     @Getter
     private static final SecurityManager instance = new SecurityManager();
 
     private List<String> whitelist = Lists.newArrayList();
     private File whitelistFile;
+
+    private SecurityManager() {
+        super("Security");
+    }
 
     public void loadWhitelist() {
         List<String> tempWhitelist = Lists.newArrayList();
@@ -61,10 +65,5 @@ public class SecurityManager implements Module {
     @Override
     public void onDisable() {
 
-    }
-
-    @Override
-    public String getModuleName() {
-        return "Security";
     }
 }

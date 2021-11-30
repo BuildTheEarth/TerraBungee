@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class DiscordManager implements Module {
+public class DiscordManager extends Module {
     private static DiscordManager instance = null;
 
     public static DiscordManager getInstance() {
@@ -54,6 +54,7 @@ public class DiscordManager implements Module {
     private final StorageHashMap<Integer, BotConfig> botConfigs = new StorageHashMap<>(Integer.class, BotConfig.class);
 
     private DiscordManager() {
+        super("Discord");
         registerCommands(
                 new PunishmentsDiscordCommand(),
                 new SetupDiscordCommand(),
