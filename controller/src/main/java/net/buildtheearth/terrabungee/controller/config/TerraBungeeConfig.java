@@ -72,7 +72,7 @@ public class TerraBungeeConfig {
         @Comment({
                 "Should data be stored locally as well [default: false]"
         })
-        @Name("Local Storage")
+        @Name("Local_Storage")
         public boolean localStorage = false;
 
         public Credentials toCredentials() {

@@ -23,7 +23,7 @@ public class Constants {
 
     public static final String serviceInitID = "service_init";
     public static final String setServiceStatusID = "set_service_status";
-    public static final String keepAliveID = "keep_alive";
+    public static final String handshakeId = "handshake";
 
     /*
      * Instance Packets

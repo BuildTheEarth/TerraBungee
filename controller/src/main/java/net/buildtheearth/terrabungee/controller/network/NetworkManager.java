@@ -28,7 +28,7 @@ import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SResponsePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CAddStaticInstancePacket;
-import net.buildtheearth.terrabungee.controller.network.S2C.S2CKeepAlivePacket;
+import net.buildtheearth.terrabungee.controller.network.S2C.S2CHandshakePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CRemoveStaticInstancePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CRetrieveUncachedPlayerPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CServiceMessagePacket;
@@ -105,7 +105,7 @@ public class NetworkManager extends Module implements INetworkManager {
 
     @Override
     public void onEnable() {
-        register(new S2CKeepAlivePacket());
+        register(new S2CHandshakePacket());
         register(new S2CAddStaticInstancePacket());
         register(new S2CRemoveStaticInstancePacket());
         register(new S2CServiceMessagePacket());

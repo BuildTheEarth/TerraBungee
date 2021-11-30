@@ -27,7 +27,7 @@ import net.buildtheearth.terrabungee.client.network.C2S.C2SServiceMessagePacket;
 import net.buildtheearth.terrabungee.client.network.IC2SPacket;
 import net.buildtheearth.terrabungee.client.network.IS2CPacket;
 import net.buildtheearth.terrabungee.client.network.ResponseRequest;
-import net.buildtheearth.terrabungee.client.network.S2C.S2CKeepAlivePacket;
+import net.buildtheearth.terrabungee.client.network.S2C.S2CHandshakePacket;
 import net.buildtheearth.terrabungee.client.network.WebsocketEndpoint;
 import net.buildtheearth.terrabungee.client.util.Manager;
 import net.buildtheearth.terrabungee.common.Constants;
@@ -78,10 +78,6 @@ public class NetworkManager extends Manager {
                 if (websocket.isOnline()) {
                     terraBungee.getListeners().forEach(l -> l.onServiceReconnect(new ServiceReconnectEvent(terraBungee)));
                 }
-            } else {
-                if (!terraBungee.isDiscarded()) {
-                    send(new S2CKeepAlivePacket());
-                }
             }
         }, 0, 2, TimeUnit.SECONDS);
 
@@ -95,6 +91,7 @@ public class NetworkManager extends Manager {
         try {
             websocket = new WebsocketEndpoint(new URI("ws://" + controller));
             websocket.connect();
+            websocket.onOpenEvent(serverHandshake -> send(new S2CHandshakePacket()));
             websocket.onMessageEvent(message -> onIncomingPayload(new JsonParser().parse(message).getAsJsonObject()));
         } catch (URISyntaxException ignored) {
         }
@@ -112,7 +109,7 @@ public class NetworkManager extends Manager {
     protected void disconnect() {
         consideredConnected = false;
         try {
-            websocket.close();
+            websocket.close(1000);
         } catch (Exception ignored) {
         }
         websocket = null;

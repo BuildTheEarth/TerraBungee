@@ -11,13 +11,14 @@ import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
 @RequiredArgsConstructor
+//TODO: Replace with proper caching
 public class C2SKeepAlivePacket implements IC2SPacket {
 
     private final TerraBungeeService service;
 
     @Override
     public String getID() {
-        return Constants.keepAliveID;
+        return Constants.handshakeId;
     }
 
     @Override

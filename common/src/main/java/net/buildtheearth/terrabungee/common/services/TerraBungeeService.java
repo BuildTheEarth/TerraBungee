@@ -8,7 +8,6 @@ package net.buildtheearth.terrabungee.common.services;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
 
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ public abstract class TerraBungeeService {
     @Getter
     private final String Id;
 
+    @Getter
     @Setter
     private ServiceStatus status = ServiceStatus.DISCARDED;
     @Getter
@@ -36,21 +36,6 @@ public abstract class TerraBungeeService {
 
     public TerraBungeeService(@NonNull String Id) {
         this.Id = Id;
-    }
-
-    public ServiceStatus getStatus() {
-        if (this.status == ServiceStatus.DISCARDED) {
-            return ServiceStatus.DISCARDED;
-        }
-        if (lastAlive + Constants.serviceTimeout < System.currentTimeMillis() && status == ServiceStatus.ONLINE) {
-            status = ServiceStatus.LOST_CONNECTION;
-        }
-        return status;
-    }
-
-    public void keepAlive() {
-        this.lastAlive = System.currentTimeMillis();
-        this.status = ServiceStatus.ONLINE;
     }
 
     /**

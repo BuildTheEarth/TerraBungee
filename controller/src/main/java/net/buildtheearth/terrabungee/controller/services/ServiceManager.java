@@ -106,7 +106,7 @@ public class ServiceManager extends Module {
      * @param client  The websocket client
      * @param intents The intents
      */
-    public void initService(ServiceType type, String ID, TerraBungeeVersion version, WebSocket client, List<ServiceIntent> intents) {
+    public TerraBungeeService initService(ServiceType type, String ID, TerraBungeeVersion version, WebSocket client, List<ServiceIntent> intents) {
         if (getService(ID) != null) {
             getService(ID).setIntents(intents);
             getService(ID).setVersion(version);
@@ -116,14 +116,14 @@ public class ServiceManager extends Module {
             if (getService(ID) instanceof Proxy) {
                 PlayerManager.getInstance().pushMuteCache(getService(ID));
             }
-            return;
+            return getService(ID);
         }
 
         TerraBungeeService service = createService(type, ID);
 
         if (service == null) {
             //TODO: Track if this service should've been awaiting initialization but somehow wasn't.
-            return;
+            return null;
         }
 
         service.setVersion(version);
@@ -137,6 +137,7 @@ public class ServiceManager extends Module {
         if (service instanceof Proxy) {
             PlayerManager.getInstance().pushMuteCache(service);
         }
+        return service;
     }
 
     /**

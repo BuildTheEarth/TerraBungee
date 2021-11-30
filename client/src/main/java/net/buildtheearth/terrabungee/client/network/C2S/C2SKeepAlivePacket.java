@@ -14,7 +14,7 @@ import net.buildtheearth.terrabungee.common.Constants;
 public class C2SKeepAlivePacket implements IC2SPacket {
     @Override
     public String getType() {
-        return Constants.keepAliveID;
+        return Constants.handshakeId;
     }
 
     @Override

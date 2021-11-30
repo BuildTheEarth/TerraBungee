@@ -11,10 +11,10 @@ import net.buildtheearth.terrabungee.client.network.IS2CPacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 
-public class S2CKeepAlivePacket implements IS2CPacket {
+public class S2CHandshakePacket implements IS2CPacket {
     @Override
     public String getType() {
-        return Constants.keepAliveID;
+        return Constants.handshakeId;
     }
 
     @Override

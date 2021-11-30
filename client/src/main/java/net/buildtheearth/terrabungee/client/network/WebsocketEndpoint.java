@@ -21,10 +21,14 @@ public class WebsocketEndpoint extends WebSocketClient {
     @Getter
     private boolean online = false;
     private Consumer<String> messageHandler;
+    private Consumer<ServerHandshake> openHandler;
 
     @Override
-    public void onOpen(ServerHandshake handshakedata) {
+    public void onOpen(ServerHandshake handshake) {
         online = true;
+        if (openHandler != null) {
+            openHandler.accept(handshake);
+        }
     }
 
     @Override
@@ -46,5 +50,9 @@ public class WebsocketEndpoint extends WebSocketClient {
 
     public void onMessageEvent(Consumer<String> message) {
         messageHandler = message;
+    }
+
+    public void onOpenEvent(Consumer<ServerHandshake> handshake) {
+        openHandler = handshake;
     }
 }

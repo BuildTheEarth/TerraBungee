@@ -22,7 +22,6 @@ import net.buildtheearth.terrabungee.controller.security.SecurityManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.buildtheearth.terrabungee.controller.util.LoggerContextUtil;
-import net.buildtheearth.terrabungee.controller.util.MySQL;
 
 import java.io.File;
 import java.util.UUID;
@@ -93,7 +92,7 @@ public class TerraBungeeController extends TerraBungee {
         generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);
 
         //TODO Temporary SQL Class until I (MineFact) understand how the Database handling works here
-        MySQL.start();
+        //MySQL.start();
 
         logger.info("TerraBungee Controller Started!");
         logger.start();

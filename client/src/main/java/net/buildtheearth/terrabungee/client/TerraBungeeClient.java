@@ -12,13 +12,11 @@ import lombok.NonNull;
 import lombok.Setter;
 import net.buildtheearth.terrabungee.client.events.EventListener;
 import net.buildtheearth.terrabungee.client.network.S2C.S2CServiceMessagePacket;
-import net.buildtheearth.terrabungee.client.network.S2C.S2CSetServiceStatusPacket;
 import net.buildtheearth.terrabungee.client.util.TBStats;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.network.Response;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
-import net.buildtheearth.terrabungee.common.services.ServiceStatus;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
 
 import java.util.ArrayList;
@@ -28,7 +26,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -94,17 +91,6 @@ public class TerraBungeeClient {
      */
     public void setAutoReconnect(boolean reconnect) {
         getNetworkManager().setAutoReconnect(reconnect);
-    }
-
-    /**
-     * Discards the service. This is the equivalent to a graceful shutdown for the API.
-     *
-     * @return {@link Response}
-     */
-    public CompletableFuture<Response> discard() {
-        discarded = true;
-        generalThreads.schedule(this::disconnect, 2, TimeUnit.SECONDS);
-        return getNetworkManager().send(new S2CSetServiceStatusPacket(getId(), ServiceStatus.DISCARDED));
     }
 
     /**
