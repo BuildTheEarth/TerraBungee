@@ -84,7 +84,7 @@ public class NetworkManager extends Module implements INetworkManager {
     @Override
     public void send(IC2SPacket packet) {
         ServicePacket servicePacket = packet.getServicePacket();
-        if (servicePacket == null) {
+        if (servicePacket == null || !servicePacket.getClient().isOpen()) {
             return;
         }
 

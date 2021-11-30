@@ -9,7 +9,7 @@ allprojects {
     apply plugin: "com.github.johnrengelman.shadow"
 
     ext {
-        tbVersion = "1.1." + ('git rev-list --count HEAD'.execute().text.trim())
+        tbVersion = "2.0." + ('git rev-list --count HEAD'.execute().text.trim())
 
         snakeYamlVersion = "1.29"
         websocketVersion = "1.5.2"
