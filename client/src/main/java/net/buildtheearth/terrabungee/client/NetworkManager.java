@@ -34,6 +34,7 @@ import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.network.Response;
 
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -48,13 +49,13 @@ public class NetworkManager extends Manager {
     private final Map<String, ResponseRequest> responseRequests = Maps.newHashMap();
     @Getter(AccessLevel.PROTECTED)
     private final List<EventListener> listeners = Lists.newArrayList();
-    private String controller;
+    private InetSocketAddress controller;
     private WebsocketEndpoint websocket;
 
     private boolean autoReconnect = false;
     private boolean consideredConnected = false;
 
-    protected NetworkManager(@NonNull String controller, @NonNull TerraBungeeClient terraBungee) {
+    protected NetworkManager(@NonNull InetSocketAddress controller, @NonNull TerraBungeeClient terraBungee) {
         super(terraBungee);
         this.controller = controller;
 

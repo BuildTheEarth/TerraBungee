@@ -19,6 +19,7 @@ import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class TerraBungeeClient {
     @Setter
     private TBStats stats = new TBStats("UNKNOWN", 0, 0, 0, 0);
 
-    protected TerraBungeeClient(@NonNull ServiceType serviceType, @NonNull String Id, @NonNull String controller) {
+    protected TerraBungeeClient(@NonNull ServiceType serviceType, @NonNull String Id, @NonNull InetSocketAddress controller) {
         this.serviceType = serviceType;
         this.Id = Id;
         this.networkManager = new NetworkManager(controller, this);
