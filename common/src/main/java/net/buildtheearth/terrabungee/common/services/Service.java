@@ -13,7 +13,7 @@ import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TerraBungeeService {
+public abstract class Service {
 
     @Getter
     private final String Id;
@@ -21,10 +21,10 @@ public abstract class TerraBungeeService {
     @Getter
     @Setter
     private ServiceStatus status = ServiceStatus.DISCARDED;
+
     @Getter
     @Setter
     private Object client;
-    private long lastAlive = -1;
 
     @Getter
     @Setter
@@ -34,7 +34,7 @@ public abstract class TerraBungeeService {
     @Setter
     private TerraBungeeVersion version;
 
-    public TerraBungeeService(@NonNull String Id) {
+    public Service(@NonNull String Id) {
         this.Id = Id;
     }
 

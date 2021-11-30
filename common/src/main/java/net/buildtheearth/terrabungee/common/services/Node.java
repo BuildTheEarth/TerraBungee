@@ -5,7 +5,7 @@
 
 package net.buildtheearth.terrabungee.common.services;
 
-public class Node extends TerraBungeeService {
+public class Node extends Service {
     public static final ServiceType type = ServiceType.NODE;
 
     public Node(String Id) {

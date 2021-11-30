@@ -3,7 +3,7 @@ package net.buildtheearth.terrabungee.controller.command.instance;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.common.services.Instance;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
+import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
@@ -28,7 +28,7 @@ public class DefaultServerCommand extends Command {
         String id = args[1];
 
         boolean matched = false;
-        for (TerraBungeeService s : ServiceManager.getInstance().getServices().values()) {
+        for (Service s : ServiceManager.getInstance().getServices().values()) {
             if (s.getId().equalsIgnoreCase(id)) {
                 matched = true;
                 if (s instanceof Instance) {

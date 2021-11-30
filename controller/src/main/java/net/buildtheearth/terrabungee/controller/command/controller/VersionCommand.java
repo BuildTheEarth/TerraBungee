@@ -5,7 +5,7 @@ import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
+import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
@@ -35,7 +35,7 @@ public class VersionCommand extends Command {
         List<String> newServices = Lists.newArrayList();
         List<String> currentServices = Lists.newArrayList();
 
-        for (TerraBungeeService service : ServiceManager.getInstance().getServices().values()) {
+        for (Service service : ServiceManager.getInstance().getServices().values()) {
             TerraBungeeVersion version = service.getVersion();
             if (version != null) {
                 if (version.isOlder(Constants.VERSION)) {

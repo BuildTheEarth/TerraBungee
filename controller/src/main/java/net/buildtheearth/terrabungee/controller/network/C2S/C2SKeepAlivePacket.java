@@ -6,7 +6,7 @@ import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.IC2SPacket;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
+import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
@@ -14,7 +14,7 @@ import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 //TODO: Replace with proper caching
 public class C2SKeepAlivePacket implements IC2SPacket {
 
-    private final TerraBungeeService service;
+    private final Service service;
 
     @Override
     public String getID() {

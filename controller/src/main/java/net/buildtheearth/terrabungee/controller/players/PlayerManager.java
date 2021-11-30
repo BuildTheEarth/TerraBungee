@@ -19,7 +19,7 @@ import net.buildtheearth.terrabungee.common.players.PunishmentHistory;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
+import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerJoinEventPacket;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SPlayerQuitEventPacket;
@@ -264,12 +264,12 @@ public class PlayerManager extends Module {
     }
 
     public void pushMuteCache() {
-        for (TerraBungeeService proxy : ServiceManager.getInstance().getServices(ServiceType.PROXY)) {
+        for (Service proxy : ServiceManager.getInstance().getServices(ServiceType.PROXY)) {
             pushMuteCache(proxy);
         }
     }
 
-    public void pushMuteCache(TerraBungeeService service) {
+    public void pushMuteCache(Service service) {
         TerraBungee.getInstance().getNetworkManager().send(new C2PMuteCachePacket(service));
     }
 

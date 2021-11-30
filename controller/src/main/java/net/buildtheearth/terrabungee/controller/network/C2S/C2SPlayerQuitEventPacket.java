@@ -7,7 +7,7 @@ import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
+import net.buildtheearth.terrabungee.common.services.Service;
 
 /**
  * @author Noah Husby
@@ -15,7 +15,7 @@ import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
 @RequiredArgsConstructor
 public class C2SPlayerQuitEventPacket implements IC2SPacket {
     private final TBPlayer player;
-    private final TerraBungeeService service;
+    private final Service service;
 
     @Override
     public String getID() {

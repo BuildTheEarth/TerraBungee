@@ -7,7 +7,7 @@ package net.buildtheearth.terrabungee.common.services;
 
 import lombok.Getter;
 
-public class Instance extends TerraBungeeService {
+public class Instance extends Service {
     public static final ServiceType type = ServiceType.INSTANCE;
 
     @Getter

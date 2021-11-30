@@ -9,7 +9,7 @@ import net.buildtheearth.terrabungee.common.services.Proxy;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.common.services.ServiceStatus;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
+import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ServiceOfflineEmbed;
@@ -36,7 +36,7 @@ public class ServiceManager extends Module {
         return instance == null ? instance = new ServiceManager() : instance;
     }
 
-    private final Map<String, TerraBungeeService> services = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+    private final Map<String, Service> services = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
     private String defaultServer = "";
 
     private final ScheduledExecutorService intentThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-intents");
@@ -46,7 +46,7 @@ public class ServiceManager extends Module {
      *
      * @return All services created
      */
-    public Map<String, TerraBungeeService> getServices() {
+    public Map<String, Service> getServices() {
         return ImmutableMap.copyOf(services);
     }
 
@@ -56,7 +56,7 @@ public class ServiceManager extends Module {
 
     public int getTotalDisconnectedServices() {
         int x = 0;
-        for (TerraBungeeService s : ImmutableMap.copyOf(services).values()) {
+        for (Service s : ImmutableMap.copyOf(services).values()) {
             if (s.getStatus() == ServiceStatus.LOST_CONNECTION) {
                 x++;
             }
@@ -70,9 +70,9 @@ public class ServiceManager extends Module {
      * @param type The type of service
      * @return All services of the same type
      */
-    public List<TerraBungeeService> getServices(ServiceType type) {
-        List<TerraBungeeService> typeServices = new ArrayList<>();
-        for (TerraBungeeService s : ImmutableMap.copyOf(services).values()) {
+    public List<Service> getServices(ServiceType type) {
+        List<Service> typeServices = new ArrayList<>();
+        for (Service s : ImmutableMap.copyOf(services).values()) {
             if (s.getType() == type) {
                 typeServices.add(s);
             }
@@ -94,7 +94,7 @@ public class ServiceManager extends Module {
      * @param id Service ID
      * @return TerraBungeeService
      */
-    public TerraBungeeService getService(String id) {
+    public Service getService(String id) {
         return services.get(id);
     }
 
@@ -106,7 +106,7 @@ public class ServiceManager extends Module {
      * @param client  The websocket client
      * @param intents The intents
      */
-    public TerraBungeeService initService(ServiceType type, String ID, TerraBungeeVersion version, WebSocket client, List<ServiceIntent> intents) {
+    public Service initService(ServiceType type, String ID, TerraBungeeVersion version, WebSocket client, List<ServiceIntent> intents) {
         if (getService(ID) != null) {
             getService(ID).setIntents(intents);
             getService(ID).setVersion(version);
@@ -119,7 +119,7 @@ public class ServiceManager extends Module {
             return getService(ID);
         }
 
-        TerraBungeeService service = createService(type, ID);
+        Service service = createService(type, ID);
 
         if (service == null) {
             //TODO: Track if this service should've been awaiting initialization but somehow wasn't.
@@ -145,7 +145,7 @@ public class ServiceManager extends Module {
      *
      * @param service The service to discard
      */
-    public void discardService(TerraBungeeService service) {
+    public void discardService(Service service) {
         discardService(service, false);
     }
 
@@ -155,7 +155,7 @@ public class ServiceManager extends Module {
      * @param service The service to discard
      * @param remove  Whether the service should be discarded or removed completely
      */
-    public void discardService(TerraBungeeService service, boolean remove) {
+    public void discardService(Service service, boolean remove) {
         if (remove) {
             services.remove(service.getId());
             return;
@@ -171,7 +171,7 @@ public class ServiceManager extends Module {
      * @param ID   The ID of the service
      * @return The new service
      */
-    public TerraBungeeService createService(ServiceType type, String ID) {
+    public Service createService(ServiceType type, String ID) {
         if (type == ServiceType.PROXY) {
             return createService(new Proxy(ID));
         } else if (type == ServiceType.CUSTOM) {
@@ -187,7 +187,7 @@ public class ServiceManager extends Module {
      * @param service The service that should be initialized in the future
      * @return The new service
      */
-    public TerraBungeeService createService(TerraBungeeService service) {
+    public Service createService(Service service) {
         return createService(service, false);
     }
 
@@ -198,7 +198,7 @@ public class ServiceManager extends Module {
      * @param staticService If the service is static, or not. Setting this to true will assume that the service won't be initialized
      * @return The new service
      */
-    public TerraBungeeService createService(TerraBungeeService service, boolean staticService) {
+    public Service createService(Service service, boolean staticService) {
         if (getService(service.getId()) != null) {
             return service;
         }
@@ -217,9 +217,9 @@ public class ServiceManager extends Module {
      *
      * @param intent  {@link ServiceIntent}
      * @param seconds Time (in seconds) that the intent action should be triggered
-     * @param service {@link Consumer<TerraBungeeService>}
+     * @param service {@link Consumer< Service >}
      */
-    private void registerIntent(ServiceIntent intent, int seconds, Consumer<TerraBungeeService> service) {
+    private void registerIntent(ServiceIntent intent, int seconds, Consumer<Service> service) {
         intentThreads.scheduleAtFixedRate(() -> runIntentAction(intent, service), 1, seconds, TimeUnit.SECONDS);
     }
 
@@ -227,10 +227,10 @@ public class ServiceManager extends Module {
      * Runs a specific action on all services with a specific intent
      *
      * @param intent  {@link ServiceIntent}
-     * @param service {@link Consumer<TerraBungeeService>}
+     * @param service {@link Consumer< Service >}
      */
-    public void runIntentAction(ServiceIntent intent, Consumer<TerraBungeeService> service) {
-        for (TerraBungeeService s : ImmutableMap.copyOf(services).values()) {
+    public void runIntentAction(ServiceIntent intent, Consumer<Service> service) {
+        for (Service s : ImmutableMap.copyOf(services).values()) {
             if (s.getStatus() == ServiceStatus.ONLINE && s.getIntents().contains(intent)) {
                 intentThreads.submit(() -> service.accept(s));
             }
@@ -259,7 +259,7 @@ public class ServiceManager extends Module {
         @Override
         public void run() {
             for (Map.Entry<String, ServiceStatus> s : serviceStatus.entrySet()) {
-                TerraBungeeService service = ServiceManager.getInstance().getService(s.getKey());
+                Service service = ServiceManager.getInstance().getService(s.getKey());
                 if (service == null) {
                     continue;
                 }
@@ -274,7 +274,7 @@ public class ServiceManager extends Module {
             }
 
             serviceStatus.clear();
-            for (TerraBungeeService s : ServiceManager.getInstance().getServices().values()) {
+            for (Service s : ServiceManager.getInstance().getServices().values()) {
                 serviceStatus.put(s.getId(), s.getStatus());
             }
         }

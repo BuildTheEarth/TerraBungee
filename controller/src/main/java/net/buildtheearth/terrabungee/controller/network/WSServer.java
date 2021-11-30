@@ -1,7 +1,7 @@
 package net.buildtheearth.terrabungee.controller.network;
 
 import net.buildtheearth.terrabungee.common.services.ServiceStatus;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
+import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.security.SecurityManager;
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -28,7 +28,7 @@ public class WSServer extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        TerraBungeeService service = conn.getAttachment();
+        Service service = conn.getAttachment();
         if (service != null) {
             service.setStatus(code == 1000 ? ServiceStatus.DISCARDED : ServiceStatus.LOST_CONNECTION);
             //TODO: Events

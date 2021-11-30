@@ -8,7 +8,7 @@ import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
+import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
 /**
@@ -17,7 +17,7 @@ import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 @RequiredArgsConstructor
 public class C2SOnlinePlayerCacheHitPacket implements IC2SPacket {
 
-    private final TerraBungeeService service;
+    private final Service service;
 
     @Override
     public String getID() {

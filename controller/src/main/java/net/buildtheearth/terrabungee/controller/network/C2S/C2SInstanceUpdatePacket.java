@@ -8,13 +8,13 @@ import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.services.Instance;
-import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
+import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 
 @RequiredArgsConstructor
 public class C2SInstanceUpdatePacket implements IC2SPacket {
 
-    private final TerraBungeeService service;
+    private final Service service;
 
     @Override
     public String getID() {

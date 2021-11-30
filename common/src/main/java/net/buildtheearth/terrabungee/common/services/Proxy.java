@@ -5,7 +5,7 @@
 
 package net.buildtheearth.terrabungee.common.services;
 
-public class Proxy extends TerraBungeeService {
+public class Proxy extends Service {
     public static final ServiceType type = ServiceType.PROXY;
 
     public Proxy(String Id) {
