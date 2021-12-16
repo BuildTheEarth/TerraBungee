@@ -11,7 +11,7 @@ allprojects {
     ext {
         tbVersion = "1.1." + ('git rev-list --count HEAD'.execute().text.trim())
 
-        snakeYamlVersion = "1.29"
+        snakeYamlVersion = "1.30"
         websocketVersion = "1.5.2"
         husbyVersion = "0.1.89"
         lombokVersion = "1.18.22"
