@@ -29,6 +29,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
+import java.net.InetSocketAddress;
 import java.util.logging.Logger;
 
 public class TerraBungeeProxy extends Plugin implements Listener {
@@ -48,7 +49,8 @@ public class TerraBungeeProxy extends Plugin implements Listener {
         ConfigHandler.getInstance();
         PlayerHandler.getInstance();
 
-        terraBungee = TerraBungeeAPI.createService(ServiceType.PROXY, ConfigHandler.serviceID, ConfigHandler.controllerUrl);
+        String[] address = ConfigHandler.controllerUrl.split(":");
+        terraBungee = TerraBungeeAPI.createService(ServiceType.PROXY, ConfigHandler.serviceID, new InetSocketAddress(address[0], Integer.parseInt(address[1])));
         terraBungee.setAutoReconnect(true);
         terraBungee.connect();
         terraBungee.enableIntents(ServiceIntent.INSTANCE_UPDATE);
@@ -80,6 +82,6 @@ public class TerraBungeeProxy extends Plugin implements Listener {
     public void onDisable() {
         ProxyServer.getInstance().getScheduler().cancel(this);
         instance = null;
-        terraBungee.discard();
+        terraBungee.disconnect();
     }
 }
