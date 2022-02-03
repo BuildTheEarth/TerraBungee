@@ -20,7 +20,7 @@ allprojects {
         commonsVersion = "2.11.0"
         jlineVersion = "3.21.0"
         logbackVersion = "1.3.0-alpha13"
-        jdaVersion = "4.4.0_351"
+        jdaVersion = "4.4.0_352"
         hikariVersion = "4.0.3"
     }
 
