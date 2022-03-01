@@ -11,7 +11,7 @@ dependencies {
     }
     implementation "com.zaxxer:HikariCP:$hikariVersion"
     implementation "org.java-websocket:Java-WebSocket:$websocketVersion"
-    implementation "mysql:mysql-connector-java:8.0.28"
+    implementation "org.mongodb:mongo-java-driver:$mongoVersion"
 }
 
 repositories {

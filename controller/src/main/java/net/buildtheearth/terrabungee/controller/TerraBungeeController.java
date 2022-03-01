@@ -9,8 +9,6 @@ import net.buildtheearth.api.plugin.PluginManager;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.command.CommandManager;
-import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
-import net.buildtheearth.terrabungee.controller.config.TerraBungeeConfig;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
@@ -21,6 +19,8 @@ import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.security.SecurityManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
+import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
+import net.buildtheearth.terrabungee.controller.storage.TerraBungeeConfig;
 import net.buildtheearth.terrabungee.controller.util.LoggerContextUtil;
 
 import java.io.File;
@@ -77,7 +77,7 @@ public class TerraBungeeController extends TerraBungee {
 
         pluginManager = new PluginManager(this);
 
-        ConfigHandler.getInstance();
+        StorageHandler.getInstance();
         splash();
         pluginManager.detectPlugins(pluginFolder);
         pluginManager.loadPlugins();
@@ -104,7 +104,7 @@ public class TerraBungeeController extends TerraBungee {
     public void end() {
         running = false;
         getLogger().info("Shutting down the controller!");
-        ConfigHandler.getInstance().unload();
+        StorageHandler.getInstance().unload();
         ModuleHandler.getInstance().disableAll();
         try {
             server.stop();

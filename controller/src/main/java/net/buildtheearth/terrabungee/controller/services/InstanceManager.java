@@ -3,11 +3,13 @@ package net.buildtheearth.terrabungee.controller.services;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.noahhusby.lib.data.storage.StorageTreeMap;
+import com.noahhusby.lib.data.storage.events.EventListener;
+import com.noahhusby.lib.data.storage.events.transfer.StorageLoadEvent;
 import lombok.Getter;
 import net.buildtheearth.terrabungee.common.services.Instance;
+import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.common.services.ServiceStatus;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
-import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceAddedEmbed;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceRemovedEmbed;
@@ -22,7 +24,7 @@ public class InstanceManager extends Module {
     private static final InstanceManager instance = new InstanceManager();
 
     @Getter
-    private final StorageTreeMap<String, StorableStaticInstance> staticInstances = new StorageTreeMap<>(String.class, StorableStaticInstance.class, String.CASE_INSENSITIVE_ORDER);
+    private final StorageTreeMap<String, StorableStaticInstance> staticInstances = new StorageTreeMap<>(StorableStaticInstance.class, String.CASE_INSENSITIVE_ORDER);
 
     private InstanceManager() {
         super("Instance");
@@ -118,7 +120,12 @@ public class InstanceManager extends Module {
 
     @Override
     public void onEnable() {
-        staticInstances.onLoadEvent(this::updateInstances);
+        staticInstances.events().register(new EventListener<StorableStaticInstance>() {
+            @Override
+            public void onLoad(StorageLoadEvent<StorableStaticInstance> event) {
+                updateInstances();
+            }
+        });
     }
 
     @Override

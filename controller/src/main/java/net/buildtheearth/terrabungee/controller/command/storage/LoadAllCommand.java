@@ -4,8 +4,8 @@ import com.noahhusby.lib.data.storage.Storage;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
-import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
+import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
 
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class LoadAllCommand extends Command {
             return;
         }
 
-        for (Map.Entry<String, Storage> storageEntry : ConfigHandler.getInstance().getStorageMap().entrySet()) {
+        for (Map.Entry<String, Storage> storageEntry : StorageHandler.getInstance().getStorageMap().entrySet()) {
             try {
                 TerraBungee.getInstance().getLogger().info("Loading storage: " + storageEntry.getKey());
                 storageEntry.getValue().load();

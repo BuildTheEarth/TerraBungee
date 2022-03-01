@@ -2,8 +2,8 @@ package net.buildtheearth.terrabungee.controller.command.controller;
 
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
-import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
+import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
 
 /**
  * @author Noah Husby
@@ -34,6 +34,6 @@ public class MigrateCommand extends Command {
         }
 
         TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, "Successfully migrated data!");
-        ConfigHandler.getInstance().migrate();
+        StorageHandler.getInstance().migrate();
     }
 }

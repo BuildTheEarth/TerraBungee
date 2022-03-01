@@ -1,7 +1,7 @@
 package net.buildtheearth.terrabungee.controller.command.controller;
 
 import net.buildtheearth.api.plugin.Command;
-import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
+import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
 
 /**
  * @author Noah Husby
@@ -19,6 +19,6 @@ public class ReloadCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        ConfigHandler.getInstance().reload();
+        StorageHandler.getInstance().reload();
     }
 }

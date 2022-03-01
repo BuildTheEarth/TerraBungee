@@ -1,7 +1,7 @@
 package net.buildtheearth.terrabungee.controller.network;
 
-import net.buildtheearth.terrabungee.common.services.ServiceStatus;
 import net.buildtheearth.terrabungee.common.services.Service;
+import net.buildtheearth.terrabungee.common.services.ServiceStatus;
 import net.buildtheearth.terrabungee.controller.security.SecurityManager;
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;

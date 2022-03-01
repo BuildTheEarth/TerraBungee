@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.controller.config;
+package net.buildtheearth.terrabungee.controller.storage;
 
 import com.noahhusby.lib.application.config.Config;
 import com.noahhusby.lib.application.config.Config.Comment;
@@ -39,7 +39,7 @@ public class TerraBungeeConfig {
     }
 
     @Comment({
-            "Settings for the MySQL Database"
+            "Settings for MongoDB"
     })
     public static DatabaseOptions database = new DatabaseOptions();
 
@@ -47,27 +47,27 @@ public class TerraBungeeConfig {
         @Comment({
                 "The host IP for the database."
         })
-        public String sqlHost = "127.0.0.1";
+        public String host = "127.0.0.1";
 
         @Comment({
                 "The port for the database."
         })
-        public int sqlPort = 3306;
+        public int port = 27017;
 
         @Comment({
                 "The username for the database."
         })
-        public String sqlUser = "";
+        public String user = "";
 
         @Comment({
                 "The password for the database."
         })
-        public String sqlPassword = "";
+        public String password = "";
 
         @Comment({
                 "The name of the database."
         })
-        public String sqlDb = "";
+        public String database = "";
 
         @Comment({
                 "Should data be stored locally as well [default: false]"
@@ -76,7 +76,7 @@ public class TerraBungeeConfig {
         public boolean localStorage = false;
 
         public Credentials toCredentials() {
-            return new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb);
+            return new Credentials(host, port, user, password, database);
         }
     }
 }
