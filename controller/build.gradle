@@ -9,7 +9,6 @@ dependencies {
     implementation("net.dv8tion:JDA:$jdaVersion") {
         exclude module: 'opus-java'
     }
-    implementation "com.zaxxer:HikariCP:$hikariVersion"
     implementation "org.java-websocket:Java-WebSocket:$websocketVersion"
     implementation "org.mongodb:mongo-java-driver:$mongoVersion"
 }
