@@ -1,5 +1,6 @@
 package net.buildtheearth.terrabungee.controller.command;
 
+import com.google.common.collect.Lists;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.terrabungee.controller.command.controller.HelpCommand;
@@ -29,6 +30,7 @@ import net.buildtheearth.terrabungee.controller.modules.Module;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class CommandManager extends Module {
     private static CommandManager instance = null;
@@ -38,7 +40,7 @@ public class CommandManager extends Module {
     }
 
     private CommandManager() {
-        super("Commands");
+        super("commands");
     }
 
     private final List<Command> controllerCommands = new ArrayList<>();
@@ -98,5 +100,10 @@ public class CommandManager extends Module {
     @Override
     public void onDisable() {
         controllerCommands.clear();
+    }
+
+    @Override
+    public List<String> getRequiredModules() {
+        return Lists.newArrayList();
     }
 }

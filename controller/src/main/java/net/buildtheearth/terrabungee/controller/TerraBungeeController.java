@@ -23,6 +23,7 @@ import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
 import net.buildtheearth.terrabungee.controller.storage.TerraBungeeConfig;
 import net.buildtheearth.terrabungee.controller.util.LoggerContextUtil;
 import org.jline.utils.Log;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.UUID;
@@ -68,7 +69,6 @@ public class TerraBungeeController extends TerraBungee {
         LoggerContextUtil.setLevel("org.mongodb.driver.connection", Level.ERROR);
         LoggerContextUtil.setLevel("org.mongodb.driver.protocol.command", Level.ERROR);
 
-
         folder = new File(System.getProperty("user.dir"));
         folder.mkdir();
 
@@ -77,13 +77,12 @@ public class TerraBungeeController extends TerraBungee {
 
         pluginManager = new PluginManager(this);
 
-        StorageHandler.getInstance();
         splash();
         pluginManager.detectPlugins(pluginFolder);
         pluginManager.loadPlugins();
         pluginManager.enablePlugins();
 
-        ModuleHandler.getInstance().registerModules(SecurityManager.getInstance(), InstanceManager.getInstance(), ServiceManager.getInstance(), PlayerManager.getInstance(), NetworkManager.getInstance(), DiscordManager.getInstance(), CommandManager.getInstance());
+        ModuleHandler.getInstance().registerModules(StorageHandler.getInstance(), SecurityManager.getInstance(), InstanceManager.getInstance(), ServiceManager.getInstance(), PlayerManager.getInstance(), NetworkManager.getInstance(), DiscordManager.getInstance(), CommandManager.getInstance());
         ModuleHandler.getInstance().enableAll();
 
         server = new WSServer(TerraBungeeConfig.getSocketAddress());

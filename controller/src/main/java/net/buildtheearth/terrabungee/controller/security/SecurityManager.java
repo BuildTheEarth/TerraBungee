@@ -24,7 +24,7 @@ public class SecurityManager extends Module {
     private File whitelistFile;
 
     private SecurityManager() {
-        super("Security");
+        super("security");
     }
 
     public void loadWhitelist() {
@@ -65,5 +65,10 @@ public class SecurityManager extends Module {
     @Override
     public void onDisable() {
 
+    }
+
+    @Override
+    public List<String> getRequiredModules() {
+        return Lists.newArrayList();
     }
 }

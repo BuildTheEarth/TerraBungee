@@ -14,6 +14,7 @@
 
 package net.buildtheearth.terrabungee.controller.network;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.JsonUtils;
@@ -44,6 +45,7 @@ import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetri
 import net.buildtheearth.terrabungee.controller.network.proxy.P2CUpdatePlayersPacket;
 import org.java_websocket.WebSocket;
 
+import java.util.List;
 import java.util.Map;
 
 public class NetworkManager extends Module implements INetworkManager {
@@ -57,7 +59,7 @@ public class NetworkManager extends Module implements INetworkManager {
     private final Map<String, IS2CPacket> packets = Maps.newHashMap();
 
     private NetworkManager() {
-        super("Network");
+        super("network");
     }
 
     public void onIncomingPayload(WebSocket client, String p) {
@@ -125,5 +127,10 @@ public class NetworkManager extends Module implements INetworkManager {
     @Override
     public void onDisable() {
         packets.clear();
+    }
+
+    @Override
+    public List<String> getRequiredModules() {
+        return Lists.newArrayList("security");
     }
 }

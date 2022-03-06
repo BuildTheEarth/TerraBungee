@@ -27,7 +27,7 @@ public class InstanceManager extends Module {
     private final StorageTreeMap<String, StorableStaticInstance> staticInstances = new StorageTreeMap<>(StorableStaticInstance.class, String.CASE_INSENSITIVE_ORDER);
 
     private InstanceManager() {
-        super("Instance");
+        super("instance");
     }
 
     /**
@@ -131,5 +131,10 @@ public class InstanceManager extends Module {
     @Override
     public void onDisable() {
 
+    }
+
+    @Override
+    public List<String> getRequiredModules() {
+        return Lists.newArrayList("storage");
     }
 }

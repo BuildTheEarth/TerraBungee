@@ -55,7 +55,7 @@ public class DiscordManager extends Module {
     private final StorageHashMap<Integer, BotConfig> botConfigs = new StorageHashMap<>(BotConfig.class);
 
     private DiscordManager() {
-        super("Discord");
+        super("discord");
         registerCommands(
                 new PunishmentsDiscordCommand(),
                 new SetupDiscordCommand(),
@@ -210,6 +210,11 @@ public class DiscordManager extends Module {
     public void onDisable() {
         send(new ControllerStoppedEmbed());
         stopBots();
+    }
+
+    @Override
+    public List<String> getRequiredModules() {
+        return Lists.newArrayList("storage");
     }
 
     @Override

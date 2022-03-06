@@ -67,7 +67,7 @@ public class PlayerManager extends Module {
     }
 
     private PlayerManager() {
-        super("Players");
+        super("players");
     }
 
     public int getTotalPlayers() {
@@ -296,5 +296,10 @@ public class PlayerManager extends Module {
     @Override
     public void onDisable() {
 
+    }
+
+    @Override
+    public List<String> getRequiredModules() {
+        return Lists.newArrayList("storage");
     }
 }

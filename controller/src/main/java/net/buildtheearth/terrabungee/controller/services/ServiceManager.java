@@ -1,6 +1,7 @@
 package net.buildtheearth.terrabungee.controller.services;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
@@ -51,7 +52,7 @@ public class ServiceManager extends Module {
     }
 
     private ServiceManager() {
-        super("Services");
+        super("services");
     }
 
     public int getTotalDisconnectedServices() {
@@ -247,6 +248,11 @@ public class ServiceManager extends Module {
     @Override
     public void onDisable() {
         intentThreads.shutdownNow();
+    }
+
+    @Override
+    public List<String> getRequiredModules() {
+        return Lists.newArrayList("storage");
     }
 
     /**

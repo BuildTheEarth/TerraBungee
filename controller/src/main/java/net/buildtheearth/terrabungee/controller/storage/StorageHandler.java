@@ -1,5 +1,6 @@
 package net.buildtheearth.terrabungee.controller.storage;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -8,6 +9,7 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 import com.noahhusby.lib.application.config.Configuration;
+import com.noahhusby.lib.application.config.exception.ClassNotConfigException;
 import com.noahhusby.lib.data.storage.Storage;
 import com.noahhusby.lib.data.storage.StorageHashMap;
 import com.noahhusby.lib.data.storage.StorageTreeMap;
@@ -21,17 +23,19 @@ import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.GuildConfig;
+import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.StorableStaticInstance;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class StorageHandler {
+public class StorageHandler extends Module {
     private static StorageHandler instance = null;
 
     public static StorageHandler getInstance() {
@@ -42,39 +46,11 @@ public class StorageHandler {
     }
 
     private StorageHandler() {
-        init();
+        super("storage");
     }
-
-    private File staticInstanceFile;
-    private File playerDataFile;
-    private File punishmentFile;
-    private File discordGuildFile;
-    private File discordBotFile;
 
     @Getter
     private final Map<String, Storage> storageMap = Maps.newHashMap();
-
-    private void init() {
-        File localDb = new File(TerraBungee.getInstance().getFolder(), "local");
-        if (!localDb.exists()) {
-            localDb.mkdir();
-        }
-
-        staticInstanceFile = new File(localDb, "instances.json");
-        playerDataFile = new File(localDb, "players.json");
-        discordGuildFile = new File(localDb, "discord_guilds.json");
-        punishmentFile = new File(localDb, "punishments.json");
-        discordBotFile = new File(localDb, "discord_bots.json");
-
-        load();
-    }
-
-    @SneakyThrows
-    public void load() {
-        Configuration configuration = Configuration.of(TerraBungeeConfig.class);
-        configuration.sync(TerraBungeeConfig.class);
-        loadHandlers();
-    }
 
     @SneakyThrows
     public void unload() {
@@ -179,7 +155,6 @@ public class StorageHandler {
      */
     public void reload() {
         TerraBungeeController.logger.info("Reloading the controller!");
-        load();
     }
 
     /**
@@ -189,5 +164,36 @@ public class StorageHandler {
         //PlayerManager.getInstance().getPlayers().migrate(0);
         //InstanceManager.getInstance().getStaticInstances().migrate(0);
         //DiscordManager.getInstance().getGuildConfigs().migrate(0);
+    }
+
+    @Override
+    public void onEnable() {
+        File localDb = new File(TerraBungee.getInstance().getFolder(), "local");
+        if (!localDb.exists()) {
+            localDb.mkdir();
+        }
+        try {
+            Configuration configuration = Configuration.of(TerraBungeeConfig.class);
+            configuration.sync(TerraBungeeConfig.class);
+        } catch (ClassNotConfigException e) {
+            e.printStackTrace();
+        }
+        loadHandlers();
+    }
+
+    @Override
+    public void onDisable() {
+        storageMap.forEach((a, b) -> {
+            try {
+                b.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public List<String> getRequiredModules() {
+        return Lists.newArrayList();
     }
 }

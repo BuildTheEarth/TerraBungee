@@ -3,6 +3,9 @@ package net.buildtheearth.terrabungee.controller.modules;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author Noah Husby
  */
@@ -22,7 +25,7 @@ public abstract class Module {
      */
     public abstract void onDisable();
 
-
+    public abstract List<String> getRequiredModules();
 
     protected void fatal() {
 
