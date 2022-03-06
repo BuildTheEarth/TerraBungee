@@ -36,34 +36,34 @@ bungeecord/bukkit plugin, node, and controller.
 # Configuration file
 
 ##########################################################################################################
-# discord
-#--------------------------------------------------------------------------------------------------------#
-# Settings for the discord bot
-##########################################################################################################
+  # discord
+  #--------------------------------------------------------------------------------------------------------#
+  # Settings for the discord bot
+  ##########################################################################################################
 
-discord {
-    # The token of the discord bot. [default: ]
+    discord {
+  # The token of the discord bot. [default: ]
     S:"Bot Token"=
 
-    # The ID of the Discord Guild/Server that the bot should listen on. [default: ]
+  # The ID of the Discord Guild/Server that the bot should listen on. [default: ]
     S:"Guild ID"=
 
-    # The ID of the Discord channel where TerraBungee updates should be sent. [default: ]
+  # The ID of the Discord channel where TerraBungee updates should be sent. [default: ]
     S:"Updates Channel ID"=
 }
 
 
-##########################################################################################################
-# general
-#--------------------------------------------------------------------------------------------------------#
-# General settings for the TerraBungee Controller
-##########################################################################################################
+  ##########################################################################################################
+  # general
+  #--------------------------------------------------------------------------------------------------------#
+  # General settings for the TerraBungee Controller
+  ##########################################################################################################
 
-general {
-    # The IP address that the controller should run on. [default: 127.0.0.1]
+    general {
+  # The IP address that the controller should run on. [default: 127.0.0.1]
     S:Host=127.0.0.1
 
-    # The port that the controller should run on. [range: 0 ~ 65535, default: 7000]
+  # The port that the controller should run on. [range: 0 ~ 65535, default: 7000]
     I:Port=7000
 }
 ```

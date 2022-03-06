@@ -22,6 +22,7 @@ import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
 import net.buildtheearth.terrabungee.controller.storage.TerraBungeeConfig;
 import net.buildtheearth.terrabungee.controller.util.LoggerContextUtil;
+import org.jline.utils.Log;
 
 import java.io.File;
 import java.util.UUID;
@@ -61,13 +62,12 @@ public class TerraBungeeController extends TerraBungee {
         logger = new TerraBungeeConsole();
 
         // Configure Loggers
-        LoggerContextUtil.setLevel("io.javalin.Javalin", Level.WARN);
         LoggerContextUtil.setLevel("org.eclipse", Level.WARN);
         LoggerContextUtil.setLevel("net.dv8tion.jda", Level.WARN);
-        LoggerContextUtil.setLevel("com.zaxxer.hikari.HikariConfig", Level.INFO);
-        LoggerContextUtil.setLevel("com.zaxxer.hikari.pool.PoolBase", Level.INFO);
-        LoggerContextUtil.setLevel("com.zaxxer.hikari.pool.HikariPool", Level.INFO);
-        LoggerContextUtil.setLevel("com.zaxxer.hikari.util.DriverDataSource", Level.INFO);
+        LoggerContextUtil.setLevel("org.mongodb.driver.cluster", Level.ERROR);
+        LoggerContextUtil.setLevel("org.mongodb.driver.connection", Level.ERROR);
+        LoggerContextUtil.setLevel("org.mongodb.driver.protocol.command", Level.ERROR);
+
 
         folder = new File(System.getProperty("user.dir"));
         folder.mkdir();
@@ -86,18 +86,13 @@ public class TerraBungeeController extends TerraBungee {
         ModuleHandler.getInstance().registerModules(SecurityManager.getInstance(), InstanceManager.getInstance(), ServiceManager.getInstance(), PlayerManager.getInstance(), NetworkManager.getInstance(), DiscordManager.getInstance(), CommandManager.getInstance());
         ModuleHandler.getInstance().enableAll();
 
-        server = new WSServer(TerraBungeeConfig.general.getSocketAddress());
+        server = new WSServer(TerraBungeeConfig.getSocketAddress());
         new Thread(server).start();
 
         generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);
 
-        //TODO Temporary SQL Class until I (MineFact) understand how the Database handling works here
-        //MySQL.start();
-
         logger.info("TerraBungee Controller Started!");
         logger.start();
-
-
     }
 
     @Override
@@ -147,7 +142,7 @@ public class TerraBungeeController extends TerraBungee {
                            "                                     |___/         ");
         System.out.println("---------------------------------------------");
         System.out.println("TerraBungee " + Constants.VERSION + " by Noah Husby");
-        System.out.println("Listening on: " + TerraBungeeConfig.general.host + ":" + TerraBungeeConfig.general.port);
+        System.out.println("Listening on: " + TerraBungeeConfig.host + ":" + TerraBungeeConfig.port);
         System.out.println("---------------------------------------------");
     }
 

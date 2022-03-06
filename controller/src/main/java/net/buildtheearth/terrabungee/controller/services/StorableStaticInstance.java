@@ -5,13 +5,11 @@ import com.google.gson.annotations.SerializedName;
 import com.noahhusby.lib.data.storage.Key;
 import lombok.AllArgsConstructor;
 
-@Key("Id")
+@Key("id")
 @AllArgsConstructor
 public class StorableStaticInstance {
     @Expose
-    @SerializedName("Id")
     public String id;
     @Expose
-    @SerializedName("Address")
     public String address;
 }

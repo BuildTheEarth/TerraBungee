@@ -11,7 +11,6 @@ import com.noahhusby.lib.application.config.Configuration;
 import com.noahhusby.lib.data.storage.Storage;
 import com.noahhusby.lib.data.storage.StorageHashMap;
 import com.noahhusby.lib.data.storage.StorageTreeMap;
-import com.noahhusby.lib.data.storage.handlers.LocalStorageHandler;
 import com.noahhusby.lib.data.storage.handlers.MongoStorageHandler;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -27,6 +26,8 @@ import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.StorableStaticInstance;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -106,19 +107,15 @@ public class StorageHandler {
         discordBotConfigData.close();
         ((StorageHashMap<?, ?>) discordBotConfigData).clear();
 
-        TerraBungeeConfig.DatabaseOptions databaseOptions = TerraBungeeConfig.database;
+        MongoCredential credential = MongoCredential.createCredential(TerraBungeeConfig.mongodb.user, TerraBungeeConfig.mongodb.database, TerraBungeeConfig.mongodb.password.toCharArray());
 
-        if (databaseOptions.localStorage) {
-            playerData.handlers().register(new LocalStorageHandler<>(playerDataFile));
-            punishmentData.handlers().register(new LocalStorageHandler<>(punishmentFile));
-            staticInstanceData.handlers().register(new LocalStorageHandler<>(staticInstanceFile));
-            discordGuildConfigData.handlers().register(new LocalStorageHandler<>(discordGuildFile));
-            discordBotConfigData.handlers().register(new LocalStorageHandler<>(discordBotFile));
+        List<ServerAddress> mongoServers = new ArrayList<>();
+        for (TerraBungeeConfig.MongoServer mongoServer : TerraBungeeConfig.mongodb.servers) {
+            mongoServers.add(new ServerAddress(mongoServer.host, mongoServer.port));
         }
 
-        MongoCredential credential = MongoCredential.createCredential(TerraBungeeConfig.database.user, TerraBungeeConfig.database.database, TerraBungeeConfig.database.password.toCharArray());
-        MongoClient client = new MongoClient(new ServerAddress(TerraBungeeConfig.database.host, TerraBungeeConfig.database.port), credential, MongoClientOptions.builder().build());
-        MongoDatabase database = client.getDatabase(TerraBungeeConfig.database.database);
+        MongoClient client = new MongoClient(mongoServers, credential, MongoClientOptions.builder().build());
+        MongoDatabase database = client.getDatabase(TerraBungeeConfig.mongodb.database);
         {
             MongoStorageHandler<ControllerPlayer> mongoStorageHandler = new MongoStorageHandler<>(database.getCollection("players"));
             mongoStorageHandler.setPriority(100);
