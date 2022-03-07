@@ -28,6 +28,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class TerraBungeeController extends TerraBungee {
+
+    @Getter
+    private static TerraBungeeConsole console;
+
     public static Logger logger;
 
     @Getter
@@ -53,7 +57,7 @@ public class TerraBungeeController extends TerraBungee {
     @Override
     protected void start() {
         instance = this;
-        TerraBungeeConsole console = new TerraBungeeConsole();
+        console = new TerraBungeeConsole();
         logger = console.getLogger();
 
         folder = new File(System.getProperty("user.dir"));

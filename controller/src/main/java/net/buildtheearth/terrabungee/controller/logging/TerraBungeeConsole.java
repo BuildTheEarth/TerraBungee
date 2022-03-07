@@ -17,15 +17,23 @@ public class TerraBungeeConsole {
     @Getter
     private final Logger logger;
 
+    @Getter
+    private LineReader reader;
+
     public TerraBungeeConsole() {
         logger = LoggerFactory.getLogger(TerraBungeeController.class);
+        try {
+            reader = LineReaderBuilder.builder().terminal(TerminalBuilder.terminal()).build();
+        } catch (IOException e) {
+            getLogger().error("Failed to create terminal for TerraBungee.", e);
+        }
     }
 
     public void start() {
         try {
-            LineReader reader = LineReaderBuilder.builder().terminal(TerminalBuilder.terminal()).build();
+            reader = LineReaderBuilder.builder().terminal(TerminalBuilder.terminal()).build();
             String line;
-            while ((line = reader.readLine("> ")) != null && TerraBungeeController.getInstance().isRunning()) {
+            while ((line = reader.readLine("terra> ")) != null && TerraBungeeController.getInstance().isRunning()) {
                 if (line.equalsIgnoreCase("")) {
                     continue;
                 }

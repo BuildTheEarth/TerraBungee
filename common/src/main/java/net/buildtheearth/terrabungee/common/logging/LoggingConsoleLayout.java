@@ -5,8 +5,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.LayoutBase;
 import com.google.common.collect.Maps;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -16,14 +14,12 @@ import java.util.Map;
 public class LoggingConsoleLayout extends LayoutBase<ILoggingEvent> {
 
     private static final Map<Level, ConsoleColor> levelColors = Maps.newHashMap();
-    private static final DateFormat df;
 
     static {
         levelColors.put(Level.DEBUG, ConsoleColor.WHITE);
         levelColors.put(Level.INFO, ConsoleColor.WHITE);
         levelColors.put(Level.WARN, ConsoleColor.YELLOW);
         levelColors.put(Level.ERROR, ConsoleColor.RED);
-        df = new SimpleDateFormat("HH:mm:ss.SSS");
     }
 
     @Override
