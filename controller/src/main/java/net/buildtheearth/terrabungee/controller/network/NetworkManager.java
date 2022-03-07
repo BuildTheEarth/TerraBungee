@@ -43,6 +43,7 @@ import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetri
 import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetrievePunishmentPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetrievePunishmentsPacket;
 import net.buildtheearth.terrabungee.controller.network.proxy.P2CUpdatePlayersPacket;
+import net.buildtheearth.terrabungee.controller.storage.TerraBungeeConfig;
 import org.java_websocket.WebSocket;
 
 import java.util.List;
@@ -50,6 +51,8 @@ import java.util.Map;
 
 public class NetworkManager extends Module implements INetworkManager {
     private static NetworkManager instance;
+
+    private WSServer server;
 
     public static NetworkManager getInstance() {
         return instance == null ? instance = new NetworkManager() : instance;
@@ -122,11 +125,19 @@ public class NetworkManager extends Module implements INetworkManager {
         register(new S2CKickPlayerPacket());
         register(new S2CEditPunishmentAction());
         register(new S2CMutePlayerPacket());
+        server = new WSServer(TerraBungeeConfig.getSocketAddress());
+        //TODO: Proper Threading
+        new Thread(server).start();
     }
 
     @Override
     public void onDisable() {
         packets.clear();
+        try {
+            server.stop();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

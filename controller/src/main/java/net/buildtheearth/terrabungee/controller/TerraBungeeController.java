@@ -13,7 +13,6 @@ import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStarted
 import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.modules.ModuleHandler;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
-import net.buildtheearth.terrabungee.controller.network.WSServer;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.security.SecurityManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
@@ -30,8 +29,6 @@ import java.util.concurrent.TimeUnit;
 
 public class TerraBungeeController extends TerraBungee {
     public static Logger logger;
-
-    private TerraBungeeConsole console;
 
     @Getter
     private File folder;
@@ -50,15 +47,13 @@ public class TerraBungeeController extends TerraBungee {
     @Getter
     private boolean running = true;
 
-    private WSServer server;
-
     protected TerraBungeeController() {
     }
 
     @Override
     protected void start() {
         instance = this;
-        console = new TerraBungeeConsole();
+        TerraBungeeConsole console = new TerraBungeeConsole();
         logger = console.getLogger();
 
         folder = new File(System.getProperty("user.dir"));
@@ -77,9 +72,6 @@ public class TerraBungeeController extends TerraBungee {
         ModuleHandler.getInstance().registerModules(StorageHandler.getInstance(), SecurityManager.getInstance(), InstanceManager.getInstance(), ServiceManager.getInstance(), PlayerManager.getInstance(), NetworkManager.getInstance(), DiscordManager.getInstance(), CommandManager.getInstance());
         ModuleHandler.getInstance().enableAll();
 
-        server = new WSServer(TerraBungeeConfig.getSocketAddress());
-        new Thread(server).start();
-
         generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);
 
         logger.info("TerraBungee Controller Started!");
@@ -92,10 +84,6 @@ public class TerraBungeeController extends TerraBungee {
         getLogger().info("Shutting down the controller!");
         StorageHandler.getInstance().unload();
         ModuleHandler.getInstance().disableAll();
-        try {
-            server.stop();
-        } catch (InterruptedException ignored) {
-        }
         generalThreads.shutdownNow();
         Executors.newSingleThreadScheduledExecutor().schedule(() -> System.exit(0), 1, TimeUnit.SECONDS);
     }
