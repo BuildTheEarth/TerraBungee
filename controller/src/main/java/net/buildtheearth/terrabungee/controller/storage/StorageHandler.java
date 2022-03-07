@@ -134,17 +134,16 @@ public class StorageHandler extends Module {
         storageMap.put("discord_config", discordGuildConfigData);
         storageMap.put("discord_bots", discordBotConfigData);
 
-        TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> {
-            playerData.load();
-            playerData.setAutoSave(5, TimeUnit.MINUTES);
-            punishmentData.load();
-            punishmentData.setAutoSave(5, TimeUnit.SECONDS);
-            staticInstanceData.setAutoSave(5, TimeUnit.SECONDS);
-            discordGuildConfigData.load();
-            discordGuildConfigData.save();
-            discordBotConfigData.load();
-            discordBotConfigData.save();
-        }, 2, TimeUnit.SECONDS);
+        playerData.load();
+        playerData.setAutoSave(5, TimeUnit.MINUTES);
+        punishmentData.load();
+        punishmentData.setAutoSave(5, TimeUnit.SECONDS);
+        staticInstanceData.setAutoSave(5, TimeUnit.SECONDS);
+        staticInstanceData.load();
+        discordGuildConfigData.load();
+        discordGuildConfigData.save();
+        discordBotConfigData.load();
+        discordBotConfigData.save();
     }
 
     /**
