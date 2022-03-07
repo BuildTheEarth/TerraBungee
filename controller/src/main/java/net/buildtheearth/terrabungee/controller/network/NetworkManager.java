@@ -142,6 +142,6 @@ public class NetworkManager extends Module implements INetworkManager {
 
     @Override
     public List<String> getRequiredModules() {
-        return Lists.newArrayList("security");
+        return Lists.newArrayList("storage", "security");
     }
 }

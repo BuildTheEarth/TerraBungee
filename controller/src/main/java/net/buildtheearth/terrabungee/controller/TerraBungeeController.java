@@ -60,6 +60,7 @@ public class TerraBungeeController extends TerraBungee {
         console = new TerraBungeeConsole();
         logger = console.getLogger();
 
+
         folder = new File(System.getProperty("user.dir"));
         folder.mkdir();
 

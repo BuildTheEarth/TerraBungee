@@ -36,6 +36,7 @@ public class SecurityManager extends Module {
                 tempWhitelist.add(strLine);
             }
             this.whitelist = ImmutableList.copyOf(tempWhitelist);
+            br.close();
         } catch (IOException e) {
             getLogger().error("Failed to read security whitelist.", e);
         }

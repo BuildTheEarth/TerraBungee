@@ -10,10 +10,8 @@ import java.util.Date;
  */
 public class LoggingFileLayout extends LayoutBase<ILoggingEvent> {
 
-
     @Override
     public String doLayout(ILoggingEvent event) {
-        event.getLoggerName();
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("[%1$tT %2$S]", new Date(event.getTimeStamp()), event.getLevel()));
         if (!event.getLoggerName().equals("TerraBungee") && !event.getLoggerName().equals("net.buildtheearth.terrabungee.controller.TerraBungeeController")) {
