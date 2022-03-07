@@ -2,9 +2,9 @@ package net.buildtheearth.terrabungee.controller.command.controller;
 
 import com.google.common.collect.Lists;
 import net.buildtheearth.api.plugin.Command;
-import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
+import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
 import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;

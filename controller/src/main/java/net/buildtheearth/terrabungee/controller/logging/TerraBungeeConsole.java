@@ -1,7 +1,7 @@
 package net.buildtheearth.terrabungee.controller.logging;
 
 import lombok.Getter;
-import net.buildtheearth.api.util.ConsoleColor;
+import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.command.CommandManager;
 import org.jline.reader.LineReader;

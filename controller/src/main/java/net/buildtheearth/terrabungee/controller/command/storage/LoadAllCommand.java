@@ -3,7 +3,7 @@ package net.buildtheearth.terrabungee.controller.command.storage;
 import com.noahhusby.lib.data.storage.Storage;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.plugin.Command;
-import net.buildtheearth.api.util.ConsoleColor;
+import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
 

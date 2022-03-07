@@ -18,6 +18,8 @@ import net.buildtheearth.terrabungee.common.network.Response;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -28,7 +30,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 
 public class TerraBungeeClient {
 
@@ -36,8 +37,7 @@ public class TerraBungeeClient {
     @Getter(AccessLevel.PROTECTED)
     private final ScheduledExecutorService generalThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(8, "terrabungee");
     @Getter
-    @Setter
-    private Logger logger = Logger.getLogger("TerraBungee");
+    private final Logger logger = LoggerFactory.getLogger("TerraBungee");
 
     @Getter
     private final NetworkManager networkManager;

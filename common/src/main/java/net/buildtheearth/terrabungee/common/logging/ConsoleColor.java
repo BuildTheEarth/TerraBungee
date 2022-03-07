@@ -1,4 +1,4 @@
-package net.buildtheearth.api.util;
+package net.buildtheearth.terrabungee.common.logging;
 
 import lombok.RequiredArgsConstructor;
 

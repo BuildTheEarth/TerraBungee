@@ -1,7 +1,7 @@
 package net.buildtheearth.terrabungee.controller.command.discord;
 
 import net.buildtheearth.api.plugin.Command;
-import net.buildtheearth.api.util.ConsoleColor;
+import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;

@@ -1,10 +1,9 @@
-package net.buildtheearth.terrabungee.controller.logging;
+package net.buildtheearth.terrabungee.common.logging;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.LayoutBase;
 import com.google.common.collect.Maps;
-import net.buildtheearth.api.util.ConsoleColor;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

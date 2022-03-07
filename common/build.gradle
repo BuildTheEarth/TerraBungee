@@ -1,5 +1,6 @@
 dependencies {
     api "com.noahhusby.lib:data:$husbyVersion"
     api "com.google.code.gson:gson:$gsonVersion"
+    compileOnly "ch.qos.logback:logback-classic:$logbackVersion"
     compileOnly "com.google.guava:guava:$guavaVersion"
 }
