@@ -270,11 +270,11 @@ public class ServiceManager extends Module {
                     continue;
                 }
                 if (s.getValue() == ServiceStatus.ONLINE && service.getStatus() == ServiceStatus.LOST_CONNECTION) {
-                    TerraBungeeController.logger.warning("Service has lost connection with the controller: " + s.getKey());
+                    ServiceManager.instance.getLogger().warn("Service has lost connection with the controller: " + s.getKey());
                     DiscordManager.getInstance().send(new ServiceOfflineEmbed(service));
                 }
                 if (s.getValue() == ServiceStatus.LOST_CONNECTION && service.getStatus() == ServiceStatus.ONLINE) {
-                    TerraBungeeController.logger.warning("Service has reconnected with the controller: " + s.getKey());
+                    ServiceManager.instance.getLogger().warn("Service has reconnected with the controller: " + s.getKey());
                     DiscordManager.getInstance().send(new ServiceReconnectedEmbed(service));
                 }
             }

@@ -2,7 +2,7 @@ package net.buildtheearth.terrabungee.controller.command.security;
 
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
-import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
+import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.security.SecurityManager;
 
 /**

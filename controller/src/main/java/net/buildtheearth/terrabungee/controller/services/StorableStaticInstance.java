@@ -1,7 +1,6 @@
 package net.buildtheearth.terrabungee.controller.services;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.noahhusby.lib.data.storage.Key;
 import lombok.AllArgsConstructor;
 

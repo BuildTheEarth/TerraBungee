@@ -30,7 +30,6 @@ import net.buildtheearth.terrabungee.controller.modules.Module;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 public class CommandManager extends Module {
     private static CommandManager instance = null;

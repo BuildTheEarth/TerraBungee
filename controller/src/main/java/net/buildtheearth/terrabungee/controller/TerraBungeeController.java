@@ -1,6 +1,5 @@
 package net.buildtheearth.terrabungee.controller;
 
-import ch.qos.logback.classic.Level;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.INetworkManager;
@@ -9,9 +8,9 @@ import net.buildtheearth.api.plugin.PluginManager;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.command.CommandManager;
-import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
+import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.modules.ModuleHandler;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.network.WSServer;
@@ -21,19 +20,18 @@ import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
 import net.buildtheearth.terrabungee.controller.storage.TerraBungeeConfig;
-import net.buildtheearth.terrabungee.controller.util.LoggerContextUtil;
-import org.jline.utils.Log;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class TerraBungeeController extends TerraBungee {
-    public static TerraBungeeConsole logger;
+    public static Logger logger;
+
+    private TerraBungeeConsole console;
 
     @Getter
     private File folder;
@@ -60,14 +58,8 @@ public class TerraBungeeController extends TerraBungee {
     @Override
     protected void start() {
         instance = this;
-        logger = new TerraBungeeConsole();
-
-        // Configure Loggers
-        LoggerContextUtil.setLevel("org.eclipse", Level.WARN);
-        LoggerContextUtil.setLevel("net.dv8tion.jda", Level.WARN);
-        LoggerContextUtil.setLevel("org.mongodb.driver.cluster", Level.ERROR);
-        LoggerContextUtil.setLevel("org.mongodb.driver.connection", Level.ERROR);
-        LoggerContextUtil.setLevel("org.mongodb.driver.protocol.command", Level.ERROR);
+        console = new TerraBungeeConsole();
+        logger = console.getLogger();
 
         folder = new File(System.getProperty("user.dir"));
         folder.mkdir();
@@ -91,7 +83,7 @@ public class TerraBungeeController extends TerraBungee {
         generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);
 
         logger.info("TerraBungee Controller Started!");
-        logger.start();
+        console.start();
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.noahhusby.lib.data.storage.StorageHashMap;
 import com.noahhusby.lib.data.storage.events.EventListener;
 import com.noahhusby.lib.data.storage.events.transfer.StorageLoadEvent;
 import lombok.Getter;
-import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
@@ -140,7 +139,7 @@ public class DiscordManager extends Module {
             slashCommands.queue();
         } catch (NullPointerException exception) {
             exception.printStackTrace();
-            TerraBungee.getInstance().getLogger().warning("Failed to update slash commands for discord!");
+            getLogger().warn("Failed to update slash commands for discord!");
         }
     }
 
@@ -215,11 +214,6 @@ public class DiscordManager extends Module {
     @Override
     public List<String> getRequiredModules() {
         return Lists.newArrayList("storage");
-    }
-
-    @Override
-    public String getModuleName() {
-        return "Discord";
     }
 }
 

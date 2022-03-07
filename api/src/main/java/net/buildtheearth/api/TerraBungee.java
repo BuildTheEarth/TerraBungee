@@ -4,10 +4,10 @@ import lombok.Getter;
 import net.buildtheearth.api.network.INetworkManager;
 import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.api.plugin.PluginManager;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 /**
  * @author Noah Husby

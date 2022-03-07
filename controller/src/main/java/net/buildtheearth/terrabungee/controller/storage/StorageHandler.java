@@ -97,7 +97,7 @@ public class StorageHandler extends Module {
             mongoStorageHandler.setPriority(100);
             mongoStorageHandler.enableEventUpdates(e -> {
                 if (e instanceof MongoCommandException) {
-                    TerraBungeeController.logger.warning("Failed to enable event-driven updates for MongoDB. If sledgehammer is being used in a multi-proxy configuration, please set MongoDB up as a replica set.");
+                    getLogger().warn("Failed to enable event-driven updates for MongoDB. MongoDB must be set up as a replica set.");
                 }
             });
             playerData.handlers().register(mongoStorageHandler);
@@ -154,7 +154,7 @@ public class StorageHandler extends Module {
      * Reloads the controller
      */
     public void reload() {
-        TerraBungeeController.logger.info("Reloading the controller!");
+        getLogger().info("Reloading the controller!");
     }
 
     /**

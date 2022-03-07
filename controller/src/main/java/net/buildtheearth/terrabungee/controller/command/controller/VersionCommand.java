@@ -6,7 +6,7 @@ import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
 import net.buildtheearth.terrabungee.common.services.Service;
-import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
+import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
 import java.util.List;

@@ -4,7 +4,7 @@ import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.common.services.Instance;
 import net.buildtheearth.terrabungee.common.services.Service;
-import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
+import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
 public class DefaultServerCommand extends Command {

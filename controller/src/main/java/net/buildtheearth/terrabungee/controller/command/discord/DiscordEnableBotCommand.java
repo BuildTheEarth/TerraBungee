@@ -3,9 +3,9 @@ package net.buildtheearth.terrabungee.controller.command.discord;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
-import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
+import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;

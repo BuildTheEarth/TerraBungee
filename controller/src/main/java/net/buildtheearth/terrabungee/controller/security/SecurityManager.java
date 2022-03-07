@@ -45,7 +45,7 @@ public class SecurityManager extends Module {
         if (whitelist.contains(address.getHostString())) {
             return true;
         }
-        TerraBungeeController.getInstance().getLogger().warning("An unknown host attempted to establish a connection with the controller: " + address.getHostString());
+        getLogger().warn("An unknown host attempted to establish a connection with the controller: " + address.getHostString());
         return false;
     }
 

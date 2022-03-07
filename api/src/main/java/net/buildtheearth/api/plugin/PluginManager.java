@@ -22,7 +22,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 
 /**
  * @author Noah Husby
@@ -112,7 +111,7 @@ public final class PluginManager {
         try {
             command.execute(args);
         } catch (Exception e) {
-            TerraBungee.getInstance().getLogger().log(Level.WARNING, "Error in dispatching command", e);
+            TerraBungee.getInstance().getLogger().warn("Error in dispatching command", e);
         }
 
         return true;

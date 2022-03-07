@@ -6,7 +6,6 @@ import com.noahhusby.lib.data.storage.Key;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.buildtheearth.api.TerraBungee;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -43,7 +42,7 @@ public class BotConfig {
                         .addEventListeners(new DiscordListener()).build();
                 bot.setAutoReconnect(true);
             } catch (LoginException e) {
-                TerraBungee.getInstance().getLogger().warning(String.format("Failed to initialize %s! Please check the token and try again.", name));
+                DiscordManager.getInstance().getLogger().warn(String.format("Failed to initialize %s! Please check the token and try again.", name));
             }
         }
     }
@@ -54,7 +53,7 @@ public class BotConfig {
                 bot.shutdown();
                 bot = null;
             } catch (IllegalStateException exception) {
-                TerraBungee.getInstance().getLogger().warning("Failed to shutdown: " + getName());
+                DiscordManager.getInstance().getLogger().warn("Failed to shutdown: " + getName());
             }
         }
     }

@@ -1,19 +1,26 @@
 package net.buildtheearth.terrabungee.controller.modules;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Noah Husby
  */
-@RequiredArgsConstructor
 public abstract class Module {
 
     @Getter
     private final String moduleName;
+
+    @Getter
+    private final Logger logger;
+
+    public Module(String moduleName) {
+        this.moduleName = moduleName;
+        this.logger = LoggerFactory.getLogger(moduleName);
+    }
 
     /**
      * Called on module enable

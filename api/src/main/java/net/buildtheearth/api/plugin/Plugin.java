@@ -2,9 +2,10 @@ package net.buildtheearth.api.plugin;
 
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.logging.Logger;
 
 /**
  * @author Noah Husby
@@ -24,7 +25,7 @@ public abstract class Plugin {
 
     protected void init(PluginDescription description) {
         this.description = description;
-        logger = new PluginLogger(description.getName());
+        logger = LoggerFactory.getLogger(description.getName());
         pluginFolder = new File(TerraBungee.getInstance().getPluginFolder(), description.getName());
     }
 

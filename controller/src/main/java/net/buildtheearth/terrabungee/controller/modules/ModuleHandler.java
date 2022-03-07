@@ -66,10 +66,10 @@ public class ModuleHandler {
         if (modules.get(module)) {
             return false;
         }
-        if(!module.getRequiredModules().isEmpty()) {
-            for(String required : module.getRequiredModules()) {
-                for(Module requiredMod : modules.keySet()) {
-                    if(requiredMod.getModuleName().equalsIgnoreCase(required)) {
+        if (!module.getRequiredModules().isEmpty()) {
+            for (String required : module.getRequiredModules()) {
+                for (Module requiredMod : modules.keySet()) {
+                    if (requiredMod.getModuleName().equalsIgnoreCase(required)) {
                         // TODO: Clean up and throw exception if loop
                         enable(requiredMod);
                     }
