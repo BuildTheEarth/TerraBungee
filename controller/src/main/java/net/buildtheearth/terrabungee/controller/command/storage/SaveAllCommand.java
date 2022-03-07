@@ -42,8 +42,7 @@ public class SaveAllCommand extends Command {
                 TerraBungee.getInstance().getLogger().info("Saving storage: " + storageEntry.getKey());
                 storageEntry.getValue().save();
             } catch (Exception e) {
-                TerraBungee.getInstance().getLogger().info("Failed to save storage: " + storageEntry.getKey());
-                e.printStackTrace();
+                TerraBungee.getInstance().getLogger().error("Failed to save storage: " + storageEntry.getKey(), e);
             }
             TerraBungee.getInstance().getLogger().info("Saved storage: " + storageEntry.getKey());
         }

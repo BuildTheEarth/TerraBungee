@@ -27,7 +27,6 @@ import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.StorableStaticInstance;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -161,20 +160,14 @@ public class StorageHandler extends Module {
             Configuration configuration = Configuration.of(TerraBungeeConfig.class);
             configuration.sync(TerraBungeeConfig.class);
         } catch (ClassNotConfigException e) {
-            e.printStackTrace();
+            getLogger().error("", e);
         }
         loadHandlers();
     }
 
     @Override
     public void onDisable() {
-        storageMap.forEach((a, b) -> {
-            try {
-                b.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        unload();
     }
 
     @Override

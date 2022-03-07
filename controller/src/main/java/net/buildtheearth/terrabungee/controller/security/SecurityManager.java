@@ -37,7 +37,7 @@ public class SecurityManager extends Module {
             }
             this.whitelist = ImmutableList.copyOf(tempWhitelist);
         } catch (IOException e) {
-            e.printStackTrace();
+            getLogger().error("Failed to read security whitelist.", e);
         }
     }
 
@@ -56,7 +56,7 @@ public class SecurityManager extends Module {
             try {
                 whitelistFile.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                getLogger().error("Failed to create security whitelist.", e);
             }
         }
         loadWhitelist();

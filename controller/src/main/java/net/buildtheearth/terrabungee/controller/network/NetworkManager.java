@@ -136,7 +136,7 @@ public class NetworkManager extends Module implements INetworkManager {
         try {
             server.stop();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            getLogger().error("Failed to stop server.", e);
         }
     }
 

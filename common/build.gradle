@@ -3,4 +3,5 @@ dependencies {
     api "com.google.code.gson:gson:$gsonVersion"
     compileOnly "ch.qos.logback:logback-classic:$logbackVersion"
     compileOnly "com.google.guava:guava:$guavaVersion"
+    compileOnly "org.jline:jline:$jlineVersion"
 }

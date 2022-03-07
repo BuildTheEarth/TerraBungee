@@ -36,12 +36,11 @@ public class TerraBungeeConsole {
                     }
                 } catch (Exception e) {
                     getLogger().error("There was an error executing the command!", e);
-                    e.printStackTrace();
                     System.out.println();
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            getLogger().error("Error while handling console.", e);
         }
     }
 

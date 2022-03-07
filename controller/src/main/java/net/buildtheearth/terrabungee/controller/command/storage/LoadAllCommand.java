@@ -42,8 +42,7 @@ public class LoadAllCommand extends Command {
                 TerraBungee.getInstance().getLogger().info("Loading storage: " + storageEntry.getKey());
                 storageEntry.getValue().load();
             } catch (Exception e) {
-                TerraBungee.getInstance().getLogger().info("Failed to load storage: " + storageEntry.getKey());
-                e.printStackTrace();
+                TerraBungee.getInstance().getLogger().info("Failed to load storage: " + storageEntry.getKey(), e);
             }
             TerraBungee.getInstance().getLogger().info("Loading storage: " + storageEntry.getKey());
         }

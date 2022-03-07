@@ -56,7 +56,7 @@ public class DiscordEnableBotCommand extends Command {
                     config.initBot();
                     TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> DiscordManager.getInstance().updateSlashCommands(config), 3, TimeUnit.SECONDS);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DiscordManager.getInstance().getLogger().error("Failed to enable " + config.getName() + "! Please check the token and try again.", e);
                     TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Failed to enable " + config.getName() + "! Please check the token and try again.");
                     return;
                 }
@@ -69,7 +69,7 @@ public class DiscordEnableBotCommand extends Command {
                 try {
                     config.shutdown();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    DiscordManager.getInstance().getLogger().error("Failed to disable " + config.getName() + "! Please check the token and try again.", e);
                     TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Failed to disable " + config.getName() + "! Please try again later.");
                     return;
                 }

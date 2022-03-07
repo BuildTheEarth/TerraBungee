@@ -77,7 +77,7 @@ public class DiscordManager extends Module {
             try {
                 config.initBot();
             } catch (Exception e) {
-                e.printStackTrace();
+                getLogger().error("Failed to start bot.", e);
             }
         }
     }
@@ -104,7 +104,7 @@ public class DiscordManager extends Module {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().error("Failed to send embed.", e);
         }
     }
 
