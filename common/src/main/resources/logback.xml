@@ -4,12 +4,30 @@
             <layout class="net.buildtheearth.terrabungee.common.logging.LoggingConsoleLayout"/>
         </encoder>
     </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <immediateFlush>true</immediateFlush>
+        <file>logs/latest.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <fileNamePattern>logs/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="net.buildtheearth.terrabungee.common.logging.LoggingFileLayout"/>
+        </encoder>
+    </appender>
+
     <logger name="org.eclipse" level="WARN"/>
     <logger name="net.dv8tion.jda" level="WARN"/>
     <logger name="org.mongodb.driver.cluster" level="ERROR"/>
     <logger name="org.mongodb.driver.operation" level="ERROR"/>
     <logger name="org.mongodb.driver.connection" level="ERROR"/>
     <logger name="org.mongodb.driver.protocol.command" level="ERROR"/>
+    <logger name="net.buildtheearth.terrabungee.controller.TerraBungeeController" level="debug">
+        <appender-ref ref="FILE"/>
+    </logger>
     <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>

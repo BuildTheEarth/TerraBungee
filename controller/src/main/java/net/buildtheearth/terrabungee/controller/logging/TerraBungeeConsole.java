@@ -18,7 +18,7 @@ public class TerraBungeeConsole {
     private final Logger logger;
 
     public TerraBungeeConsole() {
-        logger = LoggerFactory.getLogger("TerraBungee");
+        logger = LoggerFactory.getLogger(TerraBungeeController.class);
     }
 
     public void start() {

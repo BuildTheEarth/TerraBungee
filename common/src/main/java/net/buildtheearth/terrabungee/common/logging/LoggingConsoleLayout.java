@@ -31,7 +31,8 @@ public class LoggingConsoleLayout extends LayoutBase<ILoggingEvent> {
         event.getLoggerName();
         StringBuilder builder = new StringBuilder(levelColors.get(event.getLevel()).toString());
         builder.append(String.format("[%1$tT %2$S]", new Date(event.getTimeStamp()), event.getLevel()));
-        if (!event.getLoggerName().equals("TerraBungee")) {
+        // TODO: Remove "TerraBungee"
+        if (!event.getLoggerName().equals("TerraBungee") && !event.getLoggerName().equals("net.buildtheearth.terrabungee.controller.TerraBungeeController")) {
             builder.append(" [").append(event.getLoggerName()).append("]");
         }
         builder.append(": ").append(event.getFormattedMessage()).append(ConsoleColor.RESET).append("\n");
