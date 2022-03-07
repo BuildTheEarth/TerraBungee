@@ -17,6 +17,9 @@ public abstract class TerraBungee {
     private static TerraBungee instance;
 
     public static void setInstance(TerraBungee instance) {
+        if (TerraBungee.instance != null) {
+            throw new IllegalStateException("TerraBungee is already initialized. The instance cannot be set again.");
+        }
         TerraBungee.instance = instance;
     }
 

@@ -36,20 +36,20 @@ bungeecord/bukkit plugin, node, and controller.
 # Configuration file
 
 ##########################################################################################################
-  # discord
-  #--------------------------------------------------------------------------------------------------------#
-  # Settings for the discord bot
-  ##########################################################################################################
+# discord
+#--------------------------------------------------------------------------------------------------------#
+# Settings for the discord bot
+##########################################################################################################
 
-    discord {
+discord {
   # The token of the discord bot. [default: ]
-    S:"Bot Token"=
+S:"Bot Token"=
 
   # The ID of the Discord Guild/Server that the bot should listen on. [default: ]
-    S:"Guild ID"=
+S:"Guild ID"=
 
   # The ID of the Discord channel where TerraBungee updates should be sent. [default: ]
-    S:"Updates Channel ID"=
+S:"Updates Channel ID"=
 }
 
 
