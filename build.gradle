@@ -17,7 +17,7 @@ allprojects {
         husbyVersion = "0.1.115"
         lombokVersion = "1.18.22"
         guavaVersion = "31.0.1-jre"
-        gsonVersion = "2.8.9"
+        gsonVersion = "2.9.0"
         commonsVersion = "2.11.0"
         jlineVersion = "3.21.0"
         logbackVersion = "1.3.0-alpha14"
