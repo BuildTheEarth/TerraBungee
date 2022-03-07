@@ -16,7 +16,6 @@ import com.noahhusby.lib.data.storage.StorageTreeMap;
 import com.noahhusby.lib.data.storage.handlers.MongoStorageHandler;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.terrabungee.common.players.Punishment;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
@@ -28,7 +27,6 @@ import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.StorableStaticInstance;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,21 +155,8 @@ public class StorageHandler extends Module {
         getLogger().info("Reloading the controller!");
     }
 
-    /**
-     * Migrates data from the local storage to the database
-     */
-    public void migrate() {
-        //PlayerManager.getInstance().getPlayers().migrate(0);
-        //InstanceManager.getInstance().getStaticInstances().migrate(0);
-        //DiscordManager.getInstance().getGuildConfigs().migrate(0);
-    }
-
     @Override
     public void onEnable() {
-        File localDb = new File(TerraBungee.getInstance().getFolder(), "local");
-        if (!localDb.exists()) {
-            localDb.mkdir();
-        }
         try {
             Configuration configuration = Configuration.of(TerraBungeeConfig.class);
             configuration.sync(TerraBungeeConfig.class);

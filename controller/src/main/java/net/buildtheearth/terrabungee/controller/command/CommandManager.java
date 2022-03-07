@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.terrabungee.controller.command.controller.HelpCommand;
-import net.buildtheearth.terrabungee.controller.command.controller.MigrateCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.ReloadCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.StopCommand;
 import net.buildtheearth.terrabungee.controller.command.controller.VersionCommand;
@@ -74,7 +73,6 @@ public class CommandManager extends Module {
         register(new HelpCommand());
         register(new StopCommand());
         register(new ReloadCommand());
-        register(new MigrateCommand());
         register(new AddStaticCommand());
         register(new RemoveStaticCommand());
         register(new ListStaticCommand());
