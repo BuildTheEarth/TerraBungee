@@ -60,7 +60,7 @@ allprojects {
                             password = System.getenv("MAVEN_PASSWORD")
                         }
                         name = "BuildTheEarth"
-                        url = "https://maven.dev.buildtheearth.net/releases"
+                        url = "https://maven.buildtheearth.net/private"
                     }
                 }
             }
