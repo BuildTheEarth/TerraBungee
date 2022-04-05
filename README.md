@@ -22,7 +22,7 @@ Go to the [releases](https://github.com/BuildTheEarth/TerraBungee/releases) page
 
 ### Default Controller Configuration:
 ```yaml
-# Configuration file
+# Configuration fil
 
 ##########################################################################################################
 # discord
