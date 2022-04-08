@@ -13,7 +13,7 @@ allprojects {
 
         snakeYamlVersion = "1.29"
         websocketVersion = "1.5.2"
-        husbyVersion = "0.1.89"
+        husbyVersion = "0.1.115"
         lombokVersion = "1.18.22"
         guavaVersion = "31.0.1-jre"
         gsonVersion = "2.8.9"
@@ -60,7 +60,7 @@ allprojects {
                             password = System.getenv("MAVEN_PASSWORD")
                         }
                         name = "BuildTheEarth"
-                        url = "https://maven.dev.buildtheearth.net/releases"
+                        url = "https://maven.buildtheearth.net/private"
                     }
                 }
             }

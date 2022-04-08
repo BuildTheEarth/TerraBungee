@@ -13,10 +13,15 @@ import com.noahhusby.lib.data.storage.handlers.SQLStorageHandler;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.buildtheearth.api.TerraBungee;
+import net.buildtheearth.api.players.ControllerPlayer;
+import net.buildtheearth.terrabungee.common.players.Punishment;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
+import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
+import net.buildtheearth.terrabungee.controller.discord.GuildConfig;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
+import net.buildtheearth.terrabungee.controller.services.StorableStaticInstance;
 
 import java.io.File;
 import java.util.Map;
@@ -78,38 +83,38 @@ public class ConfigHandler {
 
     @SneakyThrows
     public void loadHandlers() {
-        Storage playerData = PlayerManager.getInstance().getPlayers();
+        Storage<ControllerPlayer> playerData = PlayerManager.getInstance().getPlayers();
         playerData.close();
         ((StorageHashMap<?, ?>) playerData).clear();
 
-        Storage punishmentData = PlayerManager.getInstance().getPunishments();
+        Storage<Punishment> punishmentData = PlayerManager.getInstance().getPunishments();
         punishmentData.close();
         ((StorageHashMap<?, ?>) playerData).clear();
 
-        Storage staticInstanceData = InstanceManager.getInstance().getStaticInstances();
+        Storage<StorableStaticInstance> staticInstanceData = InstanceManager.getInstance().getStaticInstances();
         staticInstanceData.close();
         ((StorageTreeMap<?, ?>) staticInstanceData).clear();
 
-        Storage discordGuildConfigData = DiscordManager.getInstance().getGuildConfigs();
-        discordGuildConfigData.clearHandlers();
+        Storage<GuildConfig> discordGuildConfigData = DiscordManager.getInstance().getGuildConfigs();
+        discordGuildConfigData.handlers().clear();
         ((StorageHashMap<?, ?>) discordGuildConfigData).clear();
 
-        Storage discordBotConfigData = DiscordManager.getInstance().getBotConfigs();
-        discordBotConfigData.clearHandlers();
+        Storage<BotConfig> discordBotConfigData = DiscordManager.getInstance().getBotConfigs();
+        discordBotConfigData.handlers().clear();
         ((StorageHashMap<?, ?>) discordBotConfigData).clear();
 
         TerraBungeeConfig.DatabaseOptions databaseOptions = TerraBungeeConfig.database;
 
         if (databaseOptions.localStorage) {
-            playerData.registerHandler(new LocalStorageHandler(playerDataFile));
-            playerData.registerHandler(new LocalStorageHandler(punishmentFile));
-            staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
-            discordGuildConfigData.registerHandler(new LocalStorageHandler(discordGuildFile));
-            discordBotConfigData.registerHandler(new LocalStorageHandler(discordBotFile));
+            playerData.handlers().register(new LocalStorageHandler<>(playerDataFile));
+            punishmentData.handlers().register(new LocalStorageHandler<>(punishmentFile));
+            staticInstanceData.handlers().register(new LocalStorageHandler<>(staticInstanceFile));
+            discordGuildConfigData.handlers().register(new LocalStorageHandler<>(discordGuildFile));
+            discordBotConfigData.handlers().register(new LocalStorageHandler<>(discordBotFile));
         }
 
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(databaseOptions.toCredentials()), "Players",
+            SQLStorageHandler<ControllerPlayer> sqlStorageHandler = new SQLStorageHandler<>(new MySQL(databaseOptions.toCredentials()), "Players",
                     Structure.builder()
                             .add("UUID", Type.TEXT)
                             .add("Name", Type.TEXT)
@@ -120,11 +125,11 @@ public class ConfigHandler {
                             .build()
             );
             sqlStorageHandler.setPriority(100);
-            playerData.registerHandler(sqlStorageHandler);
+            playerData.handlers().register(sqlStorageHandler);
         }
 
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(databaseOptions.toCredentials()), "Punishments",
+            SQLStorageHandler<Punishment> sqlStorageHandler = new SQLStorageHandler<>(new MySQL(databaseOptions.toCredentials()), "Punishments",
                     Structure.builder()
                             .add("Id", Type.INT)
                             .add("Type", Type.TEXT)
@@ -138,11 +143,11 @@ public class ConfigHandler {
                             .build()
             );
             sqlStorageHandler.setPriority(100);
-            punishmentData.registerHandler(sqlStorageHandler);
+            punishmentData.handlers().register(sqlStorageHandler);
         }
 
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(databaseOptions.toCredentials()), "StaticInstances",
+            SQLStorageHandler<StorableStaticInstance> sqlStorageHandler = new SQLStorageHandler<>(new MySQL(databaseOptions.toCredentials()), "StaticInstances",
                     Structure.builder()
                             .add("Id", Type.TEXT)
                             .add("Address", Type.TEXT)
@@ -150,11 +155,11 @@ public class ConfigHandler {
                             .build()
             );
             sqlStorageHandler.setPriority(100);
-            staticInstanceData.registerHandler(sqlStorageHandler);
+            staticInstanceData.handlers().register(sqlStorageHandler);
         }
 
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(databaseOptions.toCredentials()), "DiscordGuilds",
+            SQLStorageHandler<GuildConfig> sqlStorageHandler = new SQLStorageHandler<>(new MySQL(databaseOptions.toCredentials()), "DiscordGuilds",
                     Structure.builder()
                             .add("GuildID", Type.TEXT)
                             .add("BotID", Type.INT)
@@ -164,11 +169,11 @@ public class ConfigHandler {
                             .build()
             );
             sqlStorageHandler.setPriority(100);
-            discordGuildConfigData.registerHandler(sqlStorageHandler);
+            discordGuildConfigData.handlers().register(sqlStorageHandler);
         }
 
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(databaseOptions.toCredentials()), "DiscordBots",
+            SQLStorageHandler<BotConfig> sqlStorageHandler = new SQLStorageHandler<>(new MySQL(databaseOptions.toCredentials()), "DiscordBots",
                     Structure.builder()
                             .add("Id", Type.INT)
                             .add("Name", Type.TEXT)
@@ -177,7 +182,7 @@ public class ConfigHandler {
                             .build()
             );
             sqlStorageHandler.setPriority(100);
-            discordBotConfigData.registerHandler(sqlStorageHandler);
+            discordBotConfigData.handlers().register(sqlStorageHandler);
         }
 
         storageMap.put("players", playerData);
@@ -211,8 +216,8 @@ public class ConfigHandler {
      * Migrates data from the local storage to the database
      */
     public void migrate() {
-        PlayerManager.getInstance().getPlayers().migrate(0);
-        InstanceManager.getInstance().getStaticInstances().migrate(0);
-        DiscordManager.getInstance().getGuildConfigs().migrate(0);
+        PlayerManager.getInstance().getPlayers().migrate().migrate(0);
+        InstanceManager.getInstance().getStaticInstances().migrate().migrate(0);
+        DiscordManager.getInstance().getGuildConfigs().migrate().migrate(0);
     }
 }

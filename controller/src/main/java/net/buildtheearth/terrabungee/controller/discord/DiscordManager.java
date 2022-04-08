@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.storage.StorageHashMap;
+import com.noahhusby.lib.data.storage.events.EventListener;
+import com.noahhusby.lib.data.storage.events.transfer.StorageLoadEvent;
 import lombok.Getter;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.discord.UserPermission;
@@ -48,10 +50,10 @@ public class DiscordManager extends Module {
     private final Map<String, IDiscordCommand> discordCommands = Maps.newHashMap();
 
     @Getter
-    private final StorageHashMap<Long, GuildConfig> guildConfigs = new StorageHashMap<>(Long.class, GuildConfig.class);
+    private final StorageHashMap<Long, GuildConfig> guildConfigs = new StorageHashMap<>(GuildConfig.class);
 
     @Getter
-    private final StorageHashMap<Integer, BotConfig> botConfigs = new StorageHashMap<>(Integer.class, BotConfig.class);
+    private final StorageHashMap<Integer, BotConfig> botConfigs = new StorageHashMap<>(BotConfig.class);
 
     private DiscordManager() {
         super("Discord");
@@ -64,10 +66,13 @@ public class DiscordManager extends Module {
                 new ListDiscordCommand(),
                 new MsgDiscordCommand()
         );
-        botConfigs.onLoadEvent(() -> TerraBungeeController.getInstance().getGeneralThreads().submit(() -> {
-            startBots();
-            TerraBungeeController.getInstance().getGeneralThreads().schedule((Runnable) this::updateSlashCommands, 10, TimeUnit.SECONDS);
-        }));
+        botConfigs.events().register(new EventListener<BotConfig>() {
+            @Override
+            public void onLoad(StorageLoadEvent<BotConfig> event) {
+                startBots();
+                TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> updateSlashCommands(), 10, TimeUnit.SECONDS);
+            }
+        });
     }
 
     public void startBots() {

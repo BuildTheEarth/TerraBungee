@@ -9,6 +9,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.noahhusby.lib.data.storage.StorageHashMap;
+import com.noahhusby.lib.data.storage.events.EventListener;
+import com.noahhusby.lib.data.storage.events.transfer.StorageLoadEvent;
+import com.noahhusby.lib.data.storage.events.transfer.StorageSaveEvent;
 import lombok.Getter;
 import lombok.NonNull;
 import net.buildtheearth.api.TerraBungee;
@@ -51,10 +54,10 @@ public class PlayerManager extends Module {
             new ThreadFactoryBuilder().setNameFormat("player-manipulation-%d").build());
 
     @Getter
-    private final StorageHashMap<UUID, ControllerPlayer> players = new StorageHashMap<>(UUID.class, ControllerPlayer.class);
+    private final StorageHashMap<UUID, ControllerPlayer> players = new StorageHashMap<>(ControllerPlayer.class);
 
     @Getter
-    private final StorageHashMap<Integer, Punishment> punishments = new StorageHashMap<>(Integer.class, Punishment.class);
+    private final StorageHashMap<Integer, Punishment> punishments = new StorageHashMap<>(Punishment.class);
     private Map<UUID, List<Punishment>> punishmentsByUuid = Maps.newHashMap();
 
     private Map<UUID, ControllerPlayer> onlinePlayerRegistry = Maps.newHashMap();
@@ -277,8 +280,17 @@ public class PlayerManager extends Module {
     public void onEnable() {
         Gson punishmentGson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer()).create();
         punishments.setGson(punishmentGson);
-        punishments.onLoadEvent(this::updatePunishmentCache);
-        punishments.onSaveEvent(this::updatePunishmentCache);
+        punishments.events().register(new EventListener<Punishment>() {
+            @Override
+            public void onSave(StorageSaveEvent<Punishment> event) {
+                updatePunishmentCache();
+            }
+
+            @Override
+            public void onLoad(StorageLoadEvent<Punishment> event) {
+                updatePunishmentCache();
+            }
+        });
     }
 
     @Override
