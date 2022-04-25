@@ -13,7 +13,7 @@ allprojects {
 
         snakeYamlVersion = "1.30"
         websocketVersion = "1.5.2"
-        mongoVersion = "3.12.10"
+        mongoVersion = "3.12.11"
         husbyVersion = "0.1.115"
         lombokVersion = "1.18.22"
         guavaVersion = "31.0.1-jre"
