@@ -15,6 +15,7 @@ import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ServiceOfflineEmbed;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ServiceReconnectedEmbed;
+import net.buildtheearth.terrabungee.controller.exceptions.ServiceControllerRegisteredException;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SInstanceUpdatePacket;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SOnlinePlayerCacheHitPacket;
@@ -22,10 +23,12 @@ import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import org.java_websocket.WebSocket;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -41,6 +44,22 @@ public class ServiceManager extends Module {
     private String defaultServer = "";
 
     private final ScheduledExecutorService intentThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-intents");
+
+    private final Map<Class<? extends Service>, ServiceController<? extends Service>> serviceControllers = new ConcurrentHashMap<>();
+
+    /**
+     * Registers a service controller to handle a specific service type.
+     *
+     * @param serviceController {@link ServiceController}.
+     * @param clazz The class object of the registered service.
+     * @throws ServiceControllerRegisteredException if there is a controller already registered for the specified service.
+     */
+    public void registerController(ServiceController<? extends Service> serviceController, Class<? extends Service> clazz) throws ServiceControllerRegisteredException {
+        if(serviceControllers.containsKey(clazz)) {
+            throw new ServiceControllerRegisteredException(clazz);
+        }
+        serviceControllers.put(clazz, serviceController);
+    }
 
     /**
      * Gets all services created regardless of state (unless discarded)
@@ -108,11 +127,12 @@ public class ServiceManager extends Module {
      * @param intents The intents
      */
     public Service initService(ServiceType type, String ID, TerraBungeeVersion version, WebSocket client, List<ServiceIntent> intents) {
-        if (getService(ID) != null) {
-            getService(ID).setIntents(intents);
-            getService(ID).setVersion(version);
-            getService(ID).setClient(client);
-            getService(ID).setStatus(ServiceStatus.ONLINE);
+        Service service = getService(ID);
+        if (service != null) {
+            service.setIntents(intents);
+            service.setVersion(version);
+            service.setClient(client);
+            service.setStatus(ServiceStatus.ONLINE);
             //TODO: Remove this manual caching method
             if (getService(ID) instanceof Proxy) {
                 PlayerManager.getInstance().pushMuteCache(getService(ID));
@@ -120,7 +140,7 @@ public class ServiceManager extends Module {
             return getService(ID);
         }
 
-        Service service = createService(type, ID);
+        service = createService(type, ID);
 
         if (service == null) {
             //TODO: Track if this service should've been awaiting initialization but somehow wasn't.

@@ -118,6 +118,19 @@ public class InstanceManager extends Module {
         }
     }
 
+    public static class InstanceServiceController extends ServiceController<Instance> {
+
+        @Override
+        public void onServiceConnect(Instance service) {
+
+        }
+
+        @Override
+        public void onServiceInit(Instance service) {
+
+        }
+    }
+
     @Override
     public void onEnable() {
         staticInstances.events().register(new EventListener<StorableStaticInstance>() {
