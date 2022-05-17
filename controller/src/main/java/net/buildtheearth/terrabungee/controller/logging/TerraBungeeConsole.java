@@ -29,6 +29,16 @@ public class TerraBungeeConsole {
         }
     }
 
+    public static void sendMessage(Object... objects) {
+        StringBuilder builder = new StringBuilder();
+        for (Object o : objects) {
+            builder.append(o.toString());
+        }
+
+        builder.append(ConsoleColor.RESET);
+        System.out.println(builder);
+    }
+
     public void start() {
         try {
             reader = LineReaderBuilder.builder().terminal(TerminalBuilder.terminal()).build();
@@ -50,15 +60,5 @@ public class TerraBungeeConsole {
         } catch (IOException e) {
             getLogger().error("Error while handling console.", e);
         }
-    }
-
-    public static void sendMessage(Object... objects) {
-        StringBuilder builder = new StringBuilder();
-        for (Object o : objects) {
-            builder.append(o.toString());
-        }
-
-        builder.append(ConsoleColor.RESET);
-        System.out.println(builder);
     }
 }

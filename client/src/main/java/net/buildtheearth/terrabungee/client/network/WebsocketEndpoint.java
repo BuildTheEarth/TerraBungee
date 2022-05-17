@@ -14,14 +14,13 @@ import java.util.function.Consumer;
 
 public class WebsocketEndpoint extends WebSocketClient {
 
-    public WebsocketEndpoint(URI serverUri) {
-        super(serverUri);
-    }
-
     @Getter
     private boolean online = false;
     private Consumer<String> messageHandler;
     private Consumer<ServerHandshake> openHandler;
+    public WebsocketEndpoint(URI serverUri) {
+        super(serverUri);
+    }
 
     @Override
     public void onOpen(ServerHandshake handshake) {

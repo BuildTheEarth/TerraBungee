@@ -10,12 +10,12 @@ import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.command.CommandManager;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ControllerStartedEmbed;
+import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
 import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.modules.ModuleHandler;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.security.SecurityManager;
-import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
 import net.buildtheearth.terrabungee.controller.storage.TerraBungeeConfig;
@@ -29,25 +29,19 @@ import java.util.concurrent.TimeUnit;
 
 public class TerraBungeeController extends TerraBungee {
 
+    public static Logger logger;
     @Getter
     private static TerraBungeeConsole console;
-
-    public static Logger logger;
-
     @Getter
-    private File folder;
-
-    @Getter
-    private File pluginFolder;
-
-    @Getter
-    private PluginManager pluginManager;
-
+    private static TerraBungeeController instance;
     @Getter
     private final ScheduledExecutorService generalThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-general");
     @Getter
-    private static TerraBungeeController instance;
-
+    private File folder;
+    @Getter
+    private File pluginFolder;
+    @Getter
+    private PluginManager pluginManager;
     @Getter
     private boolean running = true;
 

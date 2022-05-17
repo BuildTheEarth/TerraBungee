@@ -16,22 +16,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 
 public class ConfigHandler {
-    private static ConfigHandler instance;
-
-    public static ConfigHandler getInstance() {
-        if (instance == null) {
-            instance = new ConfigHandler();
-        }
-        return instance;
-    }
-
     public static String queueServer = "queue";
     public static String controllerUrl = "";
     public static String serviceID = "";
-
+    private static ConfigHandler instance;
     private final TerraBungeeProxy plugin = TerraBungeeProxy.getInstance();
     private Configuration config;
-
     private ConfigHandler() {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();
@@ -58,6 +48,13 @@ public class ConfigHandler {
         queueServer = config.getString("queue-server");
         controllerUrl = config.getString("controller-url");
         serviceID = config.getString("service-id");
+    }
+
+    public static ConfigHandler getInstance() {
+        if (instance == null) {
+            instance = new ConfigHandler();
+        }
+        return instance;
     }
 
 }

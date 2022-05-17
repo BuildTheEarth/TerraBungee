@@ -15,17 +15,15 @@ import java.util.List;
 
 public abstract class CommandFragmentManager extends Command {
 
-    public CommandFragmentManager(String name, String node) {
-        super(name, node);
-    }
-
-    public CommandFragmentManager(String name, String node, String[] alias) {
-        super(name, node, alias);
-    }
-
     private List<ICommandFragment> commandFragments = new ArrayList<>();
     private String title = "";
     private String commandBase = "";
+    public CommandFragmentManager(String name, String node) {
+        super(name, node);
+    }
+    public CommandFragmentManager(String name, String node, String[] alias) {
+        super(name, node, alias);
+    }
 
     protected void registerCommandFragment(ICommandFragment c) {
         commandFragments.add(c);

@@ -34,7 +34,6 @@ public class InstanceManager extends Module {
     }
 
 
-
     /**
      * Add a static instance
      *
@@ -125,18 +124,6 @@ public class InstanceManager extends Module {
         }
     }
 
-    private class NodeServiceController extends ServiceController<Node> {
-
-        @Override
-        public void onServiceConnect(Node service) {
-        }
-
-        @Override
-        public void onServiceInit(Node service) {
-
-        }
-    }
-
     @Override
     public void onEnable() {
         staticInstances.events().register(new EventListener<StorableStaticInstance>() {
@@ -155,5 +142,17 @@ public class InstanceManager extends Module {
     @Override
     public List<String> getRequiredModules() {
         return Lists.newArrayList("storage");
+    }
+
+    private class NodeServiceController extends ServiceController<Node> {
+
+        @Override
+        public void onServiceConnect(Node service) {
+        }
+
+        @Override
+        public void onServiceInit(Node service) {
+
+        }
     }
 }

@@ -40,16 +40,9 @@ import java.util.function.Consumer;
 
 public class DiscordManager extends Module {
     private static DiscordManager instance = null;
-
-    public static DiscordManager getInstance() {
-        return instance == null ? instance = new DiscordManager() : instance;
-    }
-
     private final Map<String, IDiscordCommand> discordCommands = Maps.newHashMap();
-
     @Getter
     private final StorageHashMap<Long, GuildConfig> guildConfigs = new StorageHashMap<>(GuildConfig.class);
-
     @Getter
     private final StorageHashMap<Integer, BotConfig> botConfigs = new StorageHashMap<>(BotConfig.class);
 
@@ -70,6 +63,10 @@ public class DiscordManager extends Module {
                 TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> updateSlashCommands(), 10, TimeUnit.SECONDS);
             }
         });
+    }
+
+    public static DiscordManager getInstance() {
+        return instance == null ? instance = new DiscordManager() : instance;
     }
 
     public void startBots() {

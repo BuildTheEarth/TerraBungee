@@ -51,18 +51,16 @@ import java.util.Map;
 
 public class NetworkManager extends Module implements INetworkManager {
     private static NetworkManager instance;
-
-    private WSServer server;
-
-    public static NetworkManager getInstance() {
-        return instance == null ? instance = new NetworkManager() : instance;
-    }
-
     @Getter
     private final Map<String, IS2CPacket> packets = Maps.newHashMap();
+    private WSServer server;
 
     private NetworkManager() {
         super("network");
+    }
+
+    public static NetworkManager getInstance() {
+        return instance == null ? instance = new NetworkManager() : instance;
     }
 
     public void onIncomingPayload(WebSocket client, String p) {

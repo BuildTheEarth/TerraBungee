@@ -14,9 +14,6 @@ import java.util.UUID;
 
 public class TBPlayer {
     @Expose
-    @SerializedName("UUID")
-    private UUID uuid;
-    @Expose
     @SerializedName("Name")
     protected String name;
     @Expose
@@ -28,10 +25,12 @@ public class TBPlayer {
     @Expose
     @SerializedName("LastSeen")
     protected long lastSeen;
-
     protected String server;
     protected boolean online;
     protected String proxy;
+    @Expose
+    @SerializedName("UUID")
+    private UUID uuid;
 
     public TBPlayer() {
     }

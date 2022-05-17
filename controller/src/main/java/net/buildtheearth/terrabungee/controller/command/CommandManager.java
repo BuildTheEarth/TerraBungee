@@ -32,16 +32,15 @@ import java.util.List;
 
 public class CommandManager extends Module {
     private static CommandManager instance = null;
-
-    public static CommandManager getInstance() {
-        return instance == null ? instance = new CommandManager() : instance;
-    }
+    private final List<Command> controllerCommands = new ArrayList<>();
 
     private CommandManager() {
         super("commands");
     }
 
-    private final List<Command> controllerCommands = new ArrayList<>();
+    public static CommandManager getInstance() {
+        return instance == null ? instance = new CommandManager() : instance;
+    }
 
     private void register(Command command) {
         controllerCommands.add(command);

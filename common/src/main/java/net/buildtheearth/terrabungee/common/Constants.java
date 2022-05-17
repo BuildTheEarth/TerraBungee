@@ -7,24 +7,11 @@ import net.buildtheearth.terrabungee.common.exceptions.VersionParseException;
  */
 public class Constants {
     public static final TerraBungeeVersion VERSION;
-
-    static {
-        TerraBungeeVersion ver;
-        try {
-            ver = new TerraBungeeVersion(Constants.class.getPackage().getImplementationVersion());
-        } catch (VersionParseException exception) {
-            ver = new TerraBungeeVersion(0, 0, 0, true);
-        }
-        VERSION = ver;
-    }
-
     public static final int serviceTimeout = 5000;
     public static final int responseTimeout = 1000;
-
     public static final String serviceInitID = "service_init";
     public static final String setServiceStatusID = "set_service_status";
     public static final String handshakeId = "handshake";
-
     /*
      * Instance Packets
      */
@@ -32,7 +19,6 @@ public class Constants {
     public static final String responseID = "packet_response";
     public static final String addStaticInstanceID = "add_static_instance";
     public static final String removeStaticInstanceID = "remove_static_instance";
-
     /*
      * Player Packets
      */
@@ -42,7 +28,6 @@ public class Constants {
     public static final String onlinePlayerCacheHit = "online_player_cache";
     public static final String playerJoinEventID = "player_join_event";
     public static final String playerQuitEventID = "player_quit_event";
-
     /*
      * Punishment Packets
      */
@@ -55,6 +40,15 @@ public class Constants {
     public static final String retrievePunishmentsID = "punishments_retrieve";
     public static final String retrievePunishmentID = "punishment_retrieve";
     public static final String editPunishmentID = "edit_punishment";
-
     public static final String serviceMessageID = "service_message";
+
+    static {
+        TerraBungeeVersion ver;
+        try {
+            ver = new TerraBungeeVersion(Constants.class.getPackage().getImplementationVersion());
+        } catch (VersionParseException exception) {
+            ver = new TerraBungeeVersion(0, 0, 0, true);
+        }
+        VERSION = ver;
+    }
 }

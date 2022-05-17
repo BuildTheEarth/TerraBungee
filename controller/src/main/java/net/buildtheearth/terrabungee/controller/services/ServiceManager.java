@@ -34,27 +34,28 @@ import java.util.function.Consumer;
 
 public class ServiceManager extends Module {
     private static ServiceManager instance = null;
+    private final Map<String, Service> services = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
+    private final ScheduledExecutorService intentThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-intents");
+    private final Map<Class<? extends Service>, ServiceController<? extends Service>> serviceControllers = new ConcurrentHashMap<>();
+    private String defaultServer = "";
+
+    private ServiceManager() {
+        super("services");
+    }
 
     public static ServiceManager getInstance() {
         return instance == null ? instance = new ServiceManager() : instance;
     }
 
-    private final Map<String, Service> services = Maps.newTreeMap(String.CASE_INSENSITIVE_ORDER);
-    private String defaultServer = "";
-
-    private final ScheduledExecutorService intentThreads = TerraBungeeUtil.newThreadPoolScheduledExecutor(32, "terrabungee-intents");
-
-    private final Map<Class<? extends Service>, ServiceController<? extends Service>> serviceControllers = new ConcurrentHashMap<>();
-
     /**
      * Registers a service controller to handle a specific service type.
      *
      * @param serviceController {@link ServiceController}.
-     * @param clazz The class object of the registered service.
+     * @param clazz             The class object of the registered service.
      * @throws ServiceControllerRegisteredException if there is a controller already registered for the specified service.
      */
     public void registerController(ServiceController<? extends Service> serviceController, Class<? extends Service> clazz) throws ServiceControllerRegisteredException {
-        if(serviceControllers.containsKey(clazz)) {
+        if (serviceControllers.containsKey(clazz)) {
             throw new ServiceControllerRegisteredException(clazz);
         }
         serviceControllers.put(clazz, serviceController);
@@ -67,10 +68,6 @@ public class ServiceManager extends Module {
      */
     public Map<String, Service> getServices() {
         return ImmutableMap.copyOf(services);
-    }
-
-    private ServiceManager() {
-        super("services");
     }
 
     public int getTotalDisconnectedServices() {

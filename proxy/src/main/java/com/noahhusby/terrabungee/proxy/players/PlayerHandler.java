@@ -31,10 +31,12 @@ import java.util.concurrent.TimeUnit;
 
 public class PlayerHandler {
     private static PlayerHandler instance = null;
-
-    public static PlayerHandler getInstance() {
-        return instance == null ? instance = new PlayerHandler() : instance;
-    }
+    @Getter
+    @Setter
+    private Map<UUID, Punishment> muteCache = Maps.newHashMap();
+    @Getter
+    @Setter
+    private List<String> onlinePlayerNames = Lists.newArrayList();
 
     private PlayerHandler() {
         TaskScheduler scheduler = ProxyServer.getInstance().getScheduler();
@@ -58,13 +60,9 @@ public class PlayerHandler {
         }), 0, 2, TimeUnit.SECONDS);
     }
 
-    @Getter
-    @Setter
-    private Map<UUID, Punishment> muteCache = Maps.newHashMap();
-
-    @Getter
-    @Setter
-    private List<String> onlinePlayerNames = Lists.newArrayList();
+    public static PlayerHandler getInstance() {
+        return instance == null ? instance = new PlayerHandler() : instance;
+    }
 
     public BaseComponent getBanDisconnectMessage(Punishment punishment) {
         TextComponent kickMessage;

@@ -14,12 +14,11 @@ public class TerraBungeeConfig {
 
     public static String host = "127.0.0.1";
     public static int port = 7000;
+    public static DatabaseOptions mongodb = new DatabaseOptions();
 
     public static InetSocketAddress getSocketAddress() {
         return new InetSocketAddress(host, port);
     }
-
-    public static DatabaseOptions mongodb = new DatabaseOptions();
 
     public static class DatabaseOptions {
 

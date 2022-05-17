@@ -34,11 +34,11 @@ public final class PluginManager {
     private final Map<String, Plugin> plugins = Maps.newLinkedHashMap();
     @Getter
     private final Map<String, Command> commandMap = Maps.newHashMap();
-    private Map<String, PluginDescription> toLoad = Maps.newHashMap();
     private final Multimap<Plugin, Command> commandsByPlugin = ArrayListMultimap.create();
     @Getter
     private final Map<String, IS2CPacket> packetMap = Maps.newHashMap();
     private final Multimap<Plugin, IS2CPacket> packetsByPlugin = ArrayListMultimap.create();
+    private Map<String, PluginDescription> toLoad = Maps.newHashMap();
 
 
     public PluginManager(TerraBungee controller) {

@@ -24,6 +24,11 @@ import java.util.jar.Manifest;
 public final class PluginClassloader extends URLClassLoader {
 
     private static final Set<PluginClassloader> allLoaders = new CopyOnWriteArraySet<>();
+
+    static {
+        ClassLoader.registerAsParallelCapable();
+    }
+
     //
     private final PluginDescription desc;
     private final JarFile jar;
@@ -32,10 +37,6 @@ public final class PluginClassloader extends URLClassLoader {
     private final ClassLoader libraryLoader;
     //
     private Plugin plugin;
-
-    static {
-        ClassLoader.registerAsParallelCapable();
-    }
 
     public PluginClassloader(PluginDescription desc, File file, ClassLoader libraryLoader) throws IOException {
         super(new URL[]

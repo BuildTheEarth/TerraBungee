@@ -1,10 +1,10 @@
 package net.buildtheearth.terrabungee.controller.command.instance;
 
 import net.buildtheearth.api.plugin.Command;
+import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
-import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
-import net.buildtheearth.terrabungee.controller.instance.StorableStaticInstance;
+import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 
 public class AddStaticCommand extends Command {
 
@@ -28,16 +28,17 @@ public class AddStaticCommand extends Command {
         String id = args[0];
         String address = args[1];
 
-        for (StorableStaticInstance s : InstanceManager.getInstance().getStaticInstances().values()) {
-            if (s.id.equalsIgnoreCase(id)) {
-                TerraBungeeConsole.sendMessage(ConsoleColor.RED, "The static instance ", ConsoleColor.BLUE,
-                        id, ConsoleColor.RED, " already exists!");
-                return;
-            }
+        if (!TerraBungeeUtil.validateServerTag(id)) {
+            TerraBungeeConsole.sendMessage(ConsoleColor.RED, "That is an invalid server id. Please make sure the id contains only letters, numbers, or dashes and is between 3-24 characters long.");
+            return;
         }
 
-        TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, "Successfully added static instance ",
-                ConsoleColor.BLUE, id, ConsoleColor.GREEN, " with address ", ConsoleColor.BLUE, address);
-        InstanceManager.getInstance().addStaticInstance(null, id, address);
+        if (InstanceManager.getInstance().addStaticInstance(null, id, address)) {
+            TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, "Successfully added static instance ",
+                    ConsoleColor.BLUE, id, ConsoleColor.GREEN, " with address ", ConsoleColor.BLUE, address);
+        } else {
+            TerraBungeeConsole.sendMessage(ConsoleColor.RED, "The static instance ", ConsoleColor.BLUE,
+                    id, ConsoleColor.RED, " already exists!");
+        }
     }
 }

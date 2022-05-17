@@ -2,7 +2,6 @@ package net.buildtheearth.terrabungee.controller.services;
 
 import net.buildtheearth.terrabungee.common.services.Service;
 
-import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**

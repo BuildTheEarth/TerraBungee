@@ -24,6 +24,9 @@ public class GuildConfig {
     @SerializedName("GuildID")
     private final long guildId;
     @Expose
+    @SerializedName("StaffRoles")
+    private final List<Long> staffRoles = new ArrayList<>();
+    @Expose
     @SerializedName("BotID")
     @Setter
     private int botId;
@@ -31,9 +34,6 @@ public class GuildConfig {
     @SerializedName("NotificationChannel")
     @Setter
     private long notificationChannel;
-    @Expose
-    @SerializedName("StaffRoles")
-    private final List<Long> staffRoles = new ArrayList<>();
 
     public JDA getBot() {
         BotConfig config = DiscordManager.getInstance().getBotConfigs().get(botId);

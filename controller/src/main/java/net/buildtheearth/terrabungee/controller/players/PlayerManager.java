@@ -45,29 +45,25 @@ import java.util.concurrent.Executors;
  */
 public class PlayerManager extends Module {
     private static PlayerManager instance = null;
+    private final ExecutorService manipulationThread = Executors.newSingleThreadExecutor(
+            new ThreadFactoryBuilder().setNameFormat("player-manipulation-%d").build());
+    @Getter
+    private final StorageHashMap<UUID, ControllerPlayer> players = new StorageHashMap<>(ControllerPlayer.class);
+    @Getter
+    private final StorageHashMap<Integer, Punishment> punishments = new StorageHashMap<>(Punishment.class);
+    private Map<UUID, List<Punishment>> punishmentsByUuid = Maps.newHashMap();
+    private Map<UUID, ControllerPlayer> onlinePlayerRegistry = Maps.newHashMap();
+
+    private PlayerManager() {
+        super("players");
+    }
 
     public static PlayerManager getInstance() {
         return instance == null ? instance = new PlayerManager() : instance;
     }
 
-    private final ExecutorService manipulationThread = Executors.newSingleThreadExecutor(
-            new ThreadFactoryBuilder().setNameFormat("player-manipulation-%d").build());
-
-    @Getter
-    private final StorageHashMap<UUID, ControllerPlayer> players = new StorageHashMap<>(ControllerPlayer.class);
-
-    @Getter
-    private final StorageHashMap<Integer, Punishment> punishments = new StorageHashMap<>(Punishment.class);
-    private Map<UUID, List<Punishment>> punishmentsByUuid = Maps.newHashMap();
-
-    private Map<UUID, ControllerPlayer> onlinePlayerRegistry = Maps.newHashMap();
-
     public Map<UUID, ControllerPlayer> getOnlinePlayerRegistry() {
         return onlinePlayerRegistry;
-    }
-
-    private PlayerManager() {
-        super("players");
     }
 
     public int getTotalPlayers() {

@@ -29,11 +29,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class PlayerManager extends Manager {
 
+    private Map<UUID, TBPlayer> onlinePlayers = new HashMap<>();
+
     protected PlayerManager(TerraBungeeClient tb) {
         super(tb);
     }
-
-    private Map<UUID, TBPlayer> onlinePlayers = new HashMap<>();
 
     /**
      * Get player by username

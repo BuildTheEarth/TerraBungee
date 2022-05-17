@@ -33,11 +33,11 @@ import java.net.InetSocketAddress;
 import java.util.logging.Logger;
 
 public class TerraBungeeProxy extends Plugin implements Listener {
+    public static Logger LOGGER;
     @Getter
     private static TerraBungeeProxy instance = null;
     @Getter
     private TerraBungeeClient terraBungee;
-    public static Logger LOGGER;
 
     @Override
     public void onEnable() {

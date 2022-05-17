@@ -2,9 +2,8 @@ package net.buildtheearth.terrabungee.controller.command.instance;
 
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
-import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
-import net.buildtheearth.terrabungee.controller.instance.StorableStaticInstance;
+import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 
 public class RemoveStaticCommand extends Command {
     @Override
@@ -26,21 +25,12 @@ public class RemoveStaticCommand extends Command {
 
         String id = args[0];
 
-        StorableStaticInstance remove = null;
-        for (StorableStaticInstance s : InstanceManager.getInstance().getStaticInstances().values()) {
-            if (s.id.equalsIgnoreCase(id)) {
-                remove = s;
-            }
-        }
-
-        if (remove != null) {
-            InstanceManager.getInstance().removeStaticInstance(null, id);
+        if (InstanceManager.getInstance().removeStaticInstance(null, id)) {
             TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, "Successfully removed static instance ",
                     ConsoleColor.BLUE, id);
-            return;
+        } else {
+            TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Static instance ", ConsoleColor.BLUE, id,
+                    ConsoleColor.RED, " doesn't exist!");
         }
-
-        TerraBungeeConsole.sendMessage(ConsoleColor.RED, "Static instance ", ConsoleColor.BLUE, id,
-                ConsoleColor.RED, " doesn't exist!");
     }
 }

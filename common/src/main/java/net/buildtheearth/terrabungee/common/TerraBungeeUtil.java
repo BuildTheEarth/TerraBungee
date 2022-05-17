@@ -101,8 +101,17 @@ public class TerraBungeeUtil {
             int index = (int) (rnd.nextFloat() * SALTCHARS.length());
             salt.append(SALTCHARS.charAt(index));
         }
-        String saltStr = salt.toString();
-        return saltStr;
+        return salt.toString();
+    }
+
+    /**
+     * Validates a server tag.
+     *
+     * @param tag The server tag to be validated.
+     * @return True if the tag contains only letters, numbers, and dashes, and is between 3-24 characters long, false otherwise.
+     */
+    public static boolean validateServerTag(String tag) {
+        return tag.matches("^[A-Za-z\\d-]{3,24}$");
     }
 
     public static ExecutorService newSingleThreadExecutor(String name) {

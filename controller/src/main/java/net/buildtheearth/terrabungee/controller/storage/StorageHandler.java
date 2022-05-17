@@ -21,10 +21,10 @@ import net.buildtheearth.terrabungee.common.players.Punishment;
 import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.GuildConfig;
-import net.buildtheearth.terrabungee.controller.modules.Module;
-import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
 import net.buildtheearth.terrabungee.controller.instance.StorableStaticInstance;
+import net.buildtheearth.terrabungee.controller.modules.Module;
+import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,12 @@ import java.util.concurrent.TimeUnit;
 
 public class StorageHandler extends Module {
     private static StorageHandler instance = null;
+    @Getter
+    private final Map<String, Storage> storageMap = Maps.newHashMap();
+
+    private StorageHandler() {
+        super("storage");
+    }
 
     public static StorageHandler getInstance() {
         if (instance == null) {
@@ -40,13 +46,6 @@ public class StorageHandler extends Module {
         }
         return instance;
     }
-
-    private StorageHandler() {
-        super("storage");
-    }
-
-    @Getter
-    private final Map<String, Storage> storageMap = Maps.newHashMap();
 
     @SneakyThrows
     public void unload() {
