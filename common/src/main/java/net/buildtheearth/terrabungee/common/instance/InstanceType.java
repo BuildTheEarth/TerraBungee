@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.instance;
+package net.buildtheearth.terrabungee.common.instance;
 
 /**
  * An enumeration of the type of instance.

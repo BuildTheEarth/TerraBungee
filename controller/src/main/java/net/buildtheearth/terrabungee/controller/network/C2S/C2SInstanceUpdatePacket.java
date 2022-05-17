@@ -9,7 +9,7 @@ import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
-import net.buildtheearth.terrabungee.instance.Instance;
+import net.buildtheearth.terrabungee.common.instance.Instance;
 
 @RequiredArgsConstructor
 public class C2SInstanceUpdatePacket implements IC2SPacket {

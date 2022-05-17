@@ -3,7 +3,7 @@
  * TerraBungeeAPI - Instance.java
  */
 
-package net.buildtheearth.terrabungee.instance;
+package net.buildtheearth.terrabungee.common.instance;
 
 import lombok.Data;
 

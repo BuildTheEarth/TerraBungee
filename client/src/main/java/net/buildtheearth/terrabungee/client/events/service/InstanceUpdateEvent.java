@@ -7,7 +7,7 @@ package net.buildtheearth.terrabungee.client.events.service;
 
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.client.events.Event;
-import net.buildtheearth.terrabungee.instance.Instance;
+import net.buildtheearth.terrabungee.common.instance.Instance;
 
 import java.util.List;
 

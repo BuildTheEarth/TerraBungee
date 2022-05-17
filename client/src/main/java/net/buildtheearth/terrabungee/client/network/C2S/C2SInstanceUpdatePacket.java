@@ -13,7 +13,7 @@ import net.buildtheearth.terrabungee.client.events.service.InstanceUpdateEvent;
 import net.buildtheearth.terrabungee.client.network.IC2SPacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
-import net.buildtheearth.terrabungee.instance.Instance;
+import net.buildtheearth.terrabungee.common.instance.Instance;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -13,7 +13,7 @@ import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceAdd
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceRemovedEmbed;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.services.ServiceController;
-import net.buildtheearth.terrabungee.instance.Instance;
+import net.buildtheearth.terrabungee.common.instance.Instance;
 
 import java.util.List;
 import java.util.Map;

@@ -13,7 +13,7 @@ import net.buildtheearth.terrabungee.client.network.S2C.S2CAddStaticInstancePack
 import net.buildtheearth.terrabungee.client.network.S2C.S2CRemoveStaticInstancePacket;
 import net.buildtheearth.terrabungee.client.util.Manager;
 import net.buildtheearth.terrabungee.common.network.Response;
-import net.buildtheearth.terrabungee.instance.Instance;
+import net.buildtheearth.terrabungee.common.instance.Instance;
 
 import java.util.ArrayList;
 import java.util.List;
