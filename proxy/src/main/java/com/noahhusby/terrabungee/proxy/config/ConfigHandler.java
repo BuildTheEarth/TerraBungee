@@ -22,6 +22,7 @@ public class ConfigHandler {
     private static ConfigHandler instance;
     private final TerraBungeeProxy plugin = TerraBungeeProxy.getInstance();
     private Configuration config;
+
     private ConfigHandler() {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();

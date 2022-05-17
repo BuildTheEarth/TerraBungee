@@ -8,7 +8,7 @@ package com.noahhusby.terrabungee.proxy.commands.fragments.instance;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.commands.ICommandFragment;
 import com.noahhusby.terrabungee.proxy.util.ChatUtil;
-import net.buildtheearth.terrabungee.common.services.Instance;
+import net.buildtheearth.terrabungee.instance.Instance;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 

@@ -1,7 +1,6 @@
 package net.buildtheearth.terrabungee.controller.discord.embeds;
 
 import lombok.RequiredArgsConstructor;
-import net.buildtheearth.terrabungee.common.services.Instance;
 import net.buildtheearth.terrabungee.common.services.Proxy;
 import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.discord.IMessageEmbed;
@@ -21,8 +20,6 @@ public class ServiceOfflineEmbed implements IMessageEmbed {
 
         if (service instanceof Proxy) {
             e.setTitle("Proxy Lost Connection");
-        } else if (service instanceof Instance) {
-            e.setTitle("Instance Lost Connection");
         }
 
         e.setDescription("**ID: ** " + service.getId());

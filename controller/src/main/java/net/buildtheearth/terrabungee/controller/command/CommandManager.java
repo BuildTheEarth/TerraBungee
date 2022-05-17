@@ -18,7 +18,6 @@ import net.buildtheearth.terrabungee.controller.command.discord.DiscordRefreshSl
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordRemoveBotCommand;
 import net.buildtheearth.terrabungee.controller.command.discord.DiscordRemoveGuildCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.AddStaticCommand;
-import net.buildtheearth.terrabungee.controller.command.instance.DefaultServerCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.ListStaticCommand;
 import net.buildtheearth.terrabungee.controller.command.instance.RemoveStaticCommand;
 import net.buildtheearth.terrabungee.controller.command.security.ReloadWhitelistCommand;
@@ -75,7 +74,6 @@ public class CommandManager extends Module {
         register(new AddStaticCommand());
         register(new RemoveStaticCommand());
         register(new ListStaticCommand());
-        register(new DefaultServerCommand());
         register(new TestCommand());
         register(new SaveAllCommand());
         register(new LoadAllCommand());

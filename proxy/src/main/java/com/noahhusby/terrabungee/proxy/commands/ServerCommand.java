@@ -4,7 +4,8 @@ import com.google.common.collect.Lists;
 import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
 import com.noahhusby.terrabungee.proxy.util.ChatUtil;
 import com.noahhusby.terrabungee.proxy.util.ProxyUtil;
-import net.buildtheearth.terrabungee.common.services.Instance;
+import net.buildtheearth.terrabungee.instance.Instance;
+import net.buildtheearth.terrabungee.instance.InstanceType;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -44,7 +45,7 @@ public class ServerCommand extends Command implements TabExecutor {
                     list.addExtra(ChatUtil.combine(ChatColor.GRAY, ", "));
                 }
 
-                TextComponent t = ChatUtil.combine((i.getInstanceType() == Instance.InstanceType.STATIC ?
+                TextComponent t = ChatUtil.combine((i.getInstanceType() == InstanceType.STATIC ?
                         ChatColor.GOLD : ChatColor.GREEN), i.getId());
                 t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/server %s", i.getId())));
                 t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Connect to " + i.getId()).create()));

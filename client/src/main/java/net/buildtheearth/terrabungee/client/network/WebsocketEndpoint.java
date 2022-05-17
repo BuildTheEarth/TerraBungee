@@ -18,6 +18,7 @@ public class WebsocketEndpoint extends WebSocketClient {
     private boolean online = false;
     private Consumer<String> messageHandler;
     private Consumer<ServerHandshake> openHandler;
+
     public WebsocketEndpoint(URI serverUri) {
         super(serverUri);
     }

@@ -6,10 +6,10 @@ import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
-import net.buildtheearth.terrabungee.common.services.Instance;
 import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
 import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
+import net.buildtheearth.terrabungee.instance.Instance;
 
 public class S2CRemoveStaticInstancePacket implements IS2CPacket {
     @Override
@@ -19,7 +19,7 @@ public class S2CRemoveStaticInstancePacket implements IS2CPacket {
 
     @Override
     public void onMessage(ServicePacket servicePacket, JsonObject data, Response response) {
-        for (Instance i : InstanceManager.getInstance().getInstances()) {
+        for (Instance i : InstanceManager.getInstance().getInstances().values()) {
             if (i.getId().equalsIgnoreCase(data.get("id").getAsString())) {
                 InstanceManager.getInstance().removeStaticInstance(ServiceManager.getInstance().getService(servicePacket.getId()), data.get("id").getAsString());
                 TerraBungeeConsole.sendMessage(ConsoleColor.GREEN, servicePacket.getId() + " removed static instance ",
