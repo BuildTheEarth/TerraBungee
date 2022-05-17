@@ -6,5 +6,5 @@
 package net.buildtheearth.terrabungee.common.services;
 
 public enum ServiceType {
-    PROXY, INSTANCE, NODE, FLEET, CUSTOM
+    PROXY, NODE, FLEET, CUSTOM
 }

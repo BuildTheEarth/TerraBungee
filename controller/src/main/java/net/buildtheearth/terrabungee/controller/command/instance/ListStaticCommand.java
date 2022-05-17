@@ -3,8 +3,8 @@ package net.buildtheearth.terrabungee.controller.command.instance;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
-import net.buildtheearth.terrabungee.controller.services.InstanceManager;
-import net.buildtheearth.terrabungee.controller.services.StorableStaticInstance;
+import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
+import net.buildtheearth.terrabungee.controller.instance.StorableStaticInstance;
 
 public class ListStaticCommand extends Command {
     @Override

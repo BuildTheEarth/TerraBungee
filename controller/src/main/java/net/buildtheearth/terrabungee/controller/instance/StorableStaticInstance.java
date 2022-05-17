@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.controller.services;
+package net.buildtheearth.terrabungee.controller.instance;
 
 import com.google.gson.annotations.Expose;
 import com.noahhusby.lib.data.storage.Key;

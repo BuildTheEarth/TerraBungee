@@ -1,4 +1,4 @@
-package net.buildtheearth.terrabungee.controller.services;
+package net.buildtheearth.terrabungee.controller.instance;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -7,6 +7,7 @@ import com.noahhusby.lib.data.storage.events.EventListener;
 import com.noahhusby.lib.data.storage.events.transfer.StorageLoadEvent;
 import lombok.Getter;
 import net.buildtheearth.terrabungee.common.services.Instance;
+import net.buildtheearth.terrabungee.common.services.Node;
 import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.common.services.ServiceStatus;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
@@ -14,6 +15,8 @@ import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceAddedEmbed;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceRemovedEmbed;
 import net.buildtheearth.terrabungee.controller.modules.Module;
+import net.buildtheearth.terrabungee.controller.services.ServiceController;
+import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,8 @@ public class InstanceManager extends Module {
     private InstanceManager() {
         super("instance");
     }
+
+
 
     /**
      * Add a static instance
@@ -81,7 +86,8 @@ public class InstanceManager extends Module {
      */
     public List<Instance> getInstances(boolean discarded) {
         List<Instance> instances = new ArrayList<>();
-        for (Service s : ServiceManager.getInstance().getServices(ServiceType.INSTANCE)) {
+        // TODO: ServiceType.INSTANCE was removed, please fix.
+        for (Service s : ServiceManager.getInstance().getServices(ServiceType.CUSTOM)) {
             if (discarded || s.getStatus() != ServiceStatus.DISCARDED) {
                 instances.add((Instance) s);
             }
@@ -95,7 +101,8 @@ public class InstanceManager extends Module {
      */
     private void updateInstances() {
         Map<String, StorableStaticInstance> temp = Maps.newHashMap(staticInstances);
-        List<Service> currentInstances = ServiceManager.getInstance().getServices(ServiceType.INSTANCE);
+        // TODO: ServiceType.INSTANCE was removed, please fix.
+        List<Service> currentInstances = ServiceManager.getInstance().getServices(ServiceType.CUSTOM);
         List<Instance> removalInstances = Lists.newArrayList();
         for (Service s : currentInstances) {
             Instance i = (Instance) s;
@@ -118,15 +125,14 @@ public class InstanceManager extends Module {
         }
     }
 
-    public static class InstanceServiceController extends ServiceController<Instance> {
+    private class NodeServiceController extends ServiceController<Node> {
 
         @Override
-        public void onServiceConnect(Instance service) {
-
+        public void onServiceConnect(Node service) {
         }
 
         @Override
-        public void onServiceInit(Instance service) {
+        public void onServiceInit(Node service) {
 
         }
     }

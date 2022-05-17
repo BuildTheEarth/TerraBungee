@@ -18,14 +18,13 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.terrabungee.common.players.Punishment;
-import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.GuildConfig;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
-import net.buildtheearth.terrabungee.controller.services.InstanceManager;
-import net.buildtheearth.terrabungee.controller.services.StorableStaticInstance;
+import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
+import net.buildtheearth.terrabungee.controller.instance.StorableStaticInstance;
 
 import java.util.ArrayList;
 import java.util.List;

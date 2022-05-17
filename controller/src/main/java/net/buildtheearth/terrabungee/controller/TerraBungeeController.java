@@ -15,7 +15,7 @@ import net.buildtheearth.terrabungee.controller.modules.ModuleHandler;
 import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.security.SecurityManager;
-import net.buildtheearth.terrabungee.controller.services.InstanceManager;
+import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.buildtheearth.terrabungee.controller.storage.StorageHandler;
 import net.buildtheearth.terrabungee.controller.storage.TerraBungeeConfig;

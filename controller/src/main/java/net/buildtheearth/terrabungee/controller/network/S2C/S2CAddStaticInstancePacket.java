@@ -8,7 +8,7 @@ import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
 import net.buildtheearth.terrabungee.common.services.Instance;
 import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
-import net.buildtheearth.terrabungee.controller.services.InstanceManager;
+import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 
 public class S2CAddStaticInstancePacket implements IS2CPacket {

@@ -8,7 +8,7 @@ package net.buildtheearth.terrabungee.common.services;
 import lombok.Getter;
 
 public class Instance extends Service {
-    public static final ServiceType type = ServiceType.INSTANCE;
+    public static final ServiceType type = ServiceType.CUSTOM;
 
     @Getter
     private String address;
