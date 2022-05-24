@@ -12,8 +12,8 @@ import com.noahhusby.terrabungee.proxy.util.ProxyUtil;
 import net.buildtheearth.terrabungee.client.events.EventListener;
 import net.buildtheearth.terrabungee.client.events.player.OnlineCacheHitEvent;
 import net.buildtheearth.terrabungee.client.events.service.InstanceUpdateEvent;
-import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.instance.Instance;
+import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 

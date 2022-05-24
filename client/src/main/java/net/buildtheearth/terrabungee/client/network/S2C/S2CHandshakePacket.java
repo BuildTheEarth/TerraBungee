@@ -19,7 +19,6 @@ public class S2CHandshakePacket implements IS2CPacket {
 
     @Override
     public void getMessage(TerraBungeeClient instance, JsonObject data) {
-        data.addProperty("type", instance.getServiceType().name());
         data.add("version", TerraBungeeUtil.GSON.toJsonTree(Constants.VERSION));
         data.add("intents", TerraBungeeUtil.intentsToArray(instance.getIntents()));
     }

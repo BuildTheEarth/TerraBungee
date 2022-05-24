@@ -22,7 +22,6 @@ import lombok.Getter;
 import net.buildtheearth.terrabungee.client.TerraBungeeAPI;
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
-import net.buildtheearth.terrabungee.common.services.ServiceType;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -50,7 +49,7 @@ public class TerraBungeeProxy extends Plugin implements Listener {
         PlayerHandler.getInstance();
 
         String[] address = ConfigHandler.controllerUrl.split(":");
-        terraBungee = TerraBungeeAPI.createService(ServiceType.PROXY, ConfigHandler.serviceID, new InetSocketAddress(address[0], Integer.parseInt(address[1])));
+        terraBungee = TerraBungeeAPI.createService(ConfigHandler.serviceID, new InetSocketAddress(address[0], Integer.parseInt(address[1])));
         terraBungee.setAutoReconnect(true);
         terraBungee.connect();
         terraBungee.enableIntents(ServiceIntent.INSTANCE_UPDATE);

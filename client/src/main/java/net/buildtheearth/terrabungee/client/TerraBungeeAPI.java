@@ -7,7 +7,6 @@ package net.buildtheearth.terrabungee.client;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import net.buildtheearth.terrabungee.common.services.ServiceType;
 
 import java.net.InetSocketAddress;
 
@@ -19,12 +18,11 @@ public class TerraBungeeAPI {
     /**
      * Create a new TerraBungee service
      *
-     * @param serviceType {@link ServiceType}
-     * @param Id          Unique ID of Service
-     * @param controller  IP of Controller
+     * @param Id         Unique ID of Service
+     * @param controller IP of Controller
      * @return {@link TerraBungeeClient}
      */
-    public static TerraBungeeClient createService(@NonNull ServiceType serviceType, @NonNull String Id, @NonNull InetSocketAddress controller) {
-        return new TerraBungeeClient(serviceType, Id, controller);
+    public static TerraBungeeClient createService(@NonNull String Id, @NonNull InetSocketAddress controller) {
+        return new TerraBungeeClient(Id, controller);
     }
 }

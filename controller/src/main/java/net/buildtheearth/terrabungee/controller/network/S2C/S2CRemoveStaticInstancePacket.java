@@ -5,11 +5,11 @@ import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.Constants;
+import net.buildtheearth.terrabungee.common.instance.Instance;
 import net.buildtheearth.terrabungee.common.logging.ConsoleColor;
 import net.buildtheearth.terrabungee.controller.instance.InstanceManager;
 import net.buildtheearth.terrabungee.controller.logging.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
-import net.buildtheearth.terrabungee.common.instance.Instance;
 
 public class S2CRemoveStaticInstancePacket implements IS2CPacket {
     @Override

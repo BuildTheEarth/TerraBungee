@@ -6,17 +6,18 @@
 package net.buildtheearth.terrabungee.common.services;
 
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Service {
+@RequiredArgsConstructor
+public class Service {
 
     @Getter
-    private final String Id;
+    private final String id;
 
     @Getter
     @Setter
@@ -33,15 +34,4 @@ public abstract class Service {
     @Getter
     @Setter
     private TerraBungeeVersion version;
-
-    public Service(@NonNull String Id) {
-        this.Id = Id;
-    }
-
-    /**
-     * Gets the type of service
-     *
-     * @return The type of service
-     */
-    public abstract ServiceType getType();
 }

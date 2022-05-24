@@ -17,7 +17,6 @@ import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.network.Response;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
-import net.buildtheearth.terrabungee.common.services.ServiceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +47,6 @@ public class TerraBungeeClient {
     @Getter
     private final FleetManager fleetManager;
     @Getter
-    private final ServiceType serviceType;
-    @Getter
     private final String Id;
 
     @Getter
@@ -61,8 +58,7 @@ public class TerraBungeeClient {
     @Setter
     private TBStats stats = new TBStats("UNKNOWN", 0, 0, 0, 0);
 
-    protected TerraBungeeClient(@NonNull ServiceType serviceType, @NonNull String Id, @NonNull InetSocketAddress controller) {
-        this.serviceType = serviceType;
+    protected TerraBungeeClient(@NonNull String Id, @NonNull InetSocketAddress controller) {
         this.Id = Id;
         this.networkManager = new NetworkManager(controller, this);
         this.instanceManager = new InstanceManager(this);

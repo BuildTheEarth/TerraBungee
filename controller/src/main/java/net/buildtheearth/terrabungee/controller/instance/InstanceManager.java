@@ -6,14 +6,12 @@ import com.noahhusby.lib.data.storage.StorageTreeMap;
 import com.noahhusby.lib.data.storage.events.EventListener;
 import com.noahhusby.lib.data.storage.events.transfer.StorageLoadEvent;
 import lombok.Getter;
-import net.buildtheearth.terrabungee.common.services.Node;
+import net.buildtheearth.terrabungee.common.instance.Instance;
 import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceAddedEmbed;
 import net.buildtheearth.terrabungee.controller.discord.embeds.StaticInstanceRemovedEmbed;
 import net.buildtheearth.terrabungee.controller.modules.Module;
-import net.buildtheearth.terrabungee.controller.services.ServiceController;
-import net.buildtheearth.terrabungee.common.instance.Instance;
 
 import java.util.List;
 import java.util.Map;
@@ -92,17 +90,5 @@ public class InstanceManager extends Module {
     @Override
     public List<String> getRequiredModules() {
         return Lists.newArrayList("storage");
-    }
-
-    private class NodeServiceController extends ServiceController<Node> {
-
-        @Override
-        public void onServiceConnect(Node service) {
-        }
-
-        @Override
-        public void onServiceInit(Node service) {
-
-        }
     }
 }

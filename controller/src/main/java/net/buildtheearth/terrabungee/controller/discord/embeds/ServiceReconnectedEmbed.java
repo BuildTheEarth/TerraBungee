@@ -1,7 +1,6 @@
 package net.buildtheearth.terrabungee.controller.discord.embeds;
 
 import lombok.RequiredArgsConstructor;
-import net.buildtheearth.terrabungee.common.services.Proxy;
 import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.controller.discord.IMessageEmbed;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -16,11 +15,6 @@ public class ServiceReconnectedEmbed implements IMessageEmbed {
     @Override
     public void build(EmbedBuilder e) {
         e.setColor(Color.GREEN);
-
-        if (service instanceof Proxy) {
-            e.setTitle("Proxy Reconnected");
-        }
-
         e.setDescription("**ID: ** " + service.getId());
     }
 }

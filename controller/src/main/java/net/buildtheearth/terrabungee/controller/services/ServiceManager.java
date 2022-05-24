@@ -5,12 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.TerraBungeeVersion;
-import net.buildtheearth.terrabungee.common.services.Custom;
-import net.buildtheearth.terrabungee.common.services.Proxy;
 import net.buildtheearth.terrabungee.common.services.Service;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.common.services.ServiceStatus;
-import net.buildtheearth.terrabungee.common.services.ServiceType;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.discord.embeds.ServiceOfflineEmbed;
@@ -23,7 +20,6 @@ import net.buildtheearth.terrabungee.controller.network.NetworkManager;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import org.java_websocket.WebSocket;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,22 +76,6 @@ public class ServiceManager extends Module {
         return x;
     }
 
-    /**
-     * Gets all servers created of a certain type regardless of state (unless discarded)
-     *
-     * @param type The type of service
-     * @return All services of the same type
-     */
-    public List<Service> getServices(ServiceType type) {
-        List<Service> typeServices = new ArrayList<>();
-        for (Service s : ImmutableMap.copyOf(services).values()) {
-            if (s.getType() == type) {
-                typeServices.add(s);
-            }
-        }
-        return typeServices;
-    }
-
     public String getDefaultServer() {
         return defaultServer;
     }
@@ -117,12 +97,11 @@ public class ServiceManager extends Module {
     /**
      * Creates a new service from a service initialization packet
      *
-     * @param type    Type of service
      * @param ID      The ID of the service
      * @param client  The websocket client
      * @param intents The intents
      */
-    public Service initService(ServiceType type, String ID, TerraBungeeVersion version, WebSocket client, List<ServiceIntent> intents) {
+    public Service initService(String ID, TerraBungeeVersion version, WebSocket client, List<ServiceIntent> intents) {
         Service service = getService(ID);
         if (service != null) {
             service.setIntents(intents);
@@ -130,28 +109,22 @@ public class ServiceManager extends Module {
             service.setClient(client);
             service.setStatus(ServiceStatus.ONLINE);
             //TODO: Remove this manual caching method
-            if (getService(ID) instanceof Proxy) {
+            if (service.getIntents().contains(ServiceIntent.MUTE_CACHE)) {
                 PlayerManager.getInstance().pushMuteCache(getService(ID));
             }
             return getService(ID);
         }
 
-        service = createService(type, ID);
-
-        if (service == null) {
-            //TODO: Track if this service should've been awaiting initialization but somehow wasn't.
-            return null;
-        }
-
+        service = new Service(ID);
         service.setVersion(version);
         service.setStatus(ServiceStatus.ONLINE);
         service.setClient(client);
         service.setIntents(intents);
 
-        TerraBungeeController.logger.info("Initialized new service (" + type.name() + "): " + ID);
+        TerraBungeeController.logger.info("Initialized new service: " + ID);
 
         //TODO: Remove this manual caching method
-        if (service instanceof Proxy) {
+        if (service.getIntents().contains(ServiceIntent.MUTE_CACHE)) {
             PlayerManager.getInstance().pushMuteCache(service);
         }
         return service;
@@ -179,23 +152,6 @@ public class ServiceManager extends Module {
         }
 
         getService(service.getId()).setStatus(ServiceStatus.DISCARDED);
-    }
-
-    /**
-     * Creates a new service from a service type and ID. Useful for new services from initializations (Ex: Proxy)
-     *
-     * @param type The type of service
-     * @param ID   The ID of the service
-     * @return The new service
-     */
-    public Service createService(ServiceType type, String ID) {
-        if (type == ServiceType.PROXY) {
-            return createService(new Proxy(ID));
-        } else if (type == ServiceType.CUSTOM) {
-            return createService(new Custom(ID));
-        }
-
-        return null;
     }
 
     /**
@@ -267,6 +223,7 @@ public class ServiceManager extends Module {
     }
 
     @Override
+
     public List<String> getRequiredModules() {
         return Lists.newArrayList("storage");
     }
