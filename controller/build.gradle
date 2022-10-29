@@ -1,17 +1,17 @@
 dependencies {
-    compile project(":api")
-    compile "com.github.noahhusby:HusbyLib:$husbyVersion"
-    compile "org.yaml:snakeyaml:$snakeYamlVersion"
-    compile "com.google.code.gson:gson:$gsonVersion"
-    compile "com.google.guava:guava:$guavaVersion"
-    compile "commons-io:commons-io:$commonsVersion"
-    compile "org.jline:jline:$jlineVersion"
-    compile "ch.qos.logback:logback-classic:$logbackVersion"
-    compile("net.dv8tion:JDA:$jdaVersion") {
+    implementation project(":api")
+    implementation "com.github.noahhusby:HusbyLib:$husbyVersion"
+    implementation "org.yaml:snakeyaml:$snakeYamlVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "commons-io:commons-io:$commonsVersion"
+    implementation "org.jline:jline:$jlineVersion"
+    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation("net.dv8tion:JDA:$jdaVersion") {
         exclude module: 'opus-java'
     }
-    compile "com.zaxxer:HikariCP:$hikariVersion"
-    compile "org.java-websocket:Java-WebSocket:$websocketVersion"
+    implementation "com.zaxxer:HikariCP:$hikariVersion"
+    implementation "org.java-websocket:Java-WebSocket:$websocketVersion"
 }
 
 repositories {

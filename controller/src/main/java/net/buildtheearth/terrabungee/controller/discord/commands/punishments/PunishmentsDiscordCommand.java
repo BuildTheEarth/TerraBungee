@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -74,7 +75,7 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
                 }
             })).submit();
         } else if (subcommand.equals("inspect")) {
-            int id = new Long(event.getOption("id").getAsLong()).intValue();
+            int id = Long.valueOf(Objects.requireNonNull(event.getOption("id")).getAsLong()).intValue();
             InspectionPromptData inspectionPromptData = createGeneralInspection(id);
             ReplyAction action = event.replyEmbeds(inspectionPromptData.getEmbed());
             if (inspectionPromptData.isGenerateButtons()) {

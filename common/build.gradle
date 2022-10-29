@@ -1,5 +1,20 @@
 dependencies {
     implementation "com.github.noahhusby.HusbyLib:data:$husbyVersion"
+    implementation "org.apache.httpcomponents:fluent-hc:$apacheHttpVersion"
+    implementation "org.apache.httpcomponents:httpclient:$apacheHttpVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.1"
+    testImplementation "com.google.code.gson:gson:$gsonVersion"
+    testImplementation "com.google.guava:guava:$guavaVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.1"
+
     compileOnly "com.google.code.gson:gson:$gsonVersion"
     compileOnly "com.google.guava:guava:$guavaVersion"
+}
+
+test {
+    useJUnitPlatform()
+
+    maxHeapSize = '1G'
+
+    exclude '**/*'
 }
