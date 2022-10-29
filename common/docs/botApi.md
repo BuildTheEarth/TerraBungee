@@ -40,7 +40,7 @@ ___
 
 Located in: `net.buildtheearth.terrabungee.common.discord.BotApi`
 
-####Methods:
+
 `Constructor`:
 ```java
 //Url is api endpoint
