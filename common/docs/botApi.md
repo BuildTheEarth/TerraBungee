@@ -5,16 +5,16 @@ ___
 Located in: `net.buildtheearth.terrabungee.common.exceptions`
 > Note all exceptions are RuntimeExceptions!
 
-######`InvalidParameterException`:
+#####`InvalidParameterException`:
 This exception is thrown when a parameter has an invalid value.
 
-######`NotFoundException`:
+#####`NotFoundException`:
 This exception is thrown when the target (user or role) cannot be found
 
-######`NotImplementedException`:
+#####`NotImplementedException`:
 This exception is thrown when the target feature is not implemented
 
-######`ServerException`:
+#####`ServerException`:
 This exception is thrown when something goes catastrophically wrong, equivelent to HTTP 500
 
 >All error messages will have a reason attached in the message thrown.
@@ -25,13 +25,13 @@ Located in: `net.buildtheearth.terrabungee.common.discord.structures`
 > Note that this is what GSON serializes all responses to
 > > See each class for a list of methods.
 
-######`Builder`:
+#####`Builder`:
 Represents a user in terms of being builder or not, contains user id and a boolean.
 
-######`User`:
+#####`User`:
 Represents a user in terms of the roles they have, contains a list of `Role`
 
-######`Role`:
+#####`Role`:
 Represents a role, containing the ID and name, an important note is to only compare using `(instanceof Role).equals()`
 
 ### Api methods
@@ -41,20 +41,20 @@ ___
 Located in: `net.buildtheearth.terrabungee.common.discord.BotApi`
 
 ####Methods:
-######`Constructor`:
+#####`Constructor`:
 ```java
 //Url is api endpoint
 //Token is the bot team provided token
 new BotApi(String url, String token)
 ```
 
-######`getUser`:
+#####`getUser`:
 ```java
 //Id is the discord id of the user
 User user = botApi.getUser(String id)
 ```
 
-######`getBuilder`:
+#####`getBuilder`:
 ```java
 //Id is the discord id of the user
 Builder bld = botApi.getBuilder(String id)
