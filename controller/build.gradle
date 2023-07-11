@@ -1,6 +1,6 @@
 dependencies {
     implementation project(":api")
-    implementation "com.github.noahhusby:HusbyLib:$husbyVersion"
+    implementation "com.github.BuildTheEarth:HusbyLib:$husbyVersion"
     implementation "org.yaml:snakeyaml:$snakeYamlVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.google.guava:guava:$guavaVersion"

@@ -1,5 +1,5 @@
 dependencies {
-    implementation "com.github.noahhusby.HusbyLib:data:$husbyVersion"
+    implementation "com.github.BuildTheEarth:HusbyLib:$husbyVersion"
     implementation "org.apache.httpcomponents:fluent-hc:$apacheHttpVersion"
     implementation "org.apache.httpcomponents:httpclient:$apacheHttpVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.1"
