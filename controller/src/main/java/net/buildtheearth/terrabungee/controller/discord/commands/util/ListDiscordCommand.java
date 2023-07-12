@@ -1,20 +1,14 @@
 package net.buildtheearth.terrabungee.controller.discord.commands.util;
 
-import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.api.players.ControllerPlayer;
-import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
-import net.buildtheearth.terrabungee.common.players.TBPlayer;
-import net.buildtheearth.terrabungee.controller.TerraBungeeController;
-import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
-import net.buildtheearth.terrabungee.controller.util.MySQL;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -41,7 +35,7 @@ public class ListDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandEvent event) {
+    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandInteractionEvent event) {
         Map<UUID, ControllerPlayer> players = PlayerManager.getInstance().getOnlinePlayerRegistry();
         HashMap<String, List<ControllerPlayer>> list = new HashMap<>();
 
@@ -97,7 +91,7 @@ public class ListDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void configureData(CommandData data) {
+    public void configureData(SlashCommandData data) {
 
     }
 }

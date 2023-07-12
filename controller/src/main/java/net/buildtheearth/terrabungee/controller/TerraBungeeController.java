@@ -88,6 +88,7 @@ public class TerraBungeeController extends TerraBungee {
         ModuleHandler.getInstance().enableAll();
 
         server = new WSServer(new InetSocketAddress(ConfigHandler.host, ConfigHandler.port));
+        //server.setReuseAddr(true);
         new Thread(server).start();
 
         generalThreads.schedule(() -> DiscordManager.getInstance().send(new ControllerStartedEmbed()), 2, TimeUnit.SECONDS);

@@ -65,6 +65,13 @@ public class NetworkManager implements INetworkManager, Module {
         ServicePacket sp = new ServicePacket(client, id);
         JsonObject data = payload.get("data").getAsJsonObject();
 
+        if(type.contains("discord")){
+            System.out.println("Discord packet: " + type);
+            System.out.println("Discord packet data: " + p);
+            System.out.println("Discord packet salt: " + salt);
+            System.out.println("Discord packet id: " + id);
+        }
+
         IS2CPacket packet = packets.get(type);
         if (packet == null) {
             packet = TerraBungee.getInstance().getPluginManager().getPacketMap().get(type);

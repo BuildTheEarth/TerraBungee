@@ -4,12 +4,10 @@ import com.google.common.collect.Lists;
 import net.buildtheearth.api.discord.UserPermission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class DiscordListener extends ListenerAdapter {
@@ -18,7 +16,7 @@ public class DiscordListener extends ListenerAdapter {
     private List<Long> adminLongs = Lists.newArrayList(555520007837319178L, 422633274918174721L);
 
     @Override
-    public void onSlashCommand(SlashCommandEvent e) {
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent e) {
         if (e.getGuild() == null) {
             return;
         }
@@ -55,7 +53,7 @@ public class DiscordListener extends ListenerAdapter {
     }
 
     @Override
-    public void onButtonClick(@NotNull ButtonClickEvent event) {
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (event.getGuild() == null) {
             return;
         }

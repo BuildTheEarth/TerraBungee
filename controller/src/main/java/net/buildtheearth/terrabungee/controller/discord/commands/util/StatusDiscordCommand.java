@@ -6,9 +6,8 @@ import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import java.awt.*;
 import java.time.OffsetDateTime;
 
@@ -27,7 +26,7 @@ public class StatusDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandEvent event) {
+    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandInteractionEvent event) {
         event.replyEmbeds(DiscordManager.getInstance().buildEmbed(builder -> {
             builder.setColor(Color.getHSBColor(20, 100, 50));
             builder.setTitle("System Status");
@@ -39,7 +38,7 @@ public class StatusDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void configureData(CommandData data) {
+    public void configureData(SlashCommandData data) {
 
     }
 }

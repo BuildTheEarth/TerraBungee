@@ -25,14 +25,14 @@ import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.components.Button;
-import net.dv8tion.jda.api.interactions.components.ButtonStyle;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 import java.time.OffsetDateTime;
@@ -104,7 +104,7 @@ public class DiscordManager implements Module {
         try {
             for(GuildConfig guildConfig : guildConfigs.values()) {
                 if(guildConfig.isConfigured() && guildConfig.getNotificationTextChannel() != null) {
-                    guildConfig.getNotificationTextChannel().sendMessage(buildEmbed(emb::build)).submit();
+                    guildConfig.getNotificationTextChannel().sendMessageEmbeds(buildEmbed(emb::build)).submit();
                 }
             }
         } catch (Exception e) {
@@ -135,10 +135,12 @@ public class DiscordManager implements Module {
     public void updateSlashCommands(GuildConfig config) {
         try {
             CommandListUpdateAction slashCommands = config.getGuild().updateCommands();
+
             for (IDiscordCommand command : discordCommands.values()) {
-                CommandData commandData = new CommandData(command.getName(), command.getDescription());
-                command.configureData(commandData);
-                slashCommands.addCommands(commandData);
+                SlashCommandData slashCommandData = Commands.slash(command.getName(), command.getDescription());
+
+                command.configureData(slashCommandData);
+                slashCommands.addCommands(slashCommandData);
             }
             slashCommands.queue();
         } catch (NullPointerException exception) {
@@ -163,7 +165,7 @@ public class DiscordManager implements Module {
         return tempGuilds;
     }
 
-    public void executeSlashCommand(String name, UserPermission permission, User user, OffsetDateTime executionTime, SlashCommandEvent event) {
+    public void executeSlashCommand(String name, UserPermission permission, User user, OffsetDateTime executionTime, SlashCommandInteractionEvent event) {
         //TODO: Replace this bullshit
         if (event.getMember() == null) {
             return;
@@ -174,7 +176,7 @@ public class DiscordManager implements Module {
         }
     }
 
-    public void executeButtonCommand(ButtonClickEvent event) {
+    public void executeButtonCommand(ButtonInteractionEvent event) {
         //TODO: Replace this bullshit
         if (event.getMember() == null) {
             return;

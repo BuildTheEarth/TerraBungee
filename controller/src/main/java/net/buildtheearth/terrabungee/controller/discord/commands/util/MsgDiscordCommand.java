@@ -5,9 +5,9 @@ import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -29,14 +29,14 @@ public class MsgDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandEvent event) {
+    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandInteractionEvent event) {
         Map<UUID, ControllerPlayer> players = PlayerManager.getInstance().getOnlinePlayerRegistry();
 
         event.reply("Done.").submit();
     }
 
     @Override
-    public void configureData(CommandData data) {
+    public void configureData(SlashCommandData data) {
         Map<UUID, ControllerPlayer> players = PlayerManager.getInstance().getOnlinePlayerRegistry();
 
         for(UUID uuid : players.keySet()){

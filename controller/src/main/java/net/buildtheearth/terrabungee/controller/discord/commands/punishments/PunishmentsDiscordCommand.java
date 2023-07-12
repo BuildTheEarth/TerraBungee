@@ -15,14 +15,15 @@ import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.util.TimeUtil;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
-import net.dv8tion.jda.api.interactions.components.ButtonStyle;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -47,7 +48,7 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
     }
 
     @Override
-    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandEvent event) {
+    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandInteractionEvent event) {
         String subcommand = event.getSubcommandName().toLowerCase(Locale.ROOT);
         if (subcommand.equals("get")) {
             TBPlayer player = getPlayerByIdentifier(event.getOption("player").getAsString());
@@ -77,7 +78,7 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
         } else if (subcommand.equals("inspect")) {
             int id = Long.valueOf(Objects.requireNonNull(event.getOption("id")).getAsLong()).intValue();
             InspectionPromptData inspectionPromptData = createGeneralInspection(id);
-            ReplyAction action = event.replyEmbeds(inspectionPromptData.getEmbed());
+            ReplyCallbackAction action = event.replyEmbeds(inspectionPromptData.getEmbed());
             if (inspectionPromptData.isGenerateButtons()) {
                 JsonObject historyData = new JsonObject();
                 historyData.addProperty("type", "history");
@@ -163,7 +164,7 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
     }
 
     @Override
-    public void configureData(CommandData data) {
+    public void configureData(SlashCommandData data) {
         data.addSubcommands(new SubcommandData("get", "Get punishments for a player")
                 .addOption(OptionType.STRING, "player", "Name or UUID of player", true));
         data.addSubcommands(new SubcommandData("inspect", "Inspect a specific punishment")
@@ -199,7 +200,7 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
     }
 
     @Override
-    public void onButtonEvent(JsonObject data, ButtonClickEvent event) {
+    public void onButtonEvent(JsonObject data, ButtonInteractionEvent event) {
         String type = data.get("type").getAsString();
         int id = Integer.parseInt(data.get("id").getAsString());
         if (type.equalsIgnoreCase("history")) {

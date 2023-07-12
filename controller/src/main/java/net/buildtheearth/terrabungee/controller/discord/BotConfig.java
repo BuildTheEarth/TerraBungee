@@ -43,11 +43,12 @@ public class BotConfig {
         if(isConfigured()) {
             try {
                 bot = JDABuilder.createDefault(token)
+                        .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                         .enableIntents(GatewayIntent.DIRECT_MESSAGES)
                         .enableIntents(GatewayIntent.GUILD_MESSAGES)
                         .addEventListeners(new DiscordListener()).build();
                 bot.setAutoReconnect(true);
-            } catch (LoginException e) {
+            } catch (Exception e) {
                 TerraBungee.getInstance().getLogger().warning(String.format("Failed to initialize %s! Please check the token and try again.", name));
             }
         }

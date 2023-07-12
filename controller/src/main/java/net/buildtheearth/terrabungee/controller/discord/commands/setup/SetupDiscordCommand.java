@@ -3,8 +3,8 @@ package net.buildtheearth.terrabungee.controller.discord.commands.setup;
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.time.OffsetDateTime;
 
@@ -23,14 +23,14 @@ public class SetupDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandEvent event) {
+    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandInteractionEvent event) {
         if (permission == UserPermission.ADMIN) {
 
         }
     }
 
     @Override
-    public void configureData(CommandData data) {
+    public void configureData(SlashCommandData data) {
 
     }
 }

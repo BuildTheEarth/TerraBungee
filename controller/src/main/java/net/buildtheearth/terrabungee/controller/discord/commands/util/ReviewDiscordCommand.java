@@ -6,11 +6,9 @@ import net.buildtheearth.terrabungee.controller.util.MySQL;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -31,7 +29,7 @@ public class ReviewDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandEvent event) {
+    public void execute(User user, UserPermission permission, OffsetDateTime executionTime, SlashCommandInteractionEvent event) {
         HashMap<String,String> map = MySQL.getMap("SELECT `BuildingServerID`,`ToReview` FROM `BuildingServers` WHERE `ToReview` > 0 AND `Maintenance` = 0", "BuildingServerID", "ToReview");
 
         EmbedBuilder e = new EmbedBuilder();
@@ -52,7 +50,7 @@ public class ReviewDiscordCommand implements IDiscordCommand {
     }
 
     @Override
-    public void configureData(CommandData data) {
+    public void configureData(SlashCommandData data) {
 
     }
 }
