@@ -3,6 +3,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly "com.github.BuildTheEarth:HusbyLib:$husbyVersion"
     implementation "org.java-websocket:Java-WebSocket:$websocketVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.google.guava:guava:$guavaVersion"

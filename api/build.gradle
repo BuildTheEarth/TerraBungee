@@ -1,4 +1,5 @@
 dependencies {
+    compileOnly "com.github.BuildTheEarth:HusbyLib:$husbyVersion"
     compileOnly "com.google.code.gson:gson:$gsonVersion"
     compileOnly "com.google.guava:guava:$guavaVersion"
     compileOnly "org.yaml:snakeyaml:$snakeYamlVersion"
