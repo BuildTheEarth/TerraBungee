@@ -7,12 +7,15 @@ package net.buildtheearth.terrabungee.common.players;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@AllArgsConstructor
 public class TBPlayer {
+
     @Expose
     @SerializedName("UUID")
     private UUID uuid;
