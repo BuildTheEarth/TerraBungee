@@ -30,6 +30,7 @@ import net.buildtheearth.terrabungee.controller.network.C2S.C2SResponsePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CAddStaticInstancePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CKeepAlivePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CRemoveStaticInstancePacket;
+import net.buildtheearth.terrabungee.controller.network.S2C.S2CRetrieveAllPlayersPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CRetrieveUncachedPlayerPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CServiceMessagePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CSetServiceStatusPacket;
@@ -123,6 +124,7 @@ public class NetworkManager implements INetworkManager, Module {
         register(new S2CKickPlayerPacket());
         register(new S2CEditPunishmentAction());
         register(new S2CMutePlayerPacket());
+        register(new S2CRetrieveAllPlayersPacket());
     }
 
     @Override

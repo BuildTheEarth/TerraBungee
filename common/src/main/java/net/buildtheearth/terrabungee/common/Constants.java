@@ -40,6 +40,7 @@ public class Constants {
      */
     public static final String updateAttributeID = "update_attribute";
     public static final String retrieveUncachedPlayerID = "retrieve_uncached_player";
+    public static final String getAllPlayersID = "all_players";
     public static final String retrieveUncachedPlayersID = "retrieve_uncached_players";
     public static final String onlinePlayerCacheHit = "online_player_cache";
     public static final String playerJoinEventID = "player_join_event";

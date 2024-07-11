@@ -32,8 +32,16 @@ public class TBPlayer {
     @SerializedName("LastSeen")
     protected long lastSeen;
 
+    @Expose
+    @SerializedName("Server")
     protected String server;
+
+    @Expose
+    @SerializedName("Online")
     protected boolean online;
+
+    @Expose
+    @SerializedName("Proxy")
     protected String proxy;
 
     public TBPlayer() {
