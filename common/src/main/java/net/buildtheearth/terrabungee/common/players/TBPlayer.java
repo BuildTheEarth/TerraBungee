@@ -32,6 +32,7 @@ public class TBPlayer {
     @SerializedName("LastSeen")
     protected long lastSeen;
 
+
     protected String server;
     protected boolean online;
     protected String proxy;
