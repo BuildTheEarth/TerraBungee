@@ -65,13 +65,13 @@ allprojects {
         publications {
             maven(MavenPublication) {
                 from components.java
-                artifact shadowJar
+                //artifact shadowJar
             }
         }
 
         repositories {
             maven {
-                url "https://maven.pkg.jetbrains.space/buildtheearth/p/terrabungee/maven"
+                url "https://maven.buildtheearth.net/private"
                 credentials {
                     username = "$System.env.JB_SPACE_CLIENT_ID"
                     password = "$System.env.JB_SPACE_CLIENT_SECRET"

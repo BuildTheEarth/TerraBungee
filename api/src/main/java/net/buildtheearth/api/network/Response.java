@@ -30,11 +30,19 @@ public class Response {
         this.responseCode = responseCode;
     }
 
-    public JsonElement getData() {
+    public JsonObject getData() {
+        return (JsonObject) responseData;
+    }
+
+    public JsonElement getDataJsonElement() {
         return responseData;
     }
 
     public void setData(JsonElement responseData) {
+        this.responseData = responseData;
+    }
+
+    public void setData(JsonObject responseData) {
         this.responseData = responseData;
     }
 }
