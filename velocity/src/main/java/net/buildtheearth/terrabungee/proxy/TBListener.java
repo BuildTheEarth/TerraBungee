@@ -7,15 +7,14 @@ package net.buildtheearth.terrabungee.proxy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
-import com.noahhusby.terrabungee.proxy.util.ProxyUtil;
+import net.buildtheearth.terrabungee.proxy.players.PlayerHandler;
+import net.buildtheearth.terrabungee.proxy.util.ProxyUtil;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.buildtheearth.terrabungee.client.events.EventListener;
 import net.buildtheearth.terrabungee.client.events.player.OnlineCacheHitEvent;
 import net.buildtheearth.terrabungee.client.events.service.InstanceUpdateEvent;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.services.Instance;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +29,12 @@ public class TBListener extends EventListener {
     public void onInstanceUpdate(InstanceUpdateEvent event) {
         List<Instance> instances = new ArrayList<>(event.getInstances());
 
-        Map<String, ServerInfo> removeServerInfo = Maps.newHashMap();
-        removeServerInfo.putAll(ProxyServer.getInstance().getServers());
+        Map<String, RegisteredServer> removeServerInfo = Maps.newHashMap();
+
+        removeServerInfo.putAll(ProxyUtil.getRegisteredServers());
 
         for (Instance i : event.getInstances()) {
-            for (Map.Entry<String, ServerInfo> s : ProxyServer.getInstance().getServers().entrySet()) {
+            for (Map.Entry<String, RegisteredServer> s : ProxyUtil.getRegisteredServers().entrySet()) {
                 if (s.getKey().equalsIgnoreCase(i.getId())) {
                     removeServerInfo.remove(s.getKey(), s.getValue());
                     instances.remove(i);
@@ -49,8 +49,8 @@ public class TBListener extends EventListener {
             ProxyUtil.addServer(i.getId(), i.getAddress());
         }
 
-        for (Map.Entry<String, ServerInfo> s : removeServerInfo.entrySet()) {
-            if (s.getValue().getName().equals("Hub")) {
+        for (Map.Entry<String, RegisteredServer> s : removeServerInfo.entrySet()) {
+            if (s.getValue().getServerInfo().getName().equals("Hub")) {
                 continue;
             }
             ProxyUtil.removeServer(s.getKey());
