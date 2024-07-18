@@ -5,15 +5,15 @@
 
 package net.buildtheearth.terrabungee.proxy.config;
 
-import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
+import net.buildtheearth.terrabungee.proxy.TerraBungeeProxy;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ConfigHandler {
     private static ConfigHandler instance;
@@ -30,27 +30,23 @@ public class ConfigHandler {
     public static String serviceID = "";
 
     private final TerraBungeeProxy plugin = TerraBungeeProxy.getInstance();
-    private Configuration config;
+    private ConfigurationNode config;
 
     private ConfigHandler() {
-        if (!plugin.getDataFolder().exists()) {
-            plugin.getDataFolder().mkdir();
-        }
 
-        File file = new File(plugin.getDataFolder(), "config.yml");
-        if (!file.exists()) {
-            plugin.getLogger().info("Creating a new config for you. Please configure settings in plugins/TerraBungeeProxy/config.yml before starting.");
-            try (InputStream in = plugin.getResourceAsStream("config.yml")) {
-                Files.copy(in, file.toPath());
-                in.close();
+        Path path = TerraBungeeProxy.getDataDirectory().resolve("config.yml");
+        if (!path.toFile().exists()) {
+            TerraBungeeProxy.LOGGER.info("Creating a new config for you. Please configure settings in plugins/TerraBungeeProxy/config.yml before starting.");
+            try (InputStream in = plugin.getClass().getClassLoader().getResourceAsStream("config.yml")) {
+                Files.copy(in, path);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //return;
         }
 
         try {
-            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(plugin.getDataFolder(), "config.yml"));
+            final YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(path).build();
+            config = loader.load();
         } catch (IOException e) {
             e.printStackTrace();
         }
