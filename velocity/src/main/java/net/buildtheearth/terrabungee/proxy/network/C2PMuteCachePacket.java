@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonObject;
-import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
+import net.buildtheearth.terrabungee.proxy.players.PlayerHandler;
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.client.network.IC2SPacket;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;

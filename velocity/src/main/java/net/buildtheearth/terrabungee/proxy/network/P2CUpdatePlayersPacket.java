@@ -7,7 +7,7 @@ package net.buildtheearth.terrabungee.proxy.network;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.noahhusby.terrabungee.proxy.Constants;
+import net.buildtheearth.terrabungee.proxy.Constants;
 import lombok.RequiredArgsConstructor;
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.client.network.IS2CPacket;

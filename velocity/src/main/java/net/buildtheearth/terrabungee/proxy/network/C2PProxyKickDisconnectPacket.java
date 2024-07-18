@@ -1,17 +1,19 @@
 package net.buildtheearth.terrabungee.proxy.network;
 
 import com.google.gson.JsonObject;
-import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
+import com.velocitypowered.api.proxy.Player;
+import net.buildtheearth.terrabungee.proxy.TerraBungeeProxy;
+import net.buildtheearth.terrabungee.proxy.players.PlayerHandler;
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.client.network.IC2SPacket;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.Punishment;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+
+import java.util.Optional;
 
 /**
- * @author Noah Husby
+ * @author Noah Husby & XboxBedrock
  */
 public class C2PProxyKickDisconnectPacket implements IC2SPacket {
     @Override
@@ -22,10 +24,10 @@ public class C2PProxyKickDisconnectPacket implements IC2SPacket {
     @Override
     public void onMessage(TerraBungeeClient instance, JsonObject data) {
         Punishment punishment = TerraBungeeUtil.GSON.fromJson(data.get("punishment"), Punishment.class);
-        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(punishment.getPlayer());
-        if (player == null) {
+        Optional<Player> player = TerraBungeeProxy.getServer().getPlayer(punishment.getPlayer());
+        if (player.isEmpty()) {
             return;
         }
-        player.disconnect(PlayerHandler.getInstance().getKickDisconnectMessage(punishment));
+        player.get().disconnect(PlayerHandler.getInstance().getKickDisconnectMessage(punishment));
     }
 }
