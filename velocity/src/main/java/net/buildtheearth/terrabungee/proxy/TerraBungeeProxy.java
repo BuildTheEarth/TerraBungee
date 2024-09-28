@@ -5,46 +5,71 @@
 
 package net.buildtheearth.terrabungee.proxy;
 
-import com.noahhusby.terrabungee.proxy.commands.FindCommand;
-import com.noahhusby.terrabungee.proxy.commands.GBanCommand;
-import com.noahhusby.terrabungee.proxy.commands.GKickCommand;
-import com.noahhusby.terrabungee.proxy.commands.GMuteCommand;
-import com.noahhusby.terrabungee.proxy.commands.PunishmentCommand;
-import com.noahhusby.terrabungee.proxy.commands.ServerCommand;
-import com.noahhusby.terrabungee.proxy.commands.TerraBungeeAdminCommand;
-import com.noahhusby.terrabungee.proxy.commands.TerraBungeeCommand;
-import com.noahhusby.terrabungee.proxy.config.ConfigHandler;
-import com.noahhusby.terrabungee.proxy.network.C2PMuteCachePacket;
-import com.noahhusby.terrabungee.proxy.network.C2PProxyBanDisconnectPacket;
-import com.noahhusby.terrabungee.proxy.network.C2PProxyKickDisconnectPacket;
-import com.noahhusby.terrabungee.proxy.players.PlayerHandler;
+
+import com.google.inject.Inject;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.ProxyServer;
+import net.buildtheearth.terrabungee.proxy.commands.FindCommand;
+import net.buildtheearth.terrabungee.proxy.commands.GBanCommand;
+import net.buildtheearth.terrabungee.proxy.commands.GKickCommand;
+import net.buildtheearth.terrabungee.proxy.commands.GMuteCommand;
+import net.buildtheearth.terrabungee.proxy.commands.PunishmentCommand;
+import net.buildtheearth.terrabungee.proxy.commands.ServerCommand;
+import net.buildtheearth.terrabungee.proxy.commands.TerraBungeeAdminCommand;
+import net.buildtheearth.terrabungee.proxy.commands.TerraBungeeCommand;
+import net.buildtheearth.terrabungee.proxy.config.ConfigHandler;
+import net.buildtheearth.terrabungee.proxy.network.C2PMuteCachePacket;
+import net.buildtheearth.terrabungee.proxy.network.C2PProxyBanDisconnectPacket;
+import net.buildtheearth.terrabungee.proxy.network.C2PProxyKickDisconnectPacket;
+import net.buildtheearth.terrabungee.proxy.players.PlayerHandler;
 import lombok.Getter;
 import net.buildtheearth.terrabungee.client.TerraBungeeAPI;
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.common.services.ServiceIntent;
 import net.buildtheearth.terrabungee.common.services.ServiceType;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.event.ServerConnectEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.event.EventHandler;
+import org.slf4j.Logger;
 
-import java.util.logging.Logger;
+import java.nio.file.Path;
 
-public class TerraBungeeProxy extends Plugin implements Listener {
+@Plugin(
+        id = "terrabungeeproxy",
+        name = "TerraBungeeProxy",
+        description = "TerraBungeeProxy but Velocity",
+        version = "1.0.0",
+        authors = { "Noahhusby", "XboxBedrock" }
+)
+public class TerraBungeeProxy {
     @Getter
     private static TerraBungeeProxy instance = null;
     @Getter
     private TerraBungeeClient terraBungee;
+
+
     public static Logger LOGGER;
 
-    @Override
-    public void onEnable() {
-        LOGGER = getLogger();
+    @Getter
+    private static ProxyServer server;
+
+    @Getter
+    private static Path dataDirectory;
+
+    @Inject
+    public TerraBungeeProxy(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
+        this.server = server;
+        this.LOGGER = logger;
+        this.dataDirectory = dataDirectory;
+
+        logger.info("TerraBungeeProxy Constructed");
+    }
+
+    @Subscribe
+    void onProxyInitialization(final ProxyInitializeEvent event) {
         instance = this;
 
-        ProxyServer.getInstance().getPluginManager().registerListener(this, this);
-        ProxyServer.getInstance().getPluginManager().registerListener(this, new ProxyListener());
+        server.getEventManager().register(this, new ProxyListener());
         ConfigHandler.getInstance();
         PlayerHandler.getInstance();
 
@@ -67,13 +92,15 @@ public class TerraBungeeProxy extends Plugin implements Listener {
         getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
     }
 
+    /*
     @EventHandler
     public void onProxyJoin(ServerConnectEvent e) {
-		/*
+
 		if(e.getReason() == ServerConnectEvent.Reason.JOIN_PROXY && !ConfigHandler.queueServer.equals(""))
 			e.getPlayer().connect(ProxyServer.getInstance().getServerInfo(ConfigHandler.queueServer));
-		 */
+
     }
+    */
 
 
     @Override
