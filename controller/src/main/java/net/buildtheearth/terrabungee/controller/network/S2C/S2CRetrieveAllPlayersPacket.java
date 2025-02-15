@@ -9,6 +9,7 @@ import net.buildtheearth.api.players.ControllerPlayer;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
+import net.buildtheearth.terrabungee.controller.network.FakePacketPlayer;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 
 import java.util.ArrayList;
@@ -25,10 +26,13 @@ public class S2CRetrieveAllPlayersPacket implements  IS2CPacket {
 
         StorageHashMap<UUID, ControllerPlayer> players = PlayerManager.getInstance().getPlayers();
 
-        ArrayList<TBPlayer> playerList = new ArrayList<>();
+        ArrayList<FakePacketPlayer> playerList = new ArrayList<>();
 
         for (TBPlayer player : players.values()) {
-            if (player.isOnline()) playerList.add(player);
+            if (player.isOnline()) {
+                FakePacketPlayer fakePacketPlayer = new FakePacketPlayer(player);
+                playerList.add(fakePacketPlayer);
+            }
         }
 
         response.setData(TerraBungeeUtil.GSON.toJsonTree(playerList).getAsJsonArray());

@@ -20,7 +20,7 @@ public class C2SResponsePacket implements IC2SPacket {
     public void getMessage(JsonObject data) {
         data.addProperty("response_code", response.getCode().name());
         data.addProperty("salt", response.getSalt());
-        data.add("response_data", response.getData());
+        data.add("response_data", response.getDataJsonElement());
     }
 
     @Override
