@@ -48,6 +48,10 @@ public class ChatUtil {
         return titleAndCombine(NamedTextColor.YELLOW, playerName, NamedTextColor.GRAY, " has never joined the network!");
     }
 
+    public static TextComponent PLAYER_NOT_ONLINE(String playerName) {
+        return titleAndCombine(NamedTextColor.YELLOW, playerName, NamedTextColor.GRAY, " is not online!");
+    }
+
     public static TextComponent PLAYER_HAS_NO_PUNISHMENTS(String playerName) {
         return titleAndCombine(NamedTextColor.YELLOW, playerName, NamedTextColor.GRAY, " has no punishments on record!");
     }

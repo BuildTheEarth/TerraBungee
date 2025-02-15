@@ -19,7 +19,10 @@ public class TerraBungeeCommand extends CommandFragmentManager {
     public void execute(Invocation invocation) {
         CommandSource sender = invocation.source();
 
-        sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.RED, "TerraBungee v" + Constants.VERSION,
-                NamedTextColor.GRAY, " by ", NamedTextColor.BLUE, "BuildTheEarth"));
+        sender.sendMessage(ChatUtil.titleAndCombine(
+                NamedTextColor.RED, "TerraBungee v" + Constants.VERSION,
+                NamedTextColor.GRAY, " by ",
+                NamedTextColor.BLUE, "BuildTheEarth")
+        );
     }
 }

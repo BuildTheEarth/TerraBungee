@@ -31,7 +31,7 @@ public class GKickCommand extends Command {
             return;
         }
         if (args.length < 2) {
-            sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.RED, "Usage: /gkick <player> <reason>"));
+            sender.sendMessage(ChatUtil.USAGE("/gkick <player> <reason>"));
             return;
         }
         String player = args[0];

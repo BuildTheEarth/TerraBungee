@@ -27,21 +27,26 @@ public class FindCommand extends Command {
             return;
         }
         if(args.length < 1) {
-            sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.RED, "Usage: /find <username>"));
+            sender.sendMessage(ChatUtil.USAGE("/find <username>"));
             return;
         }
         CompletableFuture<TBPlayer> playerFuture = TerraBungeeProxy.getInstance().getTerraBungee().getPlayer(args[0]);
         playerFuture.thenAccept(tbPlayer -> {
            if(tbPlayer == null) {
-               sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.YELLOW, args[0], " has never joined the network!"));
+               sender.sendMessage(ChatUtil.PLAYER_NEVER_JOINED(args[0]));
                return;
            }
            if(!tbPlayer.isOnline()) {
-               sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.YELLOW, tbPlayer.getName(), " is not online!"));
+               sender.sendMessage(ChatUtil.PLAYER_NOT_ONLINE(tbPlayer.getName()));
                return;
            }
-           sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.YELLOW, tbPlayer.getName(), NamedTextColor.GRAY, " is currently on proxy ", NamedTextColor.BLUE, tbPlayer.getProxy(), NamedTextColor.GRAY, " on server ", NamedTextColor.RED, tbPlayer.getServer()));
-           return;
+           sender.sendMessage(ChatUtil.titleAndCombine(
+                   NamedTextColor.YELLOW, tbPlayer.getName(),
+                   NamedTextColor.GRAY, " is currently on proxy ",
+                   NamedTextColor.BLUE, tbPlayer.getProxy(),
+                   NamedTextColor.GRAY, " on server ",
+                   NamedTextColor.RED, tbPlayer.getServer())
+           );
         });
     }
 

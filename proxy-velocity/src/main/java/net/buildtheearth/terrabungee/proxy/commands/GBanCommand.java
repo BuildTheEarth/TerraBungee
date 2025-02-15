@@ -32,7 +32,7 @@ public class GBanCommand extends Command {
             return;
         }
         if (args.length < 3) {
-            sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.RED, "Usage: /gban <player> <length> <reason>"));
+            sender.sendMessage(ChatUtil.USAGE("/gban <player> <length> <reason>"));
             return;
         }
         String player = args[0];
