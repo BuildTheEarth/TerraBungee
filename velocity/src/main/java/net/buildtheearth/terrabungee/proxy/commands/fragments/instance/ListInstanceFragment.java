@@ -3,36 +3,38 @@
  * TerraBungeeProxy - ListInstanceFragment.java
  */
 
-package com.noahhusby.terrabungee.proxy.commands.fragments.instance;
+package net.buildtheearth.terrabungee.proxy.commands.fragments.instance;
 
-import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
-import com.noahhusby.terrabungee.proxy.commands.ICommandFragment;
-import com.noahhusby.terrabungee.proxy.util.ChatUtil;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
+import net.buildtheearth.terrabungee.proxy.TerraBungeeProxy;
+import net.buildtheearth.terrabungee.proxy.commands.ICommandFragment;
+import net.buildtheearth.terrabungee.proxy.util.ChatUtil;
 import net.buildtheearth.terrabungee.common.services.Instance;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class ListInstanceFragment implements ICommandFragment {
     @Override
-    public void execute(CommandSender sender, String[] args) {
-        TextComponent list = ChatUtil.titleAndCombine(ChatColor.RED, "Instances: ");
+    public void execute(SimpleCommand.Invocation invocation) {
+        CommandSource sender = invocation.source();
+
+        TextComponent list = ChatUtil.titleAndCombine(NamedTextColor.RED, "Instances: ");
         boolean first = true;
         for (Instance i : TerraBungeeProxy.getInstance().getTerraBungee().getInstanceManager().getInstances()) {
             if (first) {
                 first = false;
             } else {
-                list.addExtra(ChatUtil.combine(ChatColor.GRAY, ", "));
+                list = list.append(ChatUtil.combine(NamedTextColor.GRAY, ", "));
             }
 
-            TextComponent t = ChatUtil.combine((i.getInstanceType() == Instance.InstanceType.STATIC ?
-                    ChatColor.GOLD : ChatColor.GREEN), i.getId());
-            t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/tba instance info %s", i.getId())));
-            t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Get info about " + i.getId()).create()));
-            list.addExtra(t);
+            list = list.append(
+                ChatUtil.combine((i.getInstanceType() == Instance.InstanceType.STATIC ? NamedTextColor.GOLD : NamedTextColor.GREEN), i.getId())
+                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/tba instance info %s", i.getId())))
+                .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, ChatUtil.combine("Get info about " + i.getId())))
+            );
         }
 
         sender.sendMessage(list);

@@ -3,12 +3,13 @@
  * TerraBungeeProxy - TerraBungeeAdminCommand.java
  */
 
-package com.noahhusby.terrabungee.proxy.commands;
+package net.buildtheearth.terrabungee.proxy.commands;
 
-import com.noahhusby.terrabungee.proxy.commands.fragments.InstanceFragment;
-import com.noahhusby.terrabungee.proxy.commands.fragments.StatusFragment;
-import com.noahhusby.terrabungee.proxy.util.ChatUtil;
-import net.md_5.bungee.api.CommandSender;
+import com.velocitypowered.api.command.CommandSource;
+import net.buildtheearth.terrabungee.proxy.commands.fragments.InstanceFragment;
+import net.buildtheearth.terrabungee.proxy.commands.fragments.StatusFragment;
+import net.buildtheearth.terrabungee.proxy.util.ChatUtil;
+
 
 public class TerraBungeeAdminCommand extends CommandFragmentManager {
     public TerraBungeeAdminCommand() {
@@ -21,9 +22,12 @@ public class TerraBungeeAdminCommand extends CommandFragmentManager {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
         if (!hasAdmin(sender)) {
-            sender.sendMessage(ChatUtil.getNoPermission());
+            sender.sendMessage(ChatUtil.NO_PERMISSION);
             return;
         }
 

@@ -3,12 +3,12 @@
  * TerraBungeeProxy - TerraBungeeCommand.java
  */
 
-package com.noahhusby.terrabungee.proxy.commands;
+package net.buildtheearth.terrabungee.proxy.commands;
 
-import com.noahhusby.terrabungee.proxy.util.ChatUtil;
+import com.velocitypowered.api.command.CommandSource;
+import net.buildtheearth.terrabungee.proxy.util.ChatUtil;
 import net.buildtheearth.terrabungee.common.Constants;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class TerraBungeeCommand extends CommandFragmentManager {
     public TerraBungeeCommand() {
@@ -16,8 +16,10 @@ public class TerraBungeeCommand extends CommandFragmentManager {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
-        sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "TerraBungee v" + Constants.VERSION,
-                ChatColor.GRAY, " by ", ChatColor.BLUE, "Noah Husby"));
+    public void execute(Invocation invocation) {
+        CommandSource sender = invocation.source();
+
+        sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.RED, "TerraBungee v" + Constants.VERSION,
+                NamedTextColor.GRAY, " by ", NamedTextColor.BLUE, "BuildTheEarth"));
     }
 }

@@ -3,12 +3,12 @@
  * TerraBungeeProxy - CommandFragmentManager.java
  */
 
-package com.noahhusby.terrabungee.proxy.commands;
+package net.buildtheearth.terrabungee.proxy.commands;
 
-import com.noahhusby.terrabungee.proxy.util.ChatUtil;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
+import com.velocitypowered.api.command.CommandSource;
+import net.buildtheearth.terrabungee.proxy.util.ChatUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public abstract class CommandFragmentManager extends Command {
         this.commandBase = "/" + b + " ";
     }
 
-    protected void executeFragment(CommandSender sender, String[] args) {
+    protected void executeFragment(CommandSource sender, String[] args) {
         if (args.length != 0) {
             ArrayList<String> dataList = new ArrayList<>();
             for (int x = 1; x < args.length; x++) {
@@ -57,25 +57,27 @@ public abstract class CommandFragmentManager extends Command {
         displayCommands(sender, args);
     }
 
-    private void displayCommands(CommandSender sender, String[] args) {
-        sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, title + ":"));
+    private void displayCommands(CommandSource sender, String[] args) {
+        sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.GRAY, title + ":"));
         for (ICommandFragment f : commandFragments) {
 
-            TextComponent message = new TextComponent();
-            message.addExtra(ChatUtil.combine(ChatColor.YELLOW, commandBase));
-            message.addExtra(ChatUtil.combine(ChatColor.GREEN, String.format("%s ", f.getName())));
+            Component message = Component.text()
+            .append(ChatUtil.combine(NamedTextColor.YELLOW, commandBase))
+            .append(ChatUtil.combine(NamedTextColor.GREEN, String.format("%s ", f.getName())))
+            .build();
+
             if (f.getArguments() != null) {
                 for (int x = 0; x < f.getArguments().length; x++) {
                     String argument = f.getArguments()[x];
                     if (argument.startsWith("<")) {
-                        message.addExtra(ChatUtil.combine(ChatColor.RED, String.format("%s ", argument)));
+                        message = message.append(ChatUtil.combine(NamedTextColor.RED, String.format("%s ", argument)));
                     } else {
-                        message.addExtra(ChatUtil.combine(ChatColor.GRAY, String.format("%s ", argument)));
+                        message = message.append(ChatUtil.combine(NamedTextColor.GRAY, String.format("%s ", argument)));
                     }
                 }
             }
 
-            message.addExtra(ChatUtil.combine(ChatColor.GRAY, "- ", ChatColor.BLUE, f.getPurpose()));
+            message = message.append(ChatUtil.combine(NamedTextColor.GRAY, "- ", NamedTextColor.BLUE, f.getPurpose()));
             sender.sendMessage(message);
         }
 

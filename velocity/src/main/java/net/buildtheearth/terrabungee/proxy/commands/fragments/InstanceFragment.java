@@ -3,15 +3,17 @@
  * TerraBungeeProxy - InstanceFragment.java
  */
 
-package com.noahhusby.terrabungee.proxy.commands.fragments;
+package net.buildtheearth.terrabungee.proxy.commands.fragments;
 
-import com.noahhusby.terrabungee.proxy.commands.FragmentManager;
-import com.noahhusby.terrabungee.proxy.commands.ICommandFragment;
-import com.noahhusby.terrabungee.proxy.commands.fragments.instance.AddInstanceFragment;
-import com.noahhusby.terrabungee.proxy.commands.fragments.instance.InstanceInfoFragment;
-import com.noahhusby.terrabungee.proxy.commands.fragments.instance.ListInstanceFragment;
-import com.noahhusby.terrabungee.proxy.commands.fragments.instance.RemoveInstanceFragment;
-import net.md_5.bungee.api.CommandSender;
+import com.velocitypowered.api.command.SimpleCommand;
+import net.buildtheearth.terrabungee.proxy.commands.FragmentManager;
+import net.buildtheearth.terrabungee.proxy.commands.ICommandFragment;
+import net.buildtheearth.terrabungee.proxy.commands.fragments.instance.AddInstanceFragment;
+import net.buildtheearth.terrabungee.proxy.commands.fragments.instance.InstanceInfoFragment;
+import net.buildtheearth.terrabungee.proxy.commands.fragments.instance.ListInstanceFragment;
+import net.buildtheearth.terrabungee.proxy.commands.fragments.instance.RemoveInstanceFragment;
+import com.velocitypowered.api.command.CommandSource;
+
 
 public class InstanceFragment extends FragmentManager implements ICommandFragment {
 
@@ -25,7 +27,10 @@ public class InstanceFragment extends FragmentManager implements ICommandFragmen
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(SimpleCommand.Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
         executeFragment(sender, args);
     }
 

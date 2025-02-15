@@ -1,13 +1,13 @@
-package com.noahhusby.terrabungee.proxy.commands;
+package net.buildtheearth.terrabungee.proxy.commands;
 
-import com.noahhusby.terrabungee.proxy.TerraBungeeProxy;
-import com.noahhusby.terrabungee.proxy.util.ChatUtil;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
+import net.buildtheearth.terrabungee.proxy.TerraBungeeProxy;
+import net.buildtheearth.terrabungee.proxy.util.ChatUtil;
 import net.buildtheearth.terrabungee.client.network.S2C.S2CKickPlayerPacket;
 import net.buildtheearth.terrabungee.common.network.Response;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -22,13 +22,16 @@ public class GKickCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
         if (!hasAdmin(sender)) {
-            sender.sendMessage(ChatUtil.getNoPermission());
+            sender.sendMessage(ChatUtil.NO_PERMISSION);
             return;
         }
         if (args.length < 2) {
-            sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.RED, "Usage: /gkick <player> <reason>"));
+            sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.RED, "Usage: /gkick <player> <reason>"));
             return;
         }
         String player = args[0];
@@ -36,7 +39,7 @@ public class GKickCommand extends Command {
         CompletableFuture<TBPlayer> playerFuture = TerraBungeeProxy.getInstance().getTerraBungee().getPlayer(player);
         playerFuture.thenAccept(tbPlayer -> {
             if (tbPlayer == null) {
-                sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, player, ChatColor.GRAY, " has never joined the network!"));
+                sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.YELLOW, player, NamedTextColor.GRAY, " has never joined the network!"));
                 return;
             }
             StringBuilder reason = new StringBuilder();
@@ -44,15 +47,15 @@ public class GKickCommand extends Command {
                 reason.append(r).append(" ");
             }
             reason = new StringBuilder(reason.toString().trim());
-            CompletableFuture<Response> kickFuture = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CKickPlayerPacket((sender instanceof ProxiedPlayer) ? ((ProxiedPlayer) sender).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), tbPlayer.getUniqueID(), reason.toString()));
+            CompletableFuture<Response> kickFuture = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CKickPlayerPacket((sender instanceof Player) ? ((Player) sender).getUniqueId() : UUID.fromString("00000000-0000-0000-0000-000000000000"), tbPlayer.getUniqueID(), reason.toString()));
             String finalReason = reason.toString();
             kickFuture.thenAccept(response -> {
                 if (response.getCode() == Response.ResponseCode.ERROR) {
-                    sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.YELLOW, tbPlayer.getName(), ChatColor.GRAY, " is not online!"));
+                    sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.YELLOW, tbPlayer.getName(), NamedTextColor.GRAY, " is not online!"));
                 } else if (response.getCode() == Response.ResponseCode.SUCCESS) {
-                    sender.sendMessage(ChatUtil.titleAndCombine(ChatColor.GRAY, "Successfully kicked ", ChatColor.YELLOW, tbPlayer.getName(), ChatColor.GRAY, " for ", ChatColor.BLUE, finalReason));
+                    sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.GRAY, "Successfully kicked ", NamedTextColor.YELLOW, tbPlayer.getName(), NamedTextColor.GRAY, " for ", NamedTextColor.BLUE, finalReason));
                 } else {
-                    sender.sendMessage(ChatUtil.getNoContact());
+                    sender.sendMessage(ChatUtil.NO_CONTROLLER_CONTACT);
                 }
             });
         });

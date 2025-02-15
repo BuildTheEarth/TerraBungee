@@ -3,12 +3,12 @@
  * TerraBungeeProxy - ICommandFragment.java
  */
 
-package com.noahhusby.terrabungee.proxy.commands;
+package net.buildtheearth.terrabungee.proxy.commands;
 
-import net.md_5.bungee.api.CommandSender;
+import com.velocitypowered.api.command.SimpleCommand;
 
 public interface ICommandFragment {
-    void execute(CommandSender sender, String[] args);
+    void execute(SimpleCommand.Invocation invocation);
 
     String getName();
 
