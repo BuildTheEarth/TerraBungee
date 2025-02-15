@@ -73,7 +73,7 @@ public class ChatUtil {
      * @return prefix followed by the given objects in red if not colored otherwise
      */
     public static TextComponent titleAndCombineError(Object... objects) {
-        return combine(true, NamedTextColor.RED, objects);
+        return titleAndCombine(NamedTextColor.RED, objects);
     }
 
     /**
