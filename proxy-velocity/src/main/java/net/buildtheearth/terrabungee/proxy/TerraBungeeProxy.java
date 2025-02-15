@@ -9,9 +9,11 @@ package net.buildtheearth.terrabungee.proxy;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.scheduler.ScheduledTask;
 import net.buildtheearth.terrabungee.proxy.commands.FindCommand;
 import net.buildtheearth.terrabungee.proxy.commands.GBanCommand;
 import net.buildtheearth.terrabungee.proxy.commands.GKickCommand;
@@ -82,14 +84,14 @@ public class TerraBungeeProxy {
         terraBungee.getNetworkManager().register(new C2PMuteCachePacket());
         terraBungee.addListener(new TBListener());
 
-        getProxy().getPluginManager().registerCommand(this, new FindCommand());
-        getProxy().getPluginManager().registerCommand(this, new GBanCommand());
-        getProxy().getPluginManager().registerCommand(this, new GKickCommand());
-        getProxy().getPluginManager().registerCommand(this, new GMuteCommand());
-        getProxy().getPluginManager().registerCommand(this, new ServerCommand());
-        getProxy().getPluginManager().registerCommand(this, new PunishmentCommand());
-        getProxy().getPluginManager().registerCommand(this, new TerraBungeeCommand());
-        getProxy().getPluginManager().registerCommand(this, new TerraBungeeAdminCommand());
+        server.getEventManager().register(this, new FindCommand());
+        server.getEventManager().register(this, new GBanCommand());
+        server.getEventManager().register(this, new GKickCommand());
+        server.getEventManager().register(this, new GMuteCommand());
+        server.getEventManager().register(this, new ServerCommand());
+        server.getEventManager().register(this, new PunishmentCommand());
+        server.getEventManager().register(this, new TerraBungeeCommand());
+        server.getEventManager().register(this, new TerraBungeeAdminCommand());
     }
 
     /*
@@ -103,9 +105,9 @@ public class TerraBungeeProxy {
     */
 
 
-    @Override
-    public void onDisable() {
-        ProxyServer.getInstance().getScheduler().cancel(this);
+    @Subscribe
+    void onProxyShutdown(final ProxyShutdownEvent event) {
+        server.getScheduler().tasksByPlugin(this).forEach(ScheduledTask::cancel);
         instance = null;
         terraBungee.discard();
     }
