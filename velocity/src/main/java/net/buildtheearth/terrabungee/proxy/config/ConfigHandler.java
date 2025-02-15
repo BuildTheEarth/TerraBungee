@@ -9,7 +9,6 @@ import net.buildtheearth.terrabungee.proxy.TerraBungeeProxy;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;

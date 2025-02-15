@@ -5,7 +5,6 @@
 
 package net.buildtheearth.terrabungee.proxy.util;
 
-import com.google.common.collect.Maps;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import net.buildtheearth.terrabungee.proxy.TerraBungeeProxy;
 import lombok.experimental.UtilityClass;

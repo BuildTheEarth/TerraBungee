@@ -26,7 +26,7 @@ public class ProxyListener {
     @Subscribe(order = PostOrder.LATE)
     public void onLoginEvent(PlayerChooseInitialServerEvent e) {
         try {
-            Response punishmentResponse = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CRetrieveActiveBanPacket(e.getConnection().getUniqueId())).get();
+            Response punishmentResponse = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CRetrieveActiveBanPacket(e.getPlayer().getUniqueId())).get();
             if (punishmentResponse.getCode() == Response.ResponseCode.SUCCESS) {
                 Punishment punishment = TerraBungeeUtil.GSON.fromJson(punishmentResponse.getData(), Punishment.class);
                 e.getPlayer().disconnect(PlayerHandler.getInstance().getBanDisconnectMessage(punishment));
