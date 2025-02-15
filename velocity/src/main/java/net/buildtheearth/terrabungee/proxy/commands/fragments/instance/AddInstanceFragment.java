@@ -48,18 +48,6 @@ public class AddInstanceFragment implements ICommandFragment {
     }
 
     @Override
-    public boolean hasPermission(final Invocation invocation) {
-        if (invocation.source().hasPermission("terrabungee.admin")) {
-            return true;
-        } else {
-            invocation.source().sendMessage(
-                    ChatUtil.NO_PERMISSION
-            );
-            return false;
-        }
-    }
-
-    @Override
     public String getName() {
         return "add";
     }
