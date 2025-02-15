@@ -3,6 +3,6 @@ include 'common'
 include 'api'
 include 'controller'
 include 'client'
-include 'proxy'
-include 'velocity'
+include 'proxy-bungee'
+include 'proxy-velocity'
 
