@@ -1,5 +1,7 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 allprojects {
@@ -15,7 +17,7 @@ allprojects {
         snakeYamlVersion = "1.29"
         websocketVersion = "1.5.2"
         husbyVersion = "9298199ab9"
-        lombokVersion = "1.18.20"
+        lombokVersion = "1.18.30"
         guavaVersion = "30.1.1-jre"
         gsonVersion = "2.8.8"
         commonsVersion = "2.11.0"
@@ -81,16 +83,15 @@ allprojects {
         }
     }
 
-    shadowJar {
-        archiveFileName = "TerraBungee-${baseName}-${version}.jar"
-        manifest {
-            attributes( 'Implementation-Version': "${version}" )
-        }
+    tasks.named('shadowJar', ShadowJar) {
+        enableRelocation = true
+        archiveClassifier = 'net.buildtheearth.terrabungee'
     }
 
-    jar {
-        archiveName = "TerraBungee-${baseName}-${version}.jar"
-        enabled = false
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     jar.finalizedBy shadowJar
 }
