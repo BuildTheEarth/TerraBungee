@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Noah Husby
+ * Copyright (c) 2025 BuildTheEarth
  * TerraBungeeAPI - TerraBungeeService.java
  */
 
