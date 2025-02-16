@@ -7,6 +7,7 @@ package net.buildtheearth.terrabungee.proxy;
 
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -41,7 +42,7 @@ import java.nio.file.Path;
         name = "TerraBungeeProxy",
         description = "TerraBungeeProxy but Velocity",
         version = "1.0.0",
-        authors = { "Noahhusby", "XboxBedrock" }
+        authors = { "NoahHusby", "MineFact", "XboxBedrock" }
 )
 public class TerraBungeeProxy {
     @Getter
@@ -84,14 +85,14 @@ public class TerraBungeeProxy {
         terraBungee.getNetworkManager().register(new C2PMuteCachePacket());
         terraBungee.addListener(new TBListener());
 
-        server.getEventManager().register(this, new FindCommand());
-        server.getEventManager().register(this, new GBanCommand());
-        server.getEventManager().register(this, new GKickCommand());
-        server.getEventManager().register(this, new GMuteCommand());
-        server.getEventManager().register(this, new ServerCommand());
-        server.getEventManager().register(this, new PunishmentCommand());
-        server.getEventManager().register(this, new TerraBungeeCommand());
-        server.getEventManager().register(this, new TerraBungeeAdminCommand());
+        server.getCommandManager().register(getCommandMeta("find"), new FindCommand());
+        server.getCommandManager().register(getCommandMeta("gban"), new GBanCommand());
+        server.getCommandManager().register(getCommandMeta("gkick"), new GKickCommand());
+        server.getCommandManager().register(getCommandMeta("gmute"), new GMuteCommand());
+        server.getCommandManager().register(getCommandMeta("server"), new ServerCommand());
+        server.getCommandManager().register(getCommandMeta("punishment"), new PunishmentCommand());
+        server.getCommandManager().register(getCommandMeta("tb"), new TerraBungeeCommand());
+        server.getCommandManager().register(getCommandMeta("tba"), new TerraBungeeAdminCommand());
     }
 
     /*
@@ -110,5 +111,9 @@ public class TerraBungeeProxy {
         server.getScheduler().tasksByPlugin(this).forEach(ScheduledTask::cancel);
         instance = null;
         terraBungee.discard();
+    }
+
+    public CommandMeta getCommandMeta(String command) {
+        return server.getCommandManager().metaBuilder(command).plugin(this).build();
     }
 }
