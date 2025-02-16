@@ -63,7 +63,7 @@ public class ChatUtil {
     /**
      * A message that is combined by the given objects with the global prefix.
      *
-     * @param objects the objects to combine. Possible types: {@link Component}, {@link String}, {@link TextColor}, {@link TextDecoration}
+     * @param objects the objects to combine. Possible types: {@link TextComponent}, {@link String}, {@link TextColor}, {@link TextDecoration}
      * @return prefix followed by the given objects
      */
     public static TextComponent titleAndCombine(Object... objects) {
@@ -73,17 +73,20 @@ public class ChatUtil {
     /**
      * A red error message that is combined by the given objects with the global prefix.
      *
-     * @param objects the objects to combine. Possible types: {@link Component}, {@link TextColor}, {@link TextDecoration}
+     * @param objects the objects to combine. Possible types: {@link TextComponent}, {@link TextColor}, {@link TextDecoration}
      * @return prefix followed by the given objects in red if not colored otherwise
      */
     public static TextComponent titleAndCombineError(Object... objects) {
-        return titleAndCombine(NamedTextColor.RED, objects);
+        Object[] combinedObjects = new Object[objects.length + 1];
+        combinedObjects[0] = NamedTextColor.RED;
+        System.arraycopy(objects, 0, combinedObjects, 1, objects.length);
+        return titleAndCombine(combinedObjects);
     }
 
     /**
      * A message that is combined by the given objects.
      *
-     * @param objects the objects to combine. Possible types: {@link Component}, {@link String}, {@link TextColor}, {@link TextDecoration}
+     * @param objects the objects to combine. Possible types: {@link TextComponent}, {@link String}, {@link TextColor}, {@link TextDecoration}
      * @return the given objects combined
      */
     public static TextComponent combine(Object... objects) {
@@ -94,7 +97,7 @@ public class ChatUtil {
      * A message that is combined by the given objects.
      *
      * @param title if true, the message will be combined with the global prefix
-     * @param objects the objects to combine. Possible types: {@link Component}, {@link String}, {@link TextColor}, {@link TextDecoration}
+     * @param objects the objects to combine. Possible types: {@link TextComponent}, {@link String}, {@link TextColor}, {@link TextDecoration}
      * @return the given objects combined
      */
     public static TextComponent combine(boolean title, Object... objects) {
@@ -103,31 +106,34 @@ public class ChatUtil {
         TextColor lastFormat = null;
         TextDecoration lastDecoration = null;
         for (Object o : objects) {
-            if (o instanceof Component) {
+            if (o instanceof TextComponent component) {
                 if (builder != null) {
-                    textComponent = textComponent.append(Component.text(builder.toString(), lastFormat));
+                    component = component.append(Component.text(builder.toString(), lastFormat));
 
                     if(lastDecoration != null)
-                        textComponent = textComponent.decorate(lastDecoration);
+                        component = component.decorate(lastDecoration);
 
                     builder = null;
                 }
+
+                textComponent = textComponent.append(component);
+            } else if (o instanceof NamedTextColor) {
+                lastFormat = (NamedTextColor) o;
+            } else if (o instanceof TextDecoration) {
+                lastDecoration = (TextDecoration) o;
             } else {
-                if (o instanceof NamedTextColor)
-                    lastFormat = (NamedTextColor) o;
-                else if (o instanceof TextDecoration)
-                    lastDecoration = (TextDecoration) o;
-
-                if (builder == null)
+                if (builder == null) {
                     builder = new StringBuilder();
-
+                }
                 builder.append(o);
+
+                TextComponent component = Component.text(o.toString(), lastFormat);
+                if(lastDecoration != null)
+                    component = component.decorate(lastDecoration);
+                textComponent = textComponent.append(component);
             }
         }
 
-        if (builder != null) {
-            textComponent = textComponent.append(Component.text(builder.toString()));
-        }
         return textComponent;
     }
 
