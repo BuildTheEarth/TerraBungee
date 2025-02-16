@@ -84,8 +84,17 @@ allprojects {
     }
 
     tasks.named('shadowJar', ShadowJar) {
-        enableRelocation = true
-        archiveClassifier = 'net.buildtheearth.terrabungee'
+        archiveBaseName.set("TerraBungee-${project.name}")
+        archiveVersion.set("$tbVersion")
+        archiveClassifier.set('')
+
+        // Automatically relocate everything except SLF4J
+        dependencies {
+            exclude(dependency('org.slf4j:.*'))
+        }
+
+        // Manually relocate all other dependencies
+        relocate('com.example', 'net.buildtheearth.com.example')
     }
 
     java {
