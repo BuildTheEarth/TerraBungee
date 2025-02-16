@@ -25,6 +25,9 @@ import java.util.concurrent.ExecutionException;
 public class ProxyListener {
     @Subscribe(order = PostOrder.LATE)
     public void onLoginEvent(PlayerChooseInitialServerEvent e) {
+        if(!TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().isConnectionEstablished())
+            return;
+
         try {
             Response punishmentResponse = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CRetrieveActiveBanPacket(e.getPlayer().getUniqueId())).get();
             if (punishmentResponse.getCode() == Response.ResponseCode.SUCCESS) {
