@@ -35,7 +35,15 @@ public class ConfigHandler {
 
         Path path = TerraBungeeProxy.getDataDirectory().resolve("config.yml");
         if (!path.toFile().exists()) {
-            TerraBungeeProxy.LOGGER.info("Creating a new config for you. Please configure settings in plugins/TerraBungeeProxy/config.yml before starting.");
+            TerraBungeeProxy.LOGGER.info("Creating a new config for you. Please configure settings in " + TerraBungeeProxy.getDataDirectory().toString() + "/config.yml before starting.");
+
+            // Create the directory
+            boolean created = TerraBungeeProxy.getDataDirectory().toFile().exists() || TerraBungeeProxy.getDataDirectory().toFile().mkdir();
+            if (!created) {
+                TerraBungeeProxy.LOGGER.info("Unable to create TerraBungeeProxy directory. Please configure settings in " + TerraBungeeProxy.getDataDirectory().toString() + "/config.yml before starting.");
+                return;
+            }
+
             try (InputStream in = plugin.getClass().getClassLoader().getResourceAsStream("config.yml")) {
                 Files.copy(in, path);
             } catch (IOException e) {
