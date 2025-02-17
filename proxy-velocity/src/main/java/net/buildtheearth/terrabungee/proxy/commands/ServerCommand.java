@@ -71,7 +71,7 @@ public class ServerCommand extends Command {
 
     @Override
     public boolean hasPermission(final Invocation invocation) {
-        return invocation.source().hasPermission("terrabungee.admin");
+        return hasPermissionAdmin(invocation.source());
     }
 
     @Override
