@@ -36,16 +36,14 @@ public class ServerCommand extends Command {
             return;
         }
         if(args.length < 1) {
-            TextComponent.Builder list = Component.text()
-                    .append(ChatUtil.PREFIX)
-                    .append(Component.text("Servers: ", NamedTextColor.RED));
+            TextComponent list = ChatUtil.titleAndCombineError("Servers: ");
 
             boolean first = true;
             for (Instance i : TerraBungeeProxy.getInstance().getTerraBungee().getInstanceManager().getInstances()) {
                 if (first) {
                     first = false;
                 } else {
-                    list.append(Component.text(", ", NamedTextColor.GRAY));
+                    list = list.append(Component.text(", ", NamedTextColor.GRAY));
                 }
 
                 TextComponent t = Component.text(i.getId(), (i.getInstanceType() == Instance.InstanceType.STATIC ?
@@ -53,7 +51,7 @@ public class ServerCommand extends Command {
                         .clickEvent(ClickEvent.runCommand(String.format("/server %s", i.getId())))
                         .hoverEvent(Component.text("Connect to " + i.getId()));
 
-                list.append(t);
+                list = list.append(t);
             }
 
             source.sendMessage(list);
@@ -73,14 +71,7 @@ public class ServerCommand extends Command {
 
     @Override
     public boolean hasPermission(final Invocation invocation) {
-        if (invocation.source().hasPermission("terrabungee.admin")) {
-            return true;
-        } else {
-            invocation.source().sendMessage(
-                    ChatUtil.NO_PERMISSION
-            );
-            return false;
-        }
+        return invocation.source().hasPermission("terrabungee.admin");
     }
 
     @Override

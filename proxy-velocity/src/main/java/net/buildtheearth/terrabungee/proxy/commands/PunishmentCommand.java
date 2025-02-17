@@ -284,13 +284,6 @@ public class PunishmentCommand extends Command {
 
     @Override
     public boolean hasPermission(final Invocation invocation) {
-        if (invocation.source().hasPermission("terrabungee.admin")) {
-            return true;
-        } else {
-            invocation.source().sendMessage(
-                    ChatUtil.NO_PERMISSION
-            );
-            return false;
-        }
+        return invocation.source().hasPermission("terrabungee.admin");
     }
 }
