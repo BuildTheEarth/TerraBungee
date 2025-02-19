@@ -147,3 +147,4 @@ gradle-app.setting
 /plugins/
 /local/
 /whitelist.tb
+/gradle.properties

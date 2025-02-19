@@ -4,7 +4,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-allprojects {
+subprojects {
     apply plugin: "java"
     apply plugin: "maven-publish"
     apply plugin: "com.github.johnrengelman.shadow"
@@ -66,27 +66,29 @@ allprojects {
     publishing {
         publications {
             maven(MavenPublication) {
+                groupId = "net.buildtheearth.terrabungee"
+                artifactId = project.name
+                version = project.version
+
                 from components.java
-                //artifact shadowJar
             }
         }
 
         repositories {
             maven {
+                name "buildtheearth"
                 url "https://maven.buildtheearth.net/private"
+
                 credentials {
-                    username = "$System.env.JB_SPACE_CLIENT_ID"
-                    password = "$System.env.JB_SPACE_CLIENT_SECRET"
+                    username = project.findProperty("mavenRepoUser") ?: System.getenv("MAVEN_REPO_USER")
+                    password = project.findProperty("mavenRepoPassword") ?: System.getenv("MAVEN_REPO_PASSWORD")
                 }
             }
-
         }
     }
 
     tasks.named('shadowJar', ShadowJar) {
-        archiveBaseName.set("TerraBungee-${project.name}")
-        archiveVersion.set("$tbVersion")
-        archiveClassifier.set('')
+        archiveFileName.set("TerraBungee-${project.name}-${tbVersion}.jar")
 
         // Automatically relocate everything except SLF4J
         dependencies {
