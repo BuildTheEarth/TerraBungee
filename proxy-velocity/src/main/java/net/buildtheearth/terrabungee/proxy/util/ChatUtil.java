@@ -27,6 +27,7 @@ public class ChatUtil {
     // ======== PREDEFINED MESSAGES ========
 
     public static TextComponent PREFIX = LegacyComponentSerializer.legacyAmpersand().deserialize(Constants.prefix);
+    public static TextComponent EMPTY_TEXT = Component.text("");
 
     public static TextComponent PLAYER_ONLY = titleAndCombineError("This command can only be executed by players!");
     public static TextComponent NO_CONTROLLER_CONTACT = titleAndCombineError("Unable to contact the controller! Please try again");

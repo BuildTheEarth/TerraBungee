@@ -50,8 +50,8 @@ public class TerraBungeeProxy {
     @Getter
     private TerraBungeeClient terraBungee;
 
-
-    public static Logger LOGGER;
+    @Getter
+    public static Logger logger;
 
     @Getter
     private static ProxyServer server;
@@ -62,7 +62,7 @@ public class TerraBungeeProxy {
     @Inject
     public TerraBungeeProxy(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
         this.server = server;
-        this.LOGGER = logger;
+        this.logger = logger;
         this.dataDirectory = dataDirectory;
 
         logger.info("TerraBungeeProxy Constructed");

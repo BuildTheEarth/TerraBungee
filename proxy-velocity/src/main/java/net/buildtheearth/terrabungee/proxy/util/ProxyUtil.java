@@ -40,7 +40,7 @@ public class ProxyUtil {
      */
     public static void addServer(String instanceId, String address) {
         if (TerraBungeeProxy.getServer().getServer(instanceId).isPresent()) {
-            TerraBungeeProxy.LOGGER.info("Instance {} tried to be created but already existed?! Ignoring request.", instanceId);
+            TerraBungeeProxy.logger.info("Instance {} tried to be created but already existed?! Ignoring request.", instanceId);
             return;
         }
 
@@ -50,7 +50,7 @@ public class ProxyUtil {
 
         TerraBungeeProxy.getServer().registerServer(toRegister);
 
-        TerraBungeeProxy.LOGGER.info("Added instance {} on address {}", instanceId, address);
+        TerraBungeeProxy.logger.info("Added instance {} on address {}", instanceId, address);
     }
 
     /**
@@ -63,13 +63,13 @@ public class ProxyUtil {
         Optional<RegisteredServer> perhapsRegisteredServer = TerraBungeeProxy.getServer().getServer(instanceId);
 
         if (!perhapsRegisteredServer.isPresent()) {
-            TerraBungeeProxy.LOGGER.info("Instance {} tried to be deleted but didn't exist?! Ignoring request.", instanceId);
+            TerraBungeeProxy.logger.info("Instance {} tried to be deleted but didn't exist?! Ignoring request.", instanceId);
             return;
         }
 
         TerraBungeeProxy.getServer().unregisterServer(perhapsRegisteredServer.get().getServerInfo());
 
-        TerraBungeeProxy.LOGGER.info("Removed instance " + instanceId);
+        TerraBungeeProxy.logger.info("Removed instance " + instanceId);
     }
 
     /**

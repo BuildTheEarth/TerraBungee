@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation project(":client")
+    implementation project(":controller")
     compileOnly 'com.velocitypowered:velocity-api:3.4.0-SNAPSHOT'
     annotationProcessor 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
