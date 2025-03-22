@@ -32,12 +32,10 @@ public class S2CServiceMessagePacket implements IS2CPacket {
 
     @Override
     public void onMessage(ServicePacket servicePacket, JsonObject data, Response response) {
-        TerraBungeeController.logger.info("Received service message packet from " + servicePacket.getId());
         String to = data.get("to").getAsString();
         if (ServiceManager.getInstance().getService(to) == null) {
             return;
         }
         NetworkManager.getInstance().send(new C2SServiceMessagePacket(servicePacket.getId(), to, data.get("message").getAsString()));
-        TerraBungeeController.logger.info("Sent service message packet to " + to);
     }
 }
