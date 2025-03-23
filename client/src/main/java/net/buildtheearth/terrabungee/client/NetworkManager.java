@@ -92,7 +92,7 @@ public class NetworkManager extends Manager {
     /**
      * Attempts the connection process to the controller
      */
-    protected void connect() {
+    protected synchronized void connect() {
         if (websocket != null) {
             // Check the current state before attempting to reconnect
             ReadyState state = websocket.getReadyState();
