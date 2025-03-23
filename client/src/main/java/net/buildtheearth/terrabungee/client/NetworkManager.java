@@ -33,6 +33,7 @@ import net.buildtheearth.terrabungee.client.util.Manager;
 import net.buildtheearth.terrabungee.common.Constants;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.common.network.Response;
+import org.java_websocket.enums.ReadyState;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -92,6 +93,19 @@ public class NetworkManager extends Manager {
      * Attempts the connection process to the controller
      */
     protected void connect() {
+        if (websocket != null) {
+            // Check the current state before attempting to reconnect
+            ReadyState state = websocket.getReadyState();
+
+            if (state == ReadyState.OPEN || state == ReadyState.NOT_YET_CONNECTED) {
+                return; // Already connected or in progress, no need to reconnect
+            }
+
+            if (state == ReadyState.CLOSING || state == ReadyState.CLOSED) {
+                websocket.close(); // Ensure previous connection is properly closed
+            }
+        }
+
         try {
             websocket = new WebsocketEndpoint(new URI("ws://" + controller));
             websocket.connect();
