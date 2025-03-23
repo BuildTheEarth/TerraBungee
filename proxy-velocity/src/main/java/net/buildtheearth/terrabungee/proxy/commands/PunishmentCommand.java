@@ -263,7 +263,7 @@ public class PunishmentCommand extends Command {
 
             inspectMessage = inspectMessage.append(ChatUtil.combine(NamedTextColor.RED, "History:\n"));
             for (PunishmentHistory history : punishment.getHistory()) {
-                inspectMessage = inspectMessage.append(ChatUtil.combine(NamedTextColor.GRAY, "[", ProxyUtil.toReadableTime(history.getDate()), "] ", NamedTextColor.DARK_GRAY, "> ", NamedTextColor.WHITE, history.getType().name(), "\n"));
+                inspectMessage = inspectMessage.append(ChatUtil.combine(NamedTextColor.GRAY, "[", ProxyUtil.toReadableTime(LocalDateTime.parse(history.getDate())), "] ", NamedTextColor.DARK_GRAY, "> ", NamedTextColor.WHITE, history.getType().name(), "\n"));
             }
             ChatUtil.sendMessageBox(sender, NamedTextColor.YELLOW + "" + TextDecoration.BOLD + "Punishment Report", inspectMessage);
         });
