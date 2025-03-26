@@ -18,9 +18,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class StatusFragment implements ICommandFragment {
 
     @Override
-    public void execute(SimpleCommand.Invocation invocation) {
-        CommandSource sender = invocation.source();
-
+    public void execute(CommandSource sender, String[] args) {
         sender.sendMessage(ChatUtil.titleAndCombine(NamedTextColor.RED, "TerraBungee Status:"));
         TBStats stats = TerraBungeeProxy.getInstance().getTerraBungee().getStats();
         TBStats.ControllerStats controller = stats.getControllerStats();

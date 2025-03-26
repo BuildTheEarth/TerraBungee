@@ -31,14 +31,11 @@ public class FragmentManager {
         this.commandBase = "/" + b + " ";
     }
 
-    protected void executeFragment(SimpleCommand.Invocation invocation) {
-        executeFragment(invocation, 0);
+    protected void executeFragment(CommandSource sender, String[] args) {
+        executeFragment(sender, args, 0);
     }
 
-    protected void executeFragment(SimpleCommand.Invocation invocation, int index) {
-        CommandSource sender = invocation.source();
-        String[] args = invocation.arguments();
-
+    protected void executeFragment(CommandSource sender, String[] args, int index) {
         if (args.length <= index) {
             displayCommands(sender);
         } else {
@@ -51,7 +48,7 @@ public class FragmentManager {
                 String[] data = dataList.toArray(new String[dataList.size()]);
                 for (ICommandFragment f : commandFragments) {
                     if (f.getName().equals(args[0].toLowerCase())) {
-                        f.execute(invocation);
+                        f.execute(sender, data);
                         return;
                     }
                 }
@@ -59,7 +56,7 @@ public class FragmentManager {
             } else {
                 for (ICommandFragment f : commandFragments) {
                     if (f.getName().equals(args[index].toLowerCase())) {
-                        f.execute(invocation);
+                        f.execute(sender, args);
                         return;
                     }
                 }

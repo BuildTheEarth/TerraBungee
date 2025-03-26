@@ -39,10 +39,7 @@ public abstract class CommandFragmentManager extends Command {
         this.commandBase = "/" + b + " ";
     }
 
-    protected void executeFragment(Invocation invocation) {
-        CommandSource sender = invocation.source();
-        String[] args = invocation.arguments();
-
+    protected void executeFragment(CommandSource sender, String[] args) {
         if (args.length != 0) {
             ArrayList<String> dataList = new ArrayList<>();
             for (int x = 1; x < args.length; x++) {
@@ -52,7 +49,7 @@ public abstract class CommandFragmentManager extends Command {
             String[] data = dataList.toArray(new String[dataList.size()]);
             for (ICommandFragment f : commandFragments) {
                 if (f.getName().equals(args[0].toLowerCase())) {
-                    f.execute(invocation);
+                    f.execute(sender, data);
                     return;
                 }
             }

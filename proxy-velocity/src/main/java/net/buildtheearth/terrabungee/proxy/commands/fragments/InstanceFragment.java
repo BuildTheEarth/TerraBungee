@@ -27,8 +27,8 @@ public class InstanceFragment extends FragmentManager implements ICommandFragmen
     }
 
     @Override
-    public void execute(SimpleCommand.Invocation invocation) {
-        executeFragment(invocation);
+    public void execute(CommandSource sender, String[] args) {
+        executeFragment(sender, args);
     }
 
     @Override

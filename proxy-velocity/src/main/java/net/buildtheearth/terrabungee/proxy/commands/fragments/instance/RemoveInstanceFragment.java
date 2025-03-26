@@ -18,10 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class RemoveInstanceFragment implements ICommandFragment {
     @Override
-    public void execute(SimpleCommand.Invocation invocation) {
-        CommandSource sender = invocation.source();
-        String[] args = invocation.arguments();
-
+    public void execute(CommandSource sender, String[] args) {
         if (args.length < 1) {
             sender.sendMessage(ChatUtil.USAGE("/tba instance remove <id>"));
             return;

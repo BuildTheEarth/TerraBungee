@@ -24,12 +24,13 @@ public class TerraBungeeAdminCommand extends CommandFragmentManager {
     @Override
     public void execute(Invocation invocation) {
         CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
 
         if (!hasAdmin(sender)) {
             sender.sendMessage(ChatUtil.NO_PERMISSION);
             return;
         }
 
-        executeFragment(invocation);
+        executeFragment(sender, args);
     }
 }

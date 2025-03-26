@@ -20,10 +20,7 @@ import java.util.concurrent.CompletableFuture;
 public class AddInstanceFragment implements ICommandFragment {
 
     @Override
-    public void execute(SimpleCommand.Invocation invocation) {
-        CommandSource sender = invocation.source();
-        String[] args = invocation.arguments();
-
+    public void execute(CommandSource sender, String[] args) {
         if (args.length < 2) {
             sender.sendMessage(ChatUtil.USAGE("/tba instance add <id> <address>"));
             return;

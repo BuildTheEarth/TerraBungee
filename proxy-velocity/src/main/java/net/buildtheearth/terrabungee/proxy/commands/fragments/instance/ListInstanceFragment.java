@@ -18,9 +18,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class ListInstanceFragment implements ICommandFragment {
     @Override
-    public void execute(SimpleCommand.Invocation invocation) {
-        CommandSource sender = invocation.source();
-
+    public void execute(CommandSource sender, String[] args) {
         TextComponent list = ChatUtil.titleAndCombine(NamedTextColor.RED, "Instances: ");
         boolean first = true;
         for (Instance i : TerraBungeeProxy.getInstance().getTerraBungee().getInstanceManager().getInstances()) {
