@@ -1,5 +1,17 @@
+<!-- markdownlint-disable -->
+<div align="center">
+
+<img width="128" src="https://github.com/BuildTheEarth/assets/blob/main/images/logos/logo_archive_2.png?raw=true" />
+
 # TerraBungee
-TerraBungee is a system that allows for dynamic BungeeCord backend server management.
+
+_A system that allows for dynamic BungeeCord backend server management._
+
+![official](https://go.buildtheearth.net/official-shield)
+[![chat](https://img.shields.io/discord/706317564904472627.svg?color=768AD4&label=discord&logo=https%3A%2F%2Fdiscordapp.com%2Fassets%2F8c9701b98ad4372b58f13fd9f65f966e.svg)](https://discord.gg/buildtheearth)
+
+</div>
+<!-- markdownlint-restore -->
 
 Created by [Saghetti#7380](https://github.com/Saghetti0). Developed by [noahhusby#6512](https://github.com/noahhusby).
 
@@ -10,10 +22,15 @@ Created by [Saghetti#7380](https://github.com/Saghetti0). Developed by [noahhusb
 * Load Balancing - Automatically chooses the best server for a player to join.
 
 ## Modules
-* [API](https://github.com/BuildTheEarth/TerraBungee/tree/master/api) - API for all TerraBungee services. This can be used to create custom services (Minigame Libraries, Discord Bots, etc.)
-* [Controller](https://github.com/BuildTheEarth/TerraBungee/tree/master/controller) - Controller for TerraBungee. Connects all services together and performs logic for load balencing and fleet scaling.
-* [Proxy](https://github.com/BuildTheEarth/TerraBungee/tree/master/proxy) - Bungeecord plugin for TerraBungee. Keeps track of player data/locations. Performs the actual load balancing of players. Adds/deletes instances automatically when added to the controller.
-* [Instance](https://github.com/BuildTheEarth/TerraBungee/tree/master/instance) - Bukkit plugin for TerraBungee. Keeps track of individual instances. Does other cool magic things in the background.
+
+This repository contains the following modules:
+
+| Name                       | Description                          |
+| -------------------------- | ------------------------------------ |
+| [api](https://github.com/BuildTheEarth/TerraBungee/tree/master/api)                        | API for all TerraBungee services. This can be used to create custom services (Minigame Libraries, Discord Bots, etc.)     |
+| [controller](https://github.com/BuildTheEarth/TerraBungee/tree/master/controller)                 | Controller for TerraBungee. Connects all services together and performs logic for load balencing and fleet scaling |
+| [proxy](https://github.com/BuildTheEarth/TerraBungee/tree/master/proxy)                      | Bungeecord plugin for TerraBungee. Keeps track of player data/locations. Performs the actual load balancing of players. Adds/deletes instances automatically when added to the controller  |
+| [instance](https://github.com/BuildTheEarth/TerraBungee/tree/master/instance)                   | Bukkit plugin for TerraBungee. Keeps track of individual instances. Does other cool magic things in the background |
 
 ## Installation
 Go to the [releases](https://github.com/BuildTheEarth/TerraBungee/releases) page and download the latest bungeecord/bukkit plugin, node, and controller.
