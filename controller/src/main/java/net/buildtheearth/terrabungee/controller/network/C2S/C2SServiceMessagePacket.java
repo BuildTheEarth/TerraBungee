@@ -27,6 +27,9 @@ public class C2SServiceMessagePacket implements IC2SPacket {
 
     @Override
     public ServicePacket getServicePacket() {
+        if (ServiceManager.getInstance().getService(to) == null) {
+            return null;
+        }
         return ServicePacket.fromService(ServiceManager.getInstance().getService(to));
     }
 }

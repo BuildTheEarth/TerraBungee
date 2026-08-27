@@ -25,9 +25,12 @@ import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
+import net.buildtheearth.terrabungee.common.services.ServiceStatus;
+import net.buildtheearth.terrabungee.common.services.TerraBungeeService;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SResponsePacket;
+import net.buildtheearth.terrabungee.controller.network.C2S.C2SServiceMessagePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CAddStaticInstancePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CKeepAlivePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CRemoveStaticInstancePacket;
@@ -99,6 +102,22 @@ public class NetworkManager implements INetworkManager, Module {
     @Override
     public void send(IC2SPacket packet) {
         trySend(packet);
+    }
+
+    @Override
+    public boolean sendServiceMessage(String from, String to, JsonObject message) {
+        if (from == null || from.isBlank() || to == null || to.isBlank() || message == null) {
+            return false;
+        }
+
+        TerraBungeeService target = ServiceManager.getInstance().getService(to);
+        if (target == null || target.getStatus() != ServiceStatus.ONLINE
+                || !(target.getClient() instanceof WebSocket)
+                || !((WebSocket) target.getClient()).isOpen()) {
+            return false;
+        }
+
+        return trySend(new C2SServiceMessagePacket(from, to, message.toString()));
     }
 
     public boolean trySend(IC2SPacket packet) {
