@@ -146,6 +146,11 @@ public class TerraBungeeController extends TerraBungee {
     }
 
     @Override
+    public ControllerPlayer getPlayerByDiscordId(String discordId) {
+        return PlayerManager.getInstance().getPlayerByDiscordId(discordId);
+    }
+
+    @Override
     public ControllerPlayer linkDiscordAccount(UUID uuid, String discordId) {
         synchronized (PlayerManager.getInstance().getPlayers()) {
             ControllerPlayer target = PlayerManager.getInstance().getPlayers().get(uuid);

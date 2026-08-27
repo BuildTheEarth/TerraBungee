@@ -73,6 +73,25 @@ public class PlayerManager implements Module {
         return onlinePlayerRegistry.size();
     }
 
+    public ControllerPlayer getPlayerByDiscordId(String discordId) {
+        if (discordId == null || discordId.trim().isEmpty()) {
+            return null;
+        }
+        return findPlayerByDiscordId(players.values(), discordId);
+    }
+
+    static ControllerPlayer findPlayerByDiscordId(Iterable<ControllerPlayer> candidates, String discordId) {
+        if (candidates == null || discordId == null || discordId.trim().isEmpty()) {
+            return null;
+        }
+        for (ControllerPlayer player : candidates) {
+            if (discordId.equals(player.getDiscordId())) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     public void proxyPlayerDrop(String id, List<ControllerPlayer> playerDrop) {
         manipulate(() -> {
             Map<UUID, ControllerPlayer> playerJoinQuitMap = Maps.newHashMap();
