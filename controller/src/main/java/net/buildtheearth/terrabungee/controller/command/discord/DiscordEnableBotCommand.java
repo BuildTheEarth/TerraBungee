@@ -3,13 +3,11 @@ package net.buildtheearth.terrabungee.controller.command.discord;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.plugin.Command;
 import net.buildtheearth.api.util.ConsoleColor;
-import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.console.TerraBungeeConsole;
 import net.buildtheearth.terrabungee.controller.discord.BotConfig;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Noah Husby
@@ -50,12 +48,11 @@ public class DiscordEnableBotCommand extends Command {
             return;
         }
         if(command.equals("true")) {
-            if(config.isEnabled()) {
+            if(config.isRunning()) {
                 TerraBungeeConsole.sendMessage(ConsoleColor.RED + config.getName() + " is already enabled!");
             } else {
                 try {
                     config.initBot();
-                    TerraBungeeController.getInstance().getGeneralThreads().schedule(() -> DiscordManager.getInstance().updateSlashCommands(config), 3, TimeUnit.SECONDS);
                 } catch (Exception e) {
                     e.printStackTrace();
                     TerraBungeeConsole.sendMessage(ConsoleColor.RED + "Failed to enable " + config.getName() + "! Please check the token and try again.");

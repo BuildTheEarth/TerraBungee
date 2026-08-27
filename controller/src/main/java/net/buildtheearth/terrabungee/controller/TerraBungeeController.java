@@ -137,7 +137,32 @@ public class TerraBungeeController extends TerraBungee {
 
     @Override
     public ControllerPlayer getPlayer(String username) {
+        for (ControllerPlayer player : PlayerManager.getInstance().getPlayers().values()) {
+            if (player.getName() != null && player.getName().equalsIgnoreCase(username)) {
+                return player;
+            }
+        }
         return null;
+    }
+
+    @Override
+    public ControllerPlayer linkDiscordAccount(UUID uuid, String discordId) {
+        synchronized (PlayerManager.getInstance().getPlayers()) {
+            ControllerPlayer target = PlayerManager.getInstance().getPlayers().get(uuid);
+            if (target == null) {
+                return null;
+            }
+            if (discordId != null) {
+                for (ControllerPlayer player : PlayerManager.getInstance().getPlayers().values()) {
+                    if (!player.getUniqueID().equals(uuid) && discordId.equals(player.getDiscordId())) {
+                        player.setDiscordId(null);
+                    }
+                }
+            }
+            target.setDiscordId(discordId);
+            PlayerManager.getInstance().getPlayers().saveAsync();
+            return target;
+        }
     }
 
     public void splash() {

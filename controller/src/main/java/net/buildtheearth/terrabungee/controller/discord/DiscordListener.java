@@ -6,14 +6,26 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class DiscordListener extends ListenerAdapter {
 
+    private final BotConfig botConfig;
+
+    public DiscordListener(BotConfig botConfig) {
+        this.botConfig = botConfig;
+    }
+
     //TODO: WTF
     private List<Long> adminLongs = Lists.newArrayList(555520007837319178L, 422633274918174721L);
+
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
+        DiscordManager.getInstance().updateSlashCommands(botConfig);
+    }
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent e) {

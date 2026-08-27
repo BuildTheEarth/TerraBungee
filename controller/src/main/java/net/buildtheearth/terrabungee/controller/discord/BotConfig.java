@@ -12,11 +12,6 @@ import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.requests.GatewayIntent;
-
-import javax.security.auth.login.LoginException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Noah Husby
@@ -39,22 +34,26 @@ public class BotConfig {
 
     private JDA bot;
 
-    public void initBot() {
+    public synchronized void initBot() {
         if(isConfigured()) {
             try {
-                bot = JDABuilder.createDefault(token)
-                        .enableIntents(GatewayIntent.MESSAGE_CONTENT)
-                        .enableIntents(GatewayIntent.DIRECT_MESSAGES)
-                        .enableIntents(GatewayIntent.GUILD_MESSAGES)
-                        .addEventListeners(new DiscordListener()).build();
+                if (bot != null && bot.getStatus() != JDA.Status.SHUTDOWN
+                        && bot.getStatus() != JDA.Status.SHUTTING_DOWN
+                        && bot.getStatus() != JDA.Status.FAILED_TO_LOGIN) {
+                    return;
+                }
+                bot = JDABuilder.createLight(token)
+                        .addEventListeners(new DiscordListener(this)).build();
                 bot.setAutoReconnect(true);
             } catch (Exception e) {
-                TerraBungee.getInstance().getLogger().warning(String.format("Failed to initialize %s! Please check the token and try again.", name));
+                bot = null;
+                TerraBungee.getInstance().getLogger().warning(String.format(
+                        "Failed to initialize %s: %s", name, safeMessage(e)));
             }
         }
     }
 
-    public void shutdown() {
+    public synchronized void shutdown() {
         if(bot != null) {
             try {
                 bot.shutdown();
@@ -70,6 +69,18 @@ public class BotConfig {
     }
 
     public boolean isEnabled() {
-        return bot != null;
+        return bot != null && bot.getStatus() == JDA.Status.CONNECTED;
+    }
+
+    public boolean isRunning() {
+        return bot != null
+                && bot.getStatus() != JDA.Status.SHUTDOWN
+                && bot.getStatus() != JDA.Status.SHUTTING_DOWN
+                && bot.getStatus() != JDA.Status.FAILED_TO_LOGIN;
+    }
+
+    private String safeMessage(Exception exception) {
+        String message = exception.getMessage();
+        return exception.getClass().getSimpleName() + (message == null ? "" : ": " + message);
     }
 }

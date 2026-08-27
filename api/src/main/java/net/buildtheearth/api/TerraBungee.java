@@ -72,6 +72,17 @@ public abstract class TerraBungee {
     public abstract ControllerPlayer getPlayer(String username);
 
     /**
+     * Atomically assigns a Discord account to a Minecraft player. Any previous
+     * owner of the Discord account is unlinked before the player data is saved.
+     * Passing {@code null} unlinks the Minecraft player.
+     *
+     * @param uuid Minecraft UUID
+     * @param discordId authenticated Discord user id, or {@code null}
+     * @return the updated player, or {@code null} when the player does not exist
+     */
+    public abstract ControllerPlayer linkDiscordAccount(UUID uuid, String discordId);
+
+    /**
      * Gets root folder of controller
      *
      * @return root {@link File} of controller
