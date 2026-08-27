@@ -24,7 +24,12 @@ public class DiscordListener extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        DiscordManager.getInstance().updateSlashCommands(botConfig);
+        // JDA emits ReadyEvent immediately before transitioning its public status to
+        // CONNECTED. Going through updateSlashCommands(BotConfig) here would therefore
+        // reject the bot as "not ready" even though its guild cache is already usable.
+        for (GuildConfig guildConfig : DiscordManager.getInstance().getGuildsFromBot(botConfig)) {
+            DiscordManager.getInstance().updateSlashCommands(guildConfig);
+        }
     }
 
     @Override
