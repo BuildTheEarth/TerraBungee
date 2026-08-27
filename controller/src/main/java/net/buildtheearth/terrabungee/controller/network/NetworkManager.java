@@ -25,6 +25,7 @@ import net.buildtheearth.api.network.IS2CPacket;
 import net.buildtheearth.api.network.Response;
 import net.buildtheearth.api.network.ServicePacket;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
+import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.modules.Module;
 import net.buildtheearth.terrabungee.controller.network.C2S.C2SResponsePacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.S2CAddStaticInstancePacket;
@@ -43,9 +44,11 @@ import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetri
 import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetrievePunishmentPacket;
 import net.buildtheearth.terrabungee.controller.network.S2C.punishments.S2CRetrievePunishmentsPacket;
 import net.buildtheearth.terrabungee.controller.network.proxy.P2CUpdatePlayersPacket;
+import net.buildtheearth.terrabungee.controller.services.ServiceManager;
 import org.java_websocket.WebSocket;
 
 import java.util.Map;
+import java.util.logging.Level;
 
 public class NetworkManager implements INetworkManager, Module {
     private static NetworkManager instance;
@@ -58,49 +61,69 @@ public class NetworkManager implements INetworkManager, Module {
     private final Map<String, IS2CPacket> packets = Maps.newHashMap();
 
     public void onIncomingPayload(WebSocket client, String p) {
-        JsonObject payload = JsonUtils.parseString(p).getAsJsonObject();
-        String salt = payload.get("salt").getAsString();
-        String id = payload.get("id").getAsString();
-        String type = payload.get("type").getAsString();
+        Response response = null;
+        String type = "unknown";
+        try {
+            JsonObject payload = JsonUtils.parseString(p).getAsJsonObject();
+            String salt = payload.get("salt").getAsString();
+            String id = payload.get("id").getAsString();
+            type = payload.get("type").getAsString();
 
-        ServicePacket sp = new ServicePacket(client, id);
-        JsonObject data = payload.get("data").getAsJsonObject();
+            ServicePacket sp = new ServicePacket(client, id);
+            JsonObject data = payload.get("data").getAsJsonObject();
+            response = new Response(sp, salt);
 
-        if(type.contains("discord")){
-            System.out.println("Discord packet: " + type);
-            System.out.println("Discord packet data: " + p);
-            System.out.println("Discord packet salt: " + salt);
-            System.out.println("Discord packet id: " + id);
+            IS2CPacket packet = packets.get(type);
+            if (packet == null) {
+                packet = TerraBungee.getInstance().getPluginManager().getPacketMap().get(type);
+            }
+
+            if (packet == null) {
+                response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.ERROR);
+            } else {
+                packet.onMessage(sp, data, response);
+            }
+        } catch (Exception e) {
+            TerraBungeeController.logger.log(Level.WARNING,
+                    "Unable to process TerraBungee packet " + type, e);
+            if (response != null) {
+                response.setCode(net.buildtheearth.terrabungee.common.network.Response.ResponseCode.ERROR);
+            }
         }
 
-        IS2CPacket packet = packets.get(type);
-        if (packet == null) {
-            packet = TerraBungee.getInstance().getPluginManager().getPacketMap().get(type);
-        }
-
-        if (packet != null) {
-            Response response = new Response(sp, salt);
-            packet.onMessage(sp, data, response);
-            send(new C2SResponsePacket(response));
+        if (response != null) {
+            trySend(new C2SResponsePacket(response));
         }
     }
 
     @Override
     public void send(IC2SPacket packet) {
+        trySend(packet);
+    }
+
+    public boolean trySend(IC2SPacket packet) {
         ServicePacket servicePacket = packet.getServicePacket();
-        if (servicePacket == null) {
-            return;
+        if (servicePacket == null || servicePacket.getClient() == null || !servicePacket.getClient().isOpen()) {
+            return false;
         }
 
-        JsonObject payload = new JsonObject();
-        payload.addProperty("type", packet.getID());
-        payload.addProperty("id", servicePacket.getId());
+        try {
+            JsonObject payload = new JsonObject();
+            payload.addProperty("type", packet.getID());
+            payload.addProperty("id", servicePacket.getId());
 
-        JsonObject packetData = new JsonObject();
-        packet.getMessage(packetData);
-        payload.add("data", packetData);
+            JsonObject packetData = new JsonObject();
+            packet.getMessage(packetData);
+            payload.add("data", packetData);
 
-        servicePacket.getClient().send(TerraBungeeUtil.GSON.toJson(payload));
+            servicePacket.getClient().send(TerraBungeeUtil.GSON.toJson(payload));
+            return true;
+        } catch (Exception e) {
+            ServiceManager.getInstance().markDisconnected(servicePacket.getClient());
+            TerraBungeeController.logger.warning(
+                    "Unable to send TerraBungee packet to " + servicePacket.getId() + ": " + e.getMessage());
+            return false;
+        }
     }
 
     public void register(IS2CPacket packet) {

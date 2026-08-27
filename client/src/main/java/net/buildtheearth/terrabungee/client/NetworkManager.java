@@ -6,7 +6,6 @@
 package net.buildtheearth.terrabungee.client;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.AccessLevel;
@@ -37,23 +36,28 @@ import org.java_websocket.enums.ReadyState;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class NetworkManager extends Manager {
 
     private final List<IC2SPacket> registeredControllerPackets = Lists.newArrayList();
-    private final Map<String, ResponseRequest> responseRequests = Maps.newHashMap();
+    private final Map<String, ResponseRequest> responseRequests = new ConcurrentHashMap<>();
     @Getter(AccessLevel.PROTECTED)
     private final List<EventListener> listeners = Lists.newArrayList();
-    private String controller;
-    private WebsocketEndpoint websocket;
+    private final String controller;
+    private volatile WebsocketEndpoint websocket;
 
-    private boolean autoReconnect = false;
-    private boolean consideredConnected = false;
+    private volatile boolean autoReconnect = false;
+    private volatile boolean connectionRequested = false;
+    private volatile boolean connectionObserved = false;
+    private volatile boolean everConnected = false;
+    private volatile long connectionAttemptStarted = 0;
+
+    private static final long CONNECTION_ATTEMPT_TIMEOUT_MS = 10_000;
 
     protected NetworkManager(@NonNull String controller, @NonNull TerraBungeeClient terraBungee) {
         super(terraBungee);
@@ -67,24 +71,8 @@ public class NetworkManager extends Manager {
         register(new C2SPlayerJoinEventPacket());
         register(new C2SPlayerQuitEventPacket());
 
-        TerraBungeeUtil.newSingleThreadScheduledExecutor("terrabungee-network-handler").scheduleAtFixedRate(() -> {
-            if (websocket == null) {
-                connect();
-                return;
-            }
-            if (!websocket.isOnline()) {
-                if (autoReconnect && consideredConnected) {
-                    connect();
-                }
-                if (websocket.isOnline()) {
-                    terraBungee.getListeners().forEach(l -> l.onServiceReconnect(new ServiceReconnectEvent(terraBungee)));
-                }
-            } else {
-                if (!terraBungee.isDiscarded()) {
-                    send(new S2CKeepAlivePacket());
-                }
-            }
-        }, 0, 2, TimeUnit.SECONDS);
+        TerraBungeeUtil.newSingleThreadScheduledExecutor("terrabungee-network-handler")
+                .scheduleAtFixedRate(this::checkConnection, 0, 2, TimeUnit.SECONDS);
 
         TerraBungeeUtil.newSingleThreadScheduledExecutor("terrabungee-response-checker").scheduleAtFixedRate(this::checkResponsePacket, 0, 500, TimeUnit.MILLISECONDS);
     }
@@ -93,44 +81,54 @@ public class NetworkManager extends Manager {
      * Attempts the connection process to the controller
      */
     protected synchronized void connect() {
-        if (websocket != null) {
-            // Check the current state before attempting to reconnect
-            ReadyState state = websocket.getReadyState();
+        connectionRequested = true;
 
-            if (state == ReadyState.OPEN || state == ReadyState.NOT_YET_CONNECTED) {
-                return; // Already connected or in progress, no need to reconnect
+        WebsocketEndpoint current = websocket;
+        if (current != null) {
+            ReadyState state = current.getReadyState();
+            if (current.isOnline() && state == ReadyState.OPEN) {
+                return;
             }
-
-            if (state == ReadyState.CLOSING || state == ReadyState.CLOSED) {
-                websocket.close(); // Ensure previous connection is properly closed
+            if (state == ReadyState.NOT_YET_CONNECTED
+                    && System.currentTimeMillis() - connectionAttemptStarted < CONNECTION_ATTEMPT_TIMEOUT_MS) {
+                return;
+            }
+            closeEndpoint(current);
+            if (websocket == current) {
+                websocket = null;
             }
         }
 
         try {
-            websocket = new WebsocketEndpoint(new URI("ws://" + controller));
-            websocket.connect();
-            websocket.onMessageEvent(message -> onIncomingPayload(new JsonParser().parse(message).getAsJsonObject()));
-        } catch (URISyntaxException ignored) {
-        }
-
-        consideredConnected = true;
-
-        if (websocket != null) {
-            tb.triggerEvent(l -> l.onControllerConnect(new ControllerConnectedEvent(tb)));
+            WebsocketEndpoint endpoint = new WebsocketEndpoint(new URI("ws://" + controller));
+            endpoint.onMessageEvent(message -> {
+                try {
+                    onIncomingPayload(new JsonParser().parse(message).getAsJsonObject());
+                } catch (Exception e) {
+                    tb.getLogger().warning("Unable to process a TerraBungee controller payload: " + e.getMessage());
+                }
+            });
+            websocket = endpoint;
+            connectionAttemptStarted = System.currentTimeMillis();
+            endpoint.connect();
+        } catch (URISyntaxException e) {
+            tb.getLogger().warning("Invalid TerraBungee controller address: " + controller);
+        } catch (Exception e) {
+            tb.getLogger().warning("Unable to connect to the TerraBungee controller: " + e.getMessage());
         }
     }
 
     /**
      * Disconnects the service from the controller
      */
-    protected void disconnect() {
-        consideredConnected = false;
-        try {
-            websocket.close();
-        } catch (Exception ignored) {
-        }
+    protected synchronized void disconnect() {
+        connectionRequested = false;
+        WebsocketEndpoint current = websocket;
         websocket = null;
-        tb.getListeners().forEach(l -> l.onControllerDisconnect(new ControllerDisconnectEvent(tb, DisconnectReason.SERVICE_REQUEST)));
+        connectionObserved = false;
+        closeEndpoint(current);
+        tb.triggerEvent(l -> l.onControllerDisconnect(
+                new ControllerDisconnectEvent(tb, DisconnectReason.SERVICE_REQUEST)));
     }
 
     /**
@@ -185,15 +183,15 @@ public class NetworkManager extends Manager {
      * @return {@link Response}
      */
     public CompletableFuture<Response> send(IS2CPacket packet, int timeout) {
+        CompletableFuture<Response> future = new CompletableFuture<>();
+        WebsocketEndpoint current = websocket;
+        if (current == null || !current.isOnline() || current.getReadyState() != ReadyState.OPEN) {
+            future.complete(errorResponse());
+            return future;
+        }
+
+        String salt = TerraBungeeUtil.getSaltString();
         try {
-            CompletableFuture<Response> future = new CompletableFuture<>();
-            String salt = TerraBungeeUtil.getSaltString();
-            responseRequests.put(salt, new ResponseRequest(future, timeout));
-
-            if (!websocket.isOnline()) {
-                return future;
-            }
-
             JsonObject payload = new JsonObject();
             payload.addProperty("type", packet.getType());
             payload.addProperty("id", tb.getId());
@@ -202,14 +200,18 @@ public class NetworkManager extends Manager {
             JsonObject data = new JsonObject();
             packet.getMessage(tb, data);
             payload.add("data", data);
-            websocket.send(TerraBungeeUtil.GSON.toJson(payload));
+
+            responseRequests.put(salt, new ResponseRequest(future, timeout));
+            current.send(TerraBungeeUtil.GSON.toJson(payload));
 
             return future;
         } catch (Exception e) {
-            e.printStackTrace();
+            responseRequests.remove(salt);
+            future.complete(errorResponse());
+            tb.getLogger().warning("Unable to send a TerraBungee packet: " + e.getMessage());
         }
 
-        return null;
+        return future;
     }
 
     /**
@@ -218,7 +220,8 @@ public class NetworkManager extends Manager {
      * @return True for online, false for offline
      */
     public boolean isConnectionEstablished() {
-        return websocket.isOnline();
+        WebsocketEndpoint current = websocket;
+        return current != null && current.isOnline() && current.getReadyState() == ReadyState.OPEN;
     }
 
     /**
@@ -234,18 +237,54 @@ public class NetworkManager extends Manager {
      * Checks if responses are expired
      */
     private void checkResponsePacket() {
-        List<String> removeSalts = new ArrayList<>();
-
-        for (Map.Entry<String, ResponseRequest> e : responseRequests.entrySet()) {
-            if (e.getValue().getTime() > e.getValue().getTimeout()) {
-                e.getValue().getFuture().complete(new Response(Response.ResponseCode.TIMED_OUT, new JsonObject()));
-                removeSalts.add(e.getKey());
+        responseRequests.forEach((salt, request) -> {
+            if (request.getTime() > request.getTimeout() && responseRequests.remove(salt, request)) {
+                request.getFuture().complete(new Response(Response.ResponseCode.TIMED_OUT, new JsonObject()));
             }
+        });
+    }
+
+    private void checkConnection() {
+        boolean online = isConnectionEstablished();
+        if (online) {
+            if (!connectionObserved) {
+                connectionObserved = true;
+                if (everConnected) {
+                    tb.triggerEvent(l -> l.onServiceReconnect(new ServiceReconnectEvent(tb)));
+                } else {
+                    everConnected = true;
+                    tb.triggerEvent(l -> l.onControllerConnect(new ControllerConnectedEvent(tb)));
+                }
+            }
+            if (!tb.isDiscarded()) {
+                send(new S2CKeepAlivePacket());
+            }
+            return;
         }
 
-        for (String s : removeSalts) {
-            responseRequests.remove(s);
+        if (connectionObserved) {
+            connectionObserved = false;
+            tb.triggerEvent(l -> l.onControllerDisconnect(
+                    new ControllerDisconnectEvent(tb, DisconnectReason.LOST_CONNECTION)));
         }
+
+        if (connectionRequested && autoReconnect) {
+            connect();
+        }
+    }
+
+    private void closeEndpoint(WebsocketEndpoint endpoint) {
+        if (endpoint == null) {
+            return;
+        }
+        try {
+            endpoint.close();
+        } catch (Exception ignored) {
+        }
+    }
+
+    private Response errorResponse() {
+        return new Response(Response.ResponseCode.ERROR, new JsonObject());
     }
 
     /**

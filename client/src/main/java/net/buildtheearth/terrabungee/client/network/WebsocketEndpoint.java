@@ -19,7 +19,7 @@ public class WebsocketEndpoint extends WebSocketClient {
     }
 
     @Getter
-    private boolean online = false;
+    private volatile boolean online = false;
     private Consumer<String> messageHandler;
 
     @Override
