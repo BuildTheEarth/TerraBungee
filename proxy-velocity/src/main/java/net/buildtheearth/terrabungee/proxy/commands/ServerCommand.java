@@ -29,6 +29,11 @@ public class ServerCommand extends Command {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
 
+        if (!hasAdmin(source)) {
+            source.sendMessage(ChatUtil.NO_PERMISSION);
+            return;
+        }
+
         if(!(source instanceof Player)) {
             source.sendMessage(
                     ChatUtil.PLAYER_ONLY
@@ -71,7 +76,7 @@ public class ServerCommand extends Command {
 
     @Override
     public boolean hasPermission(final Invocation invocation) {
-        return hasPermissionAdmin(invocation.source());
+        return hasAdmin(invocation.source());
     }
 
     @Override

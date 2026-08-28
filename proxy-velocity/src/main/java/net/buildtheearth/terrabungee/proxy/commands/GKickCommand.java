@@ -26,7 +26,7 @@ public class GKickCommand extends Command {
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
-        if (!hasAdmin(sender)) {
+        if (!hasModerator(sender)) {
             sender.sendMessage(ChatUtil.NO_PERMISSION);
             return;
         }
@@ -59,5 +59,10 @@ public class GKickCommand extends Command {
                 }
             });
         });
+    }
+
+    @Override
+    public boolean hasPermission(final Invocation invocation) {
+        return hasModerator(invocation.source());
     }
 }

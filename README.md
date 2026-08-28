@@ -78,7 +78,11 @@ service-id: proxyA
 * `/tba` - TerraBungee Admin Commands
 
 ### Permissions
-* `terrabungee.admin` - Gives access to TerraBungee admin commands. **Only give this permission to people you trust! Otherwise, you might wake up with no servers left**
+Player command access is controlled by the UUID allowlists in the proxy configuration:
+* `Admin UUIDs` - Gives access to TerraBungee administration and moderation commands.
+* `Moderator UUIDs` - Gives access to `/gban`, `/gkick`, `/gmute`, and `/punishment` only.
+
+Permission-plugin nodes are intentionally not used for privileged TerraBungee commands.
 
 ## Building
 ### Controller

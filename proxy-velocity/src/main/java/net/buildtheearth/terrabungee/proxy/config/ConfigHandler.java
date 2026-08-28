@@ -26,6 +26,7 @@ public class ConfigHandler {
     public static String queueServer = "queue";
     public static String controllerUrl = "";
     public static String serviceID = "";
+    private static volatile UuidAllowlist authorization = UuidAllowlist.empty();
 
     private final TerraBungeeProxy plugin = TerraBungeeProxy.getInstance();
     private Configuration config;
@@ -58,12 +59,28 @@ public class ConfigHandler {
         controllerUrl = config.getString(prop("controller-url"), category, "127.0.0.1", "The URL that the controller can be accessed from.");
         queueServer = config.getString(prop("queue-server"), category, "Hub", "The name of the queue server that players should be sent to when first joining or being queued.");
         serviceID = config.getString(prop("service-id"), category, "proxy", "The unique name of the proxy server in the controller.");
+        String[] adminUsers = config.getStringList(prop("Admin UUIDs"), category, new String[]{},
+                "Players allowed to use TerraBungee administration commands. Permission plugins are not consulted.");
+        String[] moderatorUsers = config.getStringList(prop("Moderator UUIDs"), category, new String[]{},
+                "Players allowed to use global punishment commands. Administrators inherit moderation access.");
+
+        UuidAllowlist loadedAuthorization = UuidAllowlist.parse(
+                adminUsers,
+                moderatorUsers,
+                TerraBungeeProxy.logger::warn
+        );
 
         order();
 
         if (config.hasChanged()) {
             config.save();
         }
+
+        authorization = loadedAuthorization;
+    }
+
+    public static UuidAllowlist getAuthorization() {
+        return authorization;
     }
 
     /**

@@ -33,4 +33,9 @@ public class TerraBungeeAdminCommand extends CommandFragmentManager {
 
         executeFragment(sender, args);
     }
+
+    @Override
+    public boolean hasPermission(final Invocation invocation) {
+        return hasAdmin(invocation.source());
+    }
 }

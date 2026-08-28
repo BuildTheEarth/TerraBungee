@@ -48,6 +48,11 @@ public class PunishmentCommand extends Command {
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
+        if (!hasModerator(sender)) {
+            sender.sendMessage(ChatUtil.NO_PERMISSION);
+            return;
+        }
+
         if (args.length < 1) {
             sender.sendMessage(ChatUtil.USAGE("/punishment <get | edit | inspect>"));
             return;
@@ -284,6 +289,6 @@ public class PunishmentCommand extends Command {
 
     @Override
     public boolean hasPermission(final Invocation invocation) {
-        return hasAdmin(invocation.source());
+        return hasModerator(invocation.source());
     }
 }
