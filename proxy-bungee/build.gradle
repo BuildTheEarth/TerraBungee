@@ -3,6 +3,10 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
+    maven {
+        name = 'md5-snapshots'
+        url = 'https://repo.md-5.net/content/repositories/snapshots/'
+    }
 }
 
 dependencies {

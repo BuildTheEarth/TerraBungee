@@ -1,6 +1,7 @@
 package net.buildtheearth.terrabungee.proxy;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.EventTask;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import net.buildtheearth.terrabungee.proxy.players.PlayerHandler;
@@ -17,25 +18,81 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Noah Husby & XboxBedrock
  */
 public class ProxyListener {
+    private static final long BAN_TIMEOUT_SECONDS = 2;
+    private static final long WARNING_INTERVAL_NANOS = TimeUnit.MINUTES.toNanos(1);
+    private static final AtomicLong LAST_BAN_LOOKUP_WARNING = new AtomicLong();
+
     @Subscribe(order = PostOrder.LATE)
-    public void onLoginEvent(PlayerChooseInitialServerEvent e) {
+    public EventTask onLoginEvent(PlayerChooseInitialServerEvent e) {
         if(!TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().isConnectionEstablished())
-            return;
+            return EventTask.resumeWhenComplete(CompletableFuture.completedFuture(null));
 
         try {
-            Response punishmentResponse = TerraBungeeProxy.getInstance().getTerraBungee().getNetworkManager().send(new S2CRetrieveActiveBanPacket(e.getPlayer().getUniqueId())).get();
-            if (punishmentResponse.getCode() == Response.ResponseCode.SUCCESS) {
-                Punishment punishment = TerraBungeeUtil.GSON.fromJson(punishmentResponse.getData(), Punishment.class);
-                e.getPlayer().disconnect(PlayerHandler.getInstance().getBanDisconnectMessage(punishment));
-            }
-        } catch (InterruptedException | ExecutionException ignored) {
+            CompletableFuture<Response> request = TerraBungeeProxy.getInstance().getTerraBungee()
+                    .getNetworkManager().send(new S2CRetrieveActiveBanPacket(e.getPlayer().getUniqueId()));
+            CompletableFuture<BanCheckResult> check = resolveBanCheck(request, BAN_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            CompletableFuture<Void> completion = check.thenAccept(result -> {
+                if (result == BanCheckResult.ERROR) {
+                    warnBanLookupFailure();
+                    return;
+                }
+                if (result != BanCheckResult.BANNED) {
+                    return;
+                }
+                Response response = request.getNow(null);
+                if (response == null) {
+                    warnBanLookupFailure();
+                    return;
+                }
+                try {
+                    Punishment punishment = TerraBungeeUtil.GSON.fromJson(response.getData(), Punishment.class);
+                    e.getPlayer().disconnect(PlayerHandler.getInstance().getBanDisconnectMessage(punishment));
+                } catch (RuntimeException exception) {
+                    TerraBungeeProxy.getLogger().warn("Could not decode an active ban response; allowing login.", exception);
+                }
+            });
+            return EventTask.resumeWhenComplete(completion);
+        } catch (RuntimeException exception) {
+            warnBanLookupFailure();
+            return EventTask.resumeWhenComplete(CompletableFuture.completedFuture(null));
         }
+    }
+
+    static CompletableFuture<BanCheckResult> resolveBanCheck(
+            CompletableFuture<Response> responseFuture, long timeout, TimeUnit unit) {
+        return responseFuture.orTimeout(timeout, unit).handle((response, throwable) -> {
+            if (throwable != null || response == null) {
+                return BanCheckResult.ERROR;
+            }
+            return response.getCode() == Response.ResponseCode.SUCCESS
+                    ? BanCheckResult.BANNED
+                    : BanCheckResult.ALLOWED;
+        });
+    }
+
+    private static void warnBanLookupFailure() {
+        long now = System.nanoTime();
+        long previous = LAST_BAN_LOOKUP_WARNING.get();
+        if (now - previous >= WARNING_INTERVAL_NANOS
+                && LAST_BAN_LOOKUP_WARNING.compareAndSet(previous, now)) {
+            TerraBungeeProxy.getLogger().warn(
+                    "TerraBungee ban lookup failed or timed out after two seconds; allowing login (fail-open)."
+            );
+        }
+    }
+
+    enum BanCheckResult {
+        BANNED,
+        ALLOWED,
+        ERROR
     }
 
     @Subscribe(order = PostOrder.EARLY)
