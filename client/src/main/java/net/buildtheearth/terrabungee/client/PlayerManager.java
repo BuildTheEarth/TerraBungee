@@ -6,8 +6,6 @@
 package net.buildtheearth.terrabungee.client;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import lombok.NonNull;
 import net.buildtheearth.terrabungee.client.network.S2C.S2CRetrieveUncachedPlayerPacket;
 import net.buildtheearth.terrabungee.client.network.S2C.S2CUpdateAttributeID;
@@ -17,11 +15,12 @@ import net.buildtheearth.terrabungee.common.network.Response;
 import net.buildtheearth.terrabungee.common.players.TBPlayer;
 import net.buildtheearth.terrabungee.common.util.EventHashMap;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,7 +32,9 @@ public class PlayerManager extends Manager {
         super(tb);
     }
 
-    private Map<UUID, TBPlayer> onlinePlayers = new HashMap<>();
+    private volatile Map<UUID, TBPlayer> onlinePlayers = Map.of();
+    private final Map<UUID, CompletableFuture<TBPlayer>> pendingUuidLookups = new ConcurrentHashMap<>();
+    private final Map<String, CompletableFuture<TBPlayer>> pendingNameLookups = new ConcurrentHashMap<>();
 
     /**
      * Get player by username
@@ -42,24 +43,17 @@ public class PlayerManager extends Manager {
      * @return {@link TBPlayer}
      */
     public CompletableFuture<TBPlayer> getPlayer(@NonNull String name) {
-        CompletableFuture<TBPlayer> future = new CompletableFuture<>();
-        for (TBPlayer player : Lists.newArrayList(onlinePlayers.values())) {
+        for (TBPlayer player : onlinePlayers.values()) {
             if (player.getName().equalsIgnoreCase(name)) {
-                complete(future, player);
-                return future;
+                return completed(player);
             }
         }
 
-        tb.getNetworkManager().send(new S2CRetrieveUncachedPlayerPacket(name)).thenAccept(response -> {
-            if (response.getData() == null || response.getCode() != Response.ResponseCode.SUCCESS) {
-                future.complete(null);
-                return;
-            }
-
-            future.complete(handleEvent(TerraBungeeUtil.GSON.fromJson(response.getData(), TBPlayer.class)));
-        });
-
-        return future;
+        String lookupKey = name.toLowerCase(Locale.ROOT);
+        CompletableFuture<TBPlayer> lookup = pendingNameLookups.computeIfAbsent(
+                lookupKey, ignored -> retrieveUncachedPlayer(name));
+        lookup.whenComplete((player, throwable) -> pendingNameLookups.remove(lookupKey, lookup));
+        return lookup;
     }
 
     /**
@@ -69,24 +63,15 @@ public class PlayerManager extends Manager {
      * @return {@link TBPlayer}
      */
     public CompletableFuture<TBPlayer> getPlayer(@NonNull UUID uuid) {
-        CompletableFuture<TBPlayer> future = new CompletableFuture<>();
         TBPlayer player = onlinePlayers.get(uuid);
         if (player != null) {
-            complete(future, player);
-            return future;
-
+            return completed(player);
         }
 
-        tb.getNetworkManager().send(new S2CRetrieveUncachedPlayerPacket(uuid.toString())).thenAccept(response -> {
-            if (response.getData() == null || response.getCode() != Response.ResponseCode.SUCCESS) {
-                future.complete(null);
-                return;
-            }
-
-            future.complete(handleEvent(TerraBungeeUtil.GSON.fromJson(response.getData(), TBPlayer.class)));
-        });
-
-        return future;
+        CompletableFuture<TBPlayer> lookup = pendingUuidLookups.computeIfAbsent(
+                uuid, ignored -> retrieveUncachedPlayer(uuid.toString()));
+        lookup.whenComplete((resolved, throwable) -> pendingUuidLookups.remove(uuid, lookup));
+        return lookup;
     }
 
     /**
@@ -109,30 +94,7 @@ public class PlayerManager extends Manager {
      * @param players
      */
     public void onlineCacheHit(@NonNull List<TBPlayer> players) {
-        Map<UUID, TBPlayer> temp = Maps.newHashMap(onlinePlayers);
-        List<UUID> playerIDs = Lists.newArrayList();
-        for (TBPlayer player : players) {
-            playerIDs.add(player.getUniqueID());
-            TBPlayer p = onlinePlayers.get(player.getUniqueID());
-            if (p == null) {
-                temp.put(player.getUniqueID(), handleEvent(player));
-            } else {
-                temp.put(p.getUniqueID(), handleEvent(player));
-            }
-        }
-
-        List<UUID> remove = Lists.newArrayList();
-        for (UUID u : temp.keySet()) {
-            if (!playerIDs.contains(u)) {
-                remove.add(u);
-            }
-        }
-
-        for (UUID u : remove) {
-            temp.remove(u);
-        }
-
-        onlinePlayers = temp;
+        onlinePlayers = OnlinePlayerCache.reconcile(players, this::handleEvent);
     }
 
     /**
@@ -152,7 +114,7 @@ public class PlayerManager extends Manager {
      * @return {@link TBPlayer}
      */
     public TBPlayer getCachedOnlinePlayer(@NonNull String name) {
-        for (TBPlayer p : ImmutableMap.copyOf(onlinePlayers).values()) {
+        for (TBPlayer p : onlinePlayers.values()) {
             if (p.getName().equalsIgnoreCase(name)) {
                 return p;
             }
@@ -166,11 +128,22 @@ public class PlayerManager extends Manager {
      * @return Map of cached online players
      */
     public Map<UUID, TBPlayer> getCachedOnlinePlayers() {
-        return onlinePlayers;
+        return ImmutableMap.copyOf(onlinePlayers);
     }
 
-    private void complete(@NonNull CompletableFuture<TBPlayer> future, @NonNull TBPlayer player) {
-        tb.getGeneralThreads().schedule(() -> future.complete(player), 40, TimeUnit.MILLISECONDS);
+    private CompletableFuture<TBPlayer> completed(@NonNull TBPlayer player) {
+        return CompletableFuture.completedFuture(player);
+    }
+
+    private CompletableFuture<TBPlayer> retrieveUncachedPlayer(String identifier) {
+        return tb.getNetworkManager().send(new S2CRetrieveUncachedPlayerPacket(identifier))
+                .handle((response, throwable) -> {
+                    if (throwable != null || response == null || response.getData() == null
+                            || response.getCode() != Response.ResponseCode.SUCCESS) {
+                        return null;
+                    }
+                    return handleEvent(TerraBungeeUtil.GSON.fromJson(response.getData(), TBPlayer.class));
+                });
     }
 
     /**

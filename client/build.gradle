@@ -7,5 +7,9 @@ dependencies {
     implementation "org.java-websocket:Java-WebSocket:$websocketVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.google.guava:guava:$guavaVersion"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 }
 
+test {
+    useJUnitPlatform()
+}
