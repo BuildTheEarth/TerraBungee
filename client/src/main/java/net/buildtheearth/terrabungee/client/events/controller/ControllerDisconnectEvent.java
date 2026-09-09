@@ -7,14 +7,13 @@ package net.buildtheearth.terrabungee.client.events.controller;
 
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
 import net.buildtheearth.terrabungee.client.events.Event;
-
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 public class ControllerDisconnectEvent extends Event {
 
     private final DisconnectReason reason;
 
-    public ControllerDisconnectEvent(@Nonnull TerraBungeeClient tb, DisconnectReason reason) {
+    public ControllerDisconnectEvent(@NonNull TerraBungeeClient tb, DisconnectReason reason) {
         super(tb);
         this.reason = reason;
     }
