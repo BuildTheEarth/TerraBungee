@@ -10,7 +10,6 @@ import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.discord.UserPermission;
 import net.buildtheearth.terrabungee.common.TerraBungeeUtil;
 import net.buildtheearth.terrabungee.controller.TerraBungeeController;
-import net.buildtheearth.terrabungee.controller.config.ConfigHandler;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordButtonCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.buildtheearth.terrabungee.controller.discord.commands.punishments.PunishmentsDiscordCommand;
@@ -28,7 +27,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -39,8 +37,6 @@ import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class DiscordManager implements Module {
@@ -49,8 +45,6 @@ public class DiscordManager implements Module {
     public static DiscordManager getInstance() {
         return instance == null ? instance = new DiscordManager() : instance;
     }
-
-    private final ExecutorService botThread = TerraBungeeUtil.newSingleThreadExecutor("terrabungee-bot");
 
     private final Map<String, IDiscordCommand> discordCommands = Maps.newHashMap();
 
@@ -70,10 +64,7 @@ public class DiscordManager implements Module {
                 new ListDiscordCommand(),
                 new MsgDiscordCommand()
         );
-        botConfigs.onLoadEvent(() -> TerraBungeeController.getInstance().getGeneralThreads().submit(() -> {
-            startBots();
-            TerraBungeeController.getInstance().getGeneralThreads().schedule((Runnable) this::updateSlashCommands, 10, TimeUnit.SECONDS);
-        }));
+        botConfigs.onLoadEvent(() -> TerraBungeeController.getInstance().getGeneralThreads().submit(this::startBots));
     }
 
     public void startBots() {
@@ -127,26 +118,38 @@ public class DiscordManager implements Module {
     }
 
     public void updateSlashCommands(BotConfig config) {
+        if (!config.isEnabled()) {
+            TerraBungee.getInstance().getLogger().warning("Cannot update slash commands for "
+                    + config.getName() + ": bot is not ready.");
+            return;
+        }
         for(GuildConfig guildConfig : getGuildsFromBot(config)) {
             updateSlashCommands(guildConfig);
         }
     }
 
     public void updateSlashCommands(GuildConfig config) {
-        try {
-            CommandListUpdateAction slashCommands = config.getGuild().updateCommands();
-
-            for (IDiscordCommand command : discordCommands.values()) {
-                SlashCommandData slashCommandData = Commands.slash(command.getName(), command.getDescription());
-
-                command.configureData(slashCommandData);
-                slashCommands.addCommands(slashCommandData);
-            }
-            slashCommands.queue();
-        } catch (NullPointerException exception) {
-            exception.printStackTrace();
-            TerraBungee.getInstance().getLogger().warning("Failed to update slash commands for discord!");
+        Guild guild = config.getGuild();
+        if (guild == null) {
+            TerraBungee.getInstance().getLogger().warning("Cannot update slash commands for guild "
+                    + config.getGuildId() + ": configured bot or guild is unavailable.");
+            return;
         }
+        CommandListUpdateAction slashCommands = guild.updateCommands();
+
+        for (IDiscordCommand command : discordCommands.values()) {
+            SlashCommandData slashCommandData = Commands.slash(command.getName(), command.getDescription());
+
+            command.configureData(slashCommandData);
+            slashCommands.addCommands(slashCommandData);
+        }
+        slashCommands.queue(
+                ignored -> TerraBungee.getInstance().getLogger().info(
+                        "Updated slash commands for guild " + guild.getId()),
+                failure -> TerraBungee.getInstance().getLogger().warning(
+                        "Failed to update slash commands for guild " + guild.getId() + ": "
+                                + failure.getClass().getSimpleName() + ": " + failure.getMessage())
+        );
     }
 
     public void updateSlashCommands() {
@@ -222,4 +225,3 @@ public class DiscordManager implements Module {
         return "Discord";
     }
 }
-

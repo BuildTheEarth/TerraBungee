@@ -66,9 +66,7 @@ public class TerraBungeeController extends TerraBungee {
         LoggerContextUtil.setLevel("io.javalin.Javalin", Level.WARN);
         LoggerContextUtil.setLevel("org.eclipse", Level.WARN);
         LoggerContextUtil.setLevel("net.dv8tion.jda", Level.WARN);
-        LoggerContextUtil.setLevel("com.zaxxer.hikari.HikariConfig", Level.INFO);
-        LoggerContextUtil.setLevel("com.zaxxer.hikari.pool.HikariPool", Level.INFO);
-        LoggerContextUtil.setLevel("com.zaxxer.hikari.util.DriverDataSource", Level.INFO);
+        configureDatabaseLogging();
 
         folder = new File(System.getProperty("user.dir"));
         folder.mkdir();
@@ -83,6 +81,7 @@ public class TerraBungeeController extends TerraBungee {
         pluginManager.detectPlugins(pluginFolder);
         pluginManager.loadPlugins();
         pluginManager.enablePlugins();
+        configureDatabaseLogging();
 
         ModuleHandler.getInstance().registerModules(SecurityManager.getInstance(), InstanceManager.getInstance(), ServiceManager.getInstance(), PlayerManager.getInstance(), NetworkManager.getInstance(), DiscordManager.getInstance(), CommandManager.getInstance());
         ModuleHandler.getInstance().enableAll();
@@ -107,6 +106,7 @@ public class TerraBungeeController extends TerraBungee {
         running = false;
         getLogger().info("Shutting down the controller!");
         ModuleHandler.getInstance().disableAll();
+        ConfigHandler.getInstance().closeSqlPool();
         try {
             server.stop();
         } catch (InterruptedException ignored) {
@@ -137,7 +137,37 @@ public class TerraBungeeController extends TerraBungee {
 
     @Override
     public ControllerPlayer getPlayer(String username) {
+        for (ControllerPlayer player : PlayerManager.getInstance().getPlayers().values()) {
+            if (player.getName() != null && player.getName().equalsIgnoreCase(username)) {
+                return player;
+            }
+        }
         return null;
+    }
+
+    @Override
+    public ControllerPlayer getPlayerByDiscordId(String discordId) {
+        return PlayerManager.getInstance().getPlayerByDiscordId(discordId);
+    }
+
+    @Override
+    public ControllerPlayer linkDiscordAccount(UUID uuid, String discordId) {
+        synchronized (PlayerManager.getInstance().getPlayers()) {
+            ControllerPlayer target = PlayerManager.getInstance().getPlayers().get(uuid);
+            if (target == null) {
+                return null;
+            }
+            if (discordId != null) {
+                for (ControllerPlayer player : PlayerManager.getInstance().getPlayers().values()) {
+                    if (!player.getUniqueID().equals(uuid) && discordId.equals(player.getDiscordId())) {
+                        player.setDiscordId(null);
+                    }
+                }
+            }
+            target.setDiscordId(discordId);
+            PlayerManager.getInstance().getPlayers().saveAsync();
+            return target;
+        }
     }
 
     public void splash() {
@@ -150,6 +180,12 @@ public class TerraBungeeController extends TerraBungee {
         System.out.println("TerraBungee " + Constants.VERSION + " by Noah Husby");
         System.out.println("Listening on: " + ConfigHandler.host + ":" + ConfigHandler.port);
         System.out.println("---------------------------------------------");
+    }
+
+    private void configureDatabaseLogging() {
+        LoggerContextUtil.setLevel("com.zaxxer.hikari.HikariConfig", Level.WARN);
+        LoggerContextUtil.setLevel("com.zaxxer.hikari.pool.HikariPool", Level.WARN);
+        LoggerContextUtil.setLevel("com.zaxxer.hikari.util.DriverDataSource", Level.WARN);
     }
 
 }

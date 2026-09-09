@@ -37,13 +37,7 @@ public class MsgDiscordCommand implements IDiscordCommand {
 
     @Override
     public void configureData(SlashCommandData data) {
-        Map<UUID, ControllerPlayer> players = PlayerManager.getInstance().getOnlinePlayerRegistry();
-
-        for(UUID uuid : players.keySet()){
-            ControllerPlayer player = players.get(uuid);
-
-            data.addOption(OptionType.STRING, player.getName(), "Test");
-        }
-
+        data.addOption(OptionType.STRING, "player", "Minecraft player name or UUID", true);
+        data.addOption(OptionType.STRING, "message", "Message to send", true);
     }
 }

@@ -19,7 +19,7 @@ public class PunishmentHistory {
     @Expose
     private Type type;
     @Expose
-    private LocalDateTime date;
+    private String date;
     @Expose
     private JsonObject data;
 

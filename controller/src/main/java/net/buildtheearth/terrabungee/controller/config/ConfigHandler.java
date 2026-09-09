@@ -2,7 +2,6 @@ package net.buildtheearth.terrabungee.controller.config;
 
 import com.google.common.collect.Maps;
 import com.noahhusby.lib.data.sql.Credentials;
-import com.noahhusby.lib.data.sql.MySQL;
 import com.noahhusby.lib.data.sql.structure.Structure;
 import com.noahhusby.lib.data.sql.structure.Type;
 import com.noahhusby.lib.data.storage.Storage;
@@ -16,6 +15,7 @@ import net.buildtheearth.terrabungee.controller.TerraBungeeController;
 import net.buildtheearth.terrabungee.controller.discord.DiscordManager;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.services.InstanceManager;
+import net.buildtheearth.terrabungee.controller.util.SharedMySQLDatabase;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
@@ -45,6 +45,7 @@ public class ConfigHandler {
     private File discordBotFile;
 
     private Configuration config;
+    private SharedMySQLDatabase sqlDatabase;
 
     private String category;
     Map<String, List<String>> categories = Maps.newHashMap();
@@ -114,7 +115,7 @@ public class ConfigHandler {
 
         Storage punishmentData = PlayerManager.getInstance().getPunishments();
         punishmentData.destroy();
-        ((StorageHashMap) playerData).clear();
+        ((StorageHashMap) punishmentData).clear();
 
         Storage staticInstanceData = InstanceManager.getInstance().getStaticInstances();
         staticInstanceData.destroy();
@@ -130,15 +131,18 @@ public class ConfigHandler {
 
         if (localEnabled) {
             playerData.registerHandler(new LocalStorageHandler(playerDataFile));
-            playerData.registerHandler(new LocalStorageHandler(punishmentFile));
+            punishmentData.registerHandler(new LocalStorageHandler(punishmentFile));
             staticInstanceData.registerHandler(new LocalStorageHandler(staticInstanceFile));
             discordGuildConfigData.registerHandler(new LocalStorageHandler(discordGuildFile));
             discordBotConfigData.registerHandler(new LocalStorageHandler(discordBotFile));
         }
 
+        closeSqlPool();
+        sqlDatabase = new SharedMySQLDatabase(
+                new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb));
+
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
-                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "Players",
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(sqlDatabase, "Players",
                     Structure.builder()
                             .add("UUID", Type.TEXT)
                             .add("Name", Type.TEXT)
@@ -153,8 +157,7 @@ public class ConfigHandler {
         }
 
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
-                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "Punishments",
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(sqlDatabase, "Punishments",
                     Structure.builder()
                             .add("Id", Type.INT)
                             .add("Type", Type.TEXT)
@@ -172,8 +175,7 @@ public class ConfigHandler {
         }
 
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
-                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "StaticInstances",
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(sqlDatabase, "StaticInstances",
                     Structure.builder()
                             .add("Id", Type.TEXT)
                             .add("Address", Type.TEXT)
@@ -185,8 +187,7 @@ public class ConfigHandler {
         }
 
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
-                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "DiscordGuilds",
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(sqlDatabase, "DiscordGuilds",
                     Structure.builder()
                             .add("GuildID", Type.TEXT)
                             .add("BotID", Type.INT)
@@ -200,8 +201,7 @@ public class ConfigHandler {
         }
 
         {
-            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(new MySQL(
-                    new Credentials(sqlHost, sqlPort, sqlUser, sqlPassword, sqlDb)), "DiscordBots",
+            SQLStorageHandler sqlStorageHandler = new SQLStorageHandler(sqlDatabase, "DiscordBots",
                     Structure.builder()
                             .add("Id", Type.INT)
                             .add("Name", Type.TEXT)
@@ -239,6 +239,13 @@ public class ConfigHandler {
     public void reload() {
         TerraBungeeController.logger.info("Reloading the controller!");
         loadData();
+    }
+
+    public synchronized void closeSqlPool() {
+        if (sqlDatabase != null) {
+            sqlDatabase.shutdown();
+            sqlDatabase = null;
+        }
     }
 
     /**

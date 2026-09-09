@@ -94,6 +94,18 @@ public class ServiceManager implements Module {
         return services.get(id);
     }
 
+    public void markDisconnected(WebSocket client) {
+        if (client == null) {
+            return;
+        }
+        for (TerraBungeeService service : services.values()) {
+            if (service.getClient() == client) {
+                service.setStatus(ServiceStatus.LOST_CONNECTION);
+                service.setClient(null);
+            }
+        }
+    }
+
     /**
      * Creates a new service from a service initialization packet
      *

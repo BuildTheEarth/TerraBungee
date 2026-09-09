@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Noah Husby
+ * Copyright (c) 2025 BuildTheEarth
  * TerraBungeeAPI - WebsocketEndpoint.java
  */
 
@@ -19,7 +19,7 @@ public class WebsocketEndpoint extends WebSocketClient {
     }
 
     @Getter
-    private boolean online = false;
+    private volatile boolean online = false;
     private Consumer<String> messageHandler;
 
     @Override

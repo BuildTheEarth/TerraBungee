@@ -12,6 +12,7 @@ dependencies {
     }
     implementation "com.zaxxer:HikariCP:$hikariVersion"
     implementation "org.java-websocket:Java-WebSocket:$websocketVersion"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 }
 
 repositories {
@@ -28,4 +29,8 @@ jar {
                 'Main-Class': 'net.buildtheearth.terrabungee.controller.TerraBungeeLauncher'
         )
     }
+}
+
+test {
+    useJUnitPlatform()
 }

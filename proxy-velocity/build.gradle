@@ -1,0 +1,26 @@
+repositories {
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+
+    maven {
+        name = 'papermc'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+}
+
+dependencies {
+    implementation project(":client")
+    implementation project(":controller")
+    compileOnly 'com.velocitypowered:velocity-api:3.4.0-SNAPSHOT'
+    annotationProcessor 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'com.google.code.gson:gson:2.8.8'
+    testImplementation 'com.velocitypowered:velocity-api:3.4.0-SNAPSHOT'
+}
+
+test {
+    useJUnitPlatform()
+}

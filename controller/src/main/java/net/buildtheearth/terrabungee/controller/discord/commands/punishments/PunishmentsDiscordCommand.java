@@ -157,7 +157,7 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
             builder.addField("ID", String.valueOf(punishment.getId()), true);
             builder.addField("Player", player.getName(), true);
             for (PunishmentHistory history : punishment.getHistory()) {
-                builder.addField(TimeUtil.toReadableTime(history.getDate()), history.getType().name(), false);
+                builder.addField(TimeUtil.toReadableTime(LocalDateTime.parse(history.getDate())), history.getType().name(), false);
             }
         });
         return new InspectionPromptData(embed, true);
