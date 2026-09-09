@@ -6,17 +6,17 @@
 package net.buildtheearth.terrabungee.client.events;
 
 import net.buildtheearth.terrabungee.client.TerraBungeeClient;
+import org.jspecify.annotations.NonNull;
 
-import javax.annotation.Nonnull;
 
 public abstract class Event {
     protected final TerraBungeeClient tb;
 
-    public Event(@Nonnull TerraBungeeClient tb) {
+    public Event(@NonNull TerraBungeeClient tb) {
         this.tb = tb;
     }
 
-    @Nonnull
+    @NonNull
     public TerraBungeeClient getTerraBungee() {
         return tb;
     }

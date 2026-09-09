@@ -26,6 +26,7 @@ subprojects {
         jdaVersion = "5.0.0-beta.12"
         hikariVersion = "4.0.3"
         apacheHttpVersion = "4.5.13"
+        jspecifyVersion = "1.0.1"
     }
 
     group "net.buildtheearth.terrabungee"
