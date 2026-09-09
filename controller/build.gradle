@@ -4,7 +4,7 @@ dependencies {
     implementation "org.yaml:snakeyaml:$snakeYamlVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.google.guava:guava:$guavaVersion"
-    implementation "commons-io:commons-io:$commonsVersion"
+    implementation "commons-io:commons-io:$commonsIOVersion"
     implementation "org.jline:jline:$jlineVersion"
     implementation "ch.qos.logback:logback-classic:$logbackVersion"
     implementation("net.dv8tion:JDA:$jdaVersion") {

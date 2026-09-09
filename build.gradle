@@ -80,8 +80,8 @@ subprojects {
                 url "https://maven.buildtheearth.net/private"
 
                 credentials {
-                    username = project.findProperty("mavenRepoUser") ?: System.getenv("MAVEN_REPO_USER")
-                    password = project.findProperty("mavenRepoPassword") ?: System.getenv("MAVEN_REPO_PASSWORD")
+                    username = "$System.env.JB_SPACE_CLIENT_ID"
+                    password = "$System.env.JB_SPACE_CLIENT_SECRET"
                 }
             }
         }
