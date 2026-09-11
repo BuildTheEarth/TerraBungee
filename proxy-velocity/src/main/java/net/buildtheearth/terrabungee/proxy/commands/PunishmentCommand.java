@@ -117,14 +117,14 @@ public class PunishmentCommand extends Command {
                         punishmentMessage = punishmentMessage.hoverEvent(HoverEvent.showText(hoverMessage));
                         punishmentMessage = punishmentMessage.append(
                                 Component.text("[*]", NamedTextColor.YELLOW)
-                                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/punishment inspect " + punishment.getId()))
-                                .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, ChatUtil.combine("Inspect the punishment")))
+                                .clickEvent(ClickEvent.runCommand("/punishment inspect " + punishment.getId()))
+                                .hoverEvent(HoverEvent.showText(ChatUtil.combine("Inspect the punishment")))
                         );
 
                         if (punishment.isActive()) {
                             punishmentMessage = punishmentMessage.append(
                                 ChatUtil.combine(NamedTextColor.GREEN + "✓")
-                                .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, ChatUtil.combine(NamedTextColor.GREEN + "Punishment is active")))
+                                .hoverEvent(HoverEvent.showText(ChatUtil.combine(NamedTextColor.GREEN + "Punishment is active")))
                             );
                         }
                         sender.sendMessage(punishmentMessage);

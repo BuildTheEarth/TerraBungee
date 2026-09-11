@@ -30,8 +30,8 @@ public class ListInstanceFragment implements ICommandFragment {
 
             list = list.append(
                 ChatUtil.combine((i.getInstanceType() == Instance.InstanceType.STATIC ? NamedTextColor.GOLD : NamedTextColor.GREEN), i.getId())
-                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/tba instance info %s", i.getId())))
-                .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, ChatUtil.combine("Get info about " + i.getId())))
+                .clickEvent(ClickEvent.runCommand(String.format("/tba instance info %s", i.getId())))
+                .hoverEvent(HoverEvent.showText(ChatUtil.combine("Get info about " + i.getId())))
             );
         }
 
