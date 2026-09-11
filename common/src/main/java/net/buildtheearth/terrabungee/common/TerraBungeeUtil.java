@@ -67,7 +67,6 @@ public class TerraBungeeUtil {
     /**
      * Creates {@link InetSocketAddress} from {@link String}
      *
-     * @param address
      * @return {@link InetSocketAddress}
      */
     public static InetSocketAddress makeInetSocketAddress(String address) {
@@ -85,7 +84,7 @@ public class TerraBungeeUtil {
     }
 
     public static JsonObject parse(String s) {
-        return new JsonParser().parse(s).getAsJsonObject();
+        return JsonParser.parseString(s).getAsJsonObject();
     }
 
     /**
@@ -101,12 +100,7 @@ public class TerraBungeeUtil {
             int index = (int) (rnd.nextFloat() * SALTCHARS.length());
             salt.append(SALTCHARS.charAt(index));
         }
-        String saltStr = salt.toString();
-        return saltStr;
-    }
-
-    public static ExecutorService newSingleThreadExecutor(String name) {
-        return Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat(name + "-%d").build());
+        return salt.toString();
     }
 
     public static ScheduledExecutorService newSingleThreadScheduledExecutor(String name) {
