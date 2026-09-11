@@ -9,6 +9,7 @@ import lombok.NonNull;
 import net.buildtheearth.api.TerraBungee;
 import net.buildtheearth.api.network.IC2SPacket;
 import net.buildtheearth.api.network.IS2CPacket;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
@@ -44,7 +45,7 @@ public final class PluginManager {
 
     public PluginManager(TerraBungee controller) {
         this.controller = controller;
-        Constructor yamlConstructor = new Constructor();
+        Constructor yamlConstructor = new Constructor(new LoaderOptions());
         PropertyUtils propertyUtils = yamlConstructor.getPropertyUtils();
         propertyUtils.setSkipMissingProperties(true);
         yamlConstructor.setPropertyUtils(propertyUtils);
