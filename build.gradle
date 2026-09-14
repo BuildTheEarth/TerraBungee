@@ -24,7 +24,7 @@ subprojects {
         jlineVersion = "3.20.0"
         logbackVersion = "1.3.0-alpha10"
         jdaVersion = "5.0.0-beta.12"
-        hikariVersion = "4.0.3"
+        hikariVersion = "7.1.0"
         apacheHttpVersion = "4.5.14"
         jspecifyVersion = "1.0.1"
     }
