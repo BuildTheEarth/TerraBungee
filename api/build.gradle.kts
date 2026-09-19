@@ -1,0 +1,12 @@
+val husbyVersion = extra["husbyVersion"].toString()
+val gsonVersion = extra["gsonVersion"].toString()
+val guavaVersion = extra["guavaVersion"].toString()
+val snakeYamlVersion = extra["snakeYamlVersion"].toString()
+val websocketVersion = extra["websocketVersion"].toString()
+dependencies {
+    compileOnly("com.github.BuildTheEarth:HusbyLib:$husbyVersion")
+    compileOnly("com.google.code.gson:gson:$gsonVersion")
+    compileOnly("com.google.guava:guava:$guavaVersion")
+    compileOnly("org.yaml:snakeyaml:$snakeYamlVersion")
+    compileOnly("org.java-websocket:Java-WebSocket:$websocketVersion")
+}
