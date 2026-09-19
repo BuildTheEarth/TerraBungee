@@ -23,7 +23,7 @@ subprojects {
         commonsVersion = "2.22.0"
         jlineVersion = "4.4.3"
         logbackVersion = "1.6.3"
-        jdaVersion = "5.0.0-beta.12"
+        jdaVersion = "6.6.0"
         hikariVersion = "7.1.0"
         apacheHttpVersion = "4.5.14"
         jspecifyVersion = "1.0.1"
