@@ -13,6 +13,8 @@ import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordButtonC
 import net.buildtheearth.terrabungee.controller.discord.commands.IDiscordCommand;
 import net.buildtheearth.terrabungee.controller.players.PlayerManager;
 import net.buildtheearth.terrabungee.controller.util.TimeUtil;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -22,7 +24,6 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 import java.awt.*;
@@ -83,7 +84,7 @@ public class PunishmentsDiscordCommand implements IDiscordCommand, IDiscordButto
                 JsonObject historyData = new JsonObject();
                 historyData.addProperty("type", "history");
                 historyData.addProperty("id", String.valueOf(id));
-                action.addActionRow(DiscordManager.getInstance().generateButtonInteraction(this, ButtonStyle.SECONDARY, historyData, "History"));
+                action.addComponents(ActionRow.of(DiscordManager.getInstance().generateButtonInteraction(this, ButtonStyle.SECONDARY, historyData, "History")));
             }
             action.submit();
         } else if (subcommand.equals("edit") || (event.getSubcommandGroup() != null) && event.getSubcommandGroup().equalsIgnoreCase("edit")) {
