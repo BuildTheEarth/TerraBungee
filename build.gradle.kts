@@ -29,7 +29,7 @@ subprojects {
     extra["guavaVersion"] = "33.7.1-jre"
     extra["gsonVersion"] = "2.14.0"
     extra["commonsVersion"] = "2.22.0"
-    extra["jlineVersion"] = "4.4.3"
+    extra["jlineVersion"] = "4.4.5"
     extra["logbackVersion"] = "1.6.3"
     extra["jdaVersion"] = "6.6.0"
     extra["hikariVersion"] = "7.1.0"
