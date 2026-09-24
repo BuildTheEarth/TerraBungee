@@ -31,7 +31,7 @@ subprojects {
     extra["commonsVersion"] = "2.22.0"
     extra["jlineVersion"] = "4.4.5"
     extra["logbackVersion"] = "1.6.3"
-    extra["jdaVersion"] = "6.6.0"
+    extra["jdaVersion"] = "6.7.0"
     extra["hikariVersion"] = "7.1.0"
     extra["apacheHttpVersion"] = "4.5.14"
     extra["jspecifyVersion"] = "1.0.1"
