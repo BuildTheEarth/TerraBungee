@@ -26,7 +26,7 @@ subprojects {
     extra["websocketVersion"] = "1.6.0"
     extra["husbyVersion"] = "9298199ab9"
     extra["lombokVersion"] = lombokVersion
-    extra["guavaVersion"] = "33.7.1-jre"
+    extra["guavaVersion"] = "33.7.2-jre"
     extra["gsonVersion"] = "2.14.0"
     extra["commonsVersion"] = "2.22.0"
     extra["jlineVersion"] = "4.4.6"
