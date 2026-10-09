@@ -30,7 +30,7 @@ subprojects {
     extra["gsonVersion"] = "2.14.0"
     extra["commonsVersion"] = "2.22.0"
     extra["jlineVersion"] = "4.4.7"
-    extra["logbackVersion"] = "1.6.4"
+    extra["logbackVersion"] = "1.6.5"
     extra["jdaVersion"] = "6.7.0"
     extra["hikariVersion"] = "7.1.0"
     extra["apacheHttpVersion"] = "4.5.14"
