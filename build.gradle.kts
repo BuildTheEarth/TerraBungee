@@ -27,10 +27,10 @@ subprojects {
     extra["husbyVersion"] = "9298199ab9"
     extra["lombokVersion"] = lombokVersion
     extra["guavaVersion"] = "33.7.2-jre"
-    extra["gsonVersion"] = "2.14.0"
+    extra["gsonVersion"] = "2.15.0"
     extra["commonsVersion"] = "2.22.0"
-    extra["jlineVersion"] = "4.4.7"
-    extra["logbackVersion"] = "1.6.5"
+    extra["jlineVersion"] = "4.4.8"
+    extra["logbackVersion"] = "1.6.6"
     extra["jdaVersion"] = "6.7.0"
     extra["hikariVersion"] = "7.1.0"
     extra["apacheHttpVersion"] = "4.5.14"

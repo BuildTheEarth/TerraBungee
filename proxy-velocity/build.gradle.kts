@@ -12,14 +12,14 @@ repositories {
 dependencies {
     implementation(project(":client"))
     implementation(project(":controller"))
-    compileOnly("com.velocitypowered:velocity-api:4.2.0")
-    annotationProcessor("com.velocitypowered:velocity-api:4.2.0")
+    compileOnly("com.velocitypowered:velocity-api:4.3.1")
+    annotationProcessor("com.velocitypowered:velocity-api:4.3.1")
     implementation("org.apache.httpcomponents:httpclient:4.5.14")
 	testImplementation(platform("org.junit:junit-bom:6.1.3"))
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("com.google.code.gson:gson:2.14.0")
-    testImplementation("com.velocitypowered:velocity-api:4.2.0")
+    testImplementation("com.google.code.gson:gson:2.15.0")
+    testImplementation("com.velocitypowered:velocity-api:4.3.1")
 }
 
 tasks.named<Test>("test") {
