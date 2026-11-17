@@ -1,5 +1,21 @@
 <configuration>
+    <appender name="TERMINAL" class="net.buildtheearth.terrabungee.controller.logging.JLineAppender"/>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <immediateFlush>true</immediateFlush>
+        <file>logs/latest.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <fileNamePattern>logs/%d{yyyy-'W'ww}.log.gz</fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="net.buildtheearth.terrabungee.controller.logging.LoggingFileLayout"/>
+        </encoder>
+    </appender>
+
     <root level="INFO">
-        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="TERMINAL"/>
     </root>
 </configuration>

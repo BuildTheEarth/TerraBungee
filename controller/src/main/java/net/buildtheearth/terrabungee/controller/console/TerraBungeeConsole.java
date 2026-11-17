@@ -9,51 +9,56 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.TerminalBuilder;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import org.slf4j.LoggerFactory;
 
 public class TerraBungeeConsole extends Logger {
+    private LineReader reader;
+
     public TerraBungeeConsole() {
         super("TerraBungee", null);
         setUseParentHandlers(false);
 
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new SimpleFormatter() {
-            private static final String format = "[%1$tT %2$S]: %4$s %n";
+        addHandler(new Handler() {
+            private final org.slf4j.Logger delegate = LoggerFactory.getLogger("TerraBungee");
 
             @Override
-            public synchronized String format(LogRecord lr) {
-                StringBuilder builder = new StringBuilder();
-                if (lr.getLevel() == Level.INFO) {
-                    builder.append(ConsoleColor.WHITE.toString());
+            public void publish(LogRecord record) {
+                if (!isLoggable(record)) {
+                    return;
                 }
-                if (lr.getLevel() == Level.WARNING) {
-                    builder.append(ConsoleColor.YELLOW.toString());
+                String message = record.getMessage();
+                Object[] parameters = record.getParameters();
+                if (parameters != null && parameters.length > 0) {
+                    message = java.text.MessageFormat.format(message, parameters);
                 }
-                if (lr.getLevel() == Level.SEVERE) {
-                    builder.append(ConsoleColor.RED.toString());
+                switch (record.getLevel().getName()) {
+                    case "SEVERE" -> delegate.error(message, record.getThrown());
+                    case "WARNING" -> delegate.warn(message, record.getThrown());
+                    default -> delegate.info(message, record.getThrown());
                 }
-                builder.append(String.format(format,
-                        new Date(lr.getMillis()),
-                        lr.getLevel().getLocalizedName(),
-                        Thread.currentThread().getName(),
-                        lr.getMessage()));
-                builder.append(ConsoleColor.RESET.toString());
-                return builder.toString();
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() {
             }
         });
+    }
 
-        addHandler(handler);
-
+    public org.jline.reader.LineReader getReader() {
+        return reader;
     }
 
     public void start() {
         try {
-            LineReader reader = LineReaderBuilder.builder().terminal(TerminalBuilder.terminal()).build();
+            reader = LineReaderBuilder.builder().terminal(TerminalBuilder.terminal()).build();
             String line;
             while ((line = reader.readLine("> ")) != null && TerraBungeeController.getInstance().isRunning()) {
                 if (line.equalsIgnoreCase("")) {
@@ -61,13 +66,10 @@ public class TerraBungeeConsole extends Logger {
                 }
                 try {
                     if (!CommandManager.getInstance().execute(line)) {
-                        System.out.println(ConsoleColor.RED.toString() + "Unknown Command! Type `help` for more commands!" +
-                                           ConsoleColor.RESET);
+                        warning("Unknown command. Type `help` for more commands.");
                     }
                 } catch (Exception e) {
                     TerraBungee.getInstance().getLogger().log(Level.SEVERE, "There was an error executing the command!", e);
-                    e.printStackTrace();
-                    System.out.println();
                 }
             }
         } catch (IOException e) {
@@ -82,6 +84,10 @@ public class TerraBungeeConsole extends Logger {
         }
 
         builder.append(ConsoleColor.RESET);
-        System.out.println(builder.toString());
+        if (TerraBungeeController.logger != null && TerraBungeeController.logger.getReader() != null) {
+            TerraBungeeController.logger.getReader().printAbove(builder.toString());
+        } else {
+            System.out.println(builder);
+        }
     }
 }

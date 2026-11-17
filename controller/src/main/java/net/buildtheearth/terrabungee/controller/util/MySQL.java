@@ -57,18 +57,19 @@ public class MySQL {
         passwort = ConfigHandler.sqlPassword;
 
         if(host.equals("<host>")) {
-            System.out.println("§cPlease configure the MySQL Server.");
+            TerraBungee.getInstance().getLogger().warning("Please configure the MySQL server.");
             return;
         }
 
-        System.out.println("Connecting...");
+        TerraBungee.getInstance().getLogger().info("Connecting to MySQL...");
 
         if(!isConnected()){
             try {
                 con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database , username, passwort);
-                System.out.println("§a[MySQL] Connection established.");
+                TerraBungee.getInstance().getLogger().info("MySQL connection established.");
             } catch (SQLException e) {
-                e.printStackTrace();
+                TerraBungee.getInstance().getLogger().log(java.util.logging.Level.SEVERE,
+                        "Could not connect to MySQL.", e);
             }
         }
     }
@@ -78,9 +79,10 @@ public class MySQL {
             try {
                 con.close();
                 con = null;
-                System.out.println("§a[MySQL] Connection closed.");
+                TerraBungee.getInstance().getLogger().info("MySQL connection closed.");
             } catch (SQLException e) {
-                e.printStackTrace();
+                TerraBungee.getInstance().getLogger().log(java.util.logging.Level.WARNING,
+                        "Could not close the MySQL connection.", e);
             }
         }
     }
